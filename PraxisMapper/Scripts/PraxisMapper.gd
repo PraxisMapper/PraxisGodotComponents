@@ -19,14 +19,14 @@ static var serverURL = '' #dedicated games want this to be a fixed value and not
 static var mapTileWidth = 320 #TODO: load these from the server eventually
 static var mapTileHeight = 400
 #This variable should exist for debugging purposes, but I've provided a few choices for convenience.
-#static var debugStartingPlusCode = "85633QG4VV" #Elysian Park, Los Angeles, CA, USA
+static var debugStartingPlusCode = "85633QG4VV" #Elysian Park, Los Angeles, CA, USA
 #static var debugStartingPlusCode = "87G8Q2JMGF" #Central Park, New York City, NY, USA
 #static var debugStartingPlusCode = "8FW4V75W25" #Eiffel Tower Garden, France
 #static var debugStartingPlusCode = "9C3XGV349C" #The Green Park, London, UK
 #static var debugStartingPlusCode = "8Q7XMQJ595" #Kokyo Kien National Garden, Tokyo, Japan
 #static var debugStartingPlusCode = "8Q336FJCRV" #Peoples Park, Shanghai, China
 #static var debugStartingPlusCode = "7JWVP5923M" #Shalimar Bagh, Delhi, India
-static var debugStartingPlusCode = "86FRXXXPM8" #Ohio State University, Columbus, OH, USA
+#static var debugStartingPlusCode = "86FRXXXPM8" #Ohio State University, Columbus, OH, USA
 
 #storage values for global access at any time.
 static var currentPlusCode = '' #The Cell10 we are currently in.
