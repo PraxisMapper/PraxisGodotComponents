@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://kk0c46npchuf"]
+
+[ext_resource type="Script" path="res://Scenes/GpsTest.gd" id="1_2jlo1"]
+
+[node name="GpsTest" type="Node2D"]
+script = ExtResource("1_2jlo1")
+
+[node name="lblLocInfo" type="Label" parent="."]
+offset_left = 34.0
+offset_top = 49.0
+offset_right = 1066.0
+offset_bottom = 1877.0
+theme_override_font_sizes/font_size = 25
+text = "Waiting..."

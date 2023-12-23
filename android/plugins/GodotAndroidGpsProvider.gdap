@@ -1,0 +1,9 @@
+[config]
+
+name="GodotAndroidGpsProvider"
+binary_type="local"
+binary="GodotAndroidGpsProvider.release.aar"
+
+[dependencies]
+
+remote=["com.google.android.gms:play-services-location:21.0.1"]
