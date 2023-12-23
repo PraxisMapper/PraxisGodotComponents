@@ -16,6 +16,8 @@ A set of pre-built scenes and scripts for using a PraxisMapper server from a God
 ## Debug/Development Use:
 When running from a PC, instead of using the Android GPS Provider, a small set of buttons will appear in the upper left corner of the screen. These can be clicked to navigate 1 10-digit PlusCode (Cell10) in that direction.
 
+In Scripts/PraxisMapper.gd, you can change debugStartingPlusCode to set where your client begins play at in debug/development. Several Places are available in comments as quick reference options, but feel free to set your to a more relevant coordinate.
+
 # Nodes
 * PraxisMapper/APICalls/PraxisEndpoints: A node with a function for each default PraxisMapper API endpoint. All call the same response_data signal when completed, so one node can handle one request at a time. The preferred class to use right now.
 * PraxisMapper/APICalls/PraxisAPICall: A class with a function for each default PraxisMapper API endpoint that waits for a response and returns a properly-shaped object in the same call. Not properly async, but slightly simpler to use. Not recommended but available.
