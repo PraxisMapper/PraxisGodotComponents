@@ -319,7 +319,7 @@ func ExpireTiles(place, styleSet): #expires all map tiles in styleSet that conta
 	await call_url(url)
 	
 func GetTileGenerationID(plusCode, styleSet): #Gets the current generation ID (creation count) for a tile. -1 is "expired"
-	var url = "/MapTile/Generatiion/" + plusCode + "/" + styleSet
+	var url = "/MapTile/Generation/" + plusCode + "/" + styleSet
 	await call_url(url)
 
 #Demo endpoint API calls, so this can server immediately as a test client.
