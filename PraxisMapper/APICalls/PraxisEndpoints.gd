@@ -198,7 +198,7 @@ func ExpireTiles(place, styleSet): #expires all map tiles in styleSet that conta
 	callEndpoint("/MapTile/Expire/" + place + "/" + styleSet)
 	
 func GetTileGenerationID(plusCode, styleSet): #Gets the current generation ID (creation count) for a tile. -1 is "expired"
-	callEndpoint("/MapTile/Generatiion/" + plusCode + "/" + styleSet)
+	callEndpoint("/MapTile/Generation/" + plusCode + "/" + styleSet)
 
 #Demo endpoint API calls, so this can server immediately as a test client.
 func DemoSplatterEnter(plusCode): #Grants the player 1 splat point when walking into a Cell10 the first time in 24 hours
