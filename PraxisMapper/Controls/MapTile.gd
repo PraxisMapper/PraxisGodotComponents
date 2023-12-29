@@ -97,4 +97,5 @@ func _ready():
 	if (autoRefresh == true):
 		timer.one_shot = false
 		timer.autostart = true
+		timer.wait_time = autoRefreshSeconds
 		timer.start()
