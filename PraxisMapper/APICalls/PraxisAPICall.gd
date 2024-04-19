@@ -25,13 +25,13 @@ func _init():
 	var err = 0
 	http = HTTPClient.new() # Create the Client. 
 
-	var split = PraxisMapper.serverURL.split(":")
+	var split = PraxisServer.serverURL.split(":")
 	if (split.size() == 3): #http:\\url:port
 		err =  http.connect_to_host(split[0] + ":" + split[1], int(split[2])) # Connect to host/port.
 	elif (split.size() == 2 and !split[0].begins_with("http")): #url:port
 		err =  http.connect_to_host(split[0], int(split[1])) # Connect to host/port.
 	else: # url
-		err = http.connect_to_host(PraxisMapper.serverURL)
+		err = http.connect_to_host(PraxisServer.serverURL)
 
 	assert(err == OK) # Make sure connection is OK.
 	
@@ -51,8 +51,8 @@ func call_url(endpoint, method = HTTPClient.METHOD_GET, body = ''):
 	lastResponseCode = 0
 	# Some headers
 	var headers = [
-		"AuthKey: " + PraxisMapper.authKey,
-		"PraxisAuthKey: " + PraxisMapper.headerKey,
+		"AuthKey: " + PraxisServer.authKey,
+		"PraxisAuthKey: " + PraxisServer.headerKey,
 		"User-Agent: Pirulo/1.0 (Godot)",
 		"Accept: */*"
 	]
@@ -92,7 +92,7 @@ func call_url(endpoint, method = HTTPClient.METHOD_GET, body = ''):
 					OS.delay_msec(25)
 		else:		
 			_isReauthing = true
-			await self.Login(PraxisMapper.username, PraxisMapper.password)
+			await self.Login(PraxisServer.username, PraxisServer.password)
 			_isReauthing = false
 		return await call_url(endpoint, method, body)
 	elif(statusCode != 200 and statusCode != 204):
@@ -319,7 +319,7 @@ func ExpireTiles(place, styleSet): #expires all map tiles in styleSet that conta
 	await call_url(url)
 	
 func GetTileGenerationID(plusCode, styleSet): #Gets the current generation ID (creation count) for a tile. -1 is "expired"
-	var url = "/MapTile/Generation/" + plusCode + "/" + styleSet
+	var url = "/MapTile/Generatiion/" + plusCode + "/" + styleSet
 	await call_url(url)
 
 #Demo endpoint API calls, so this can server immediately as a test client.

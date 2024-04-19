@@ -12,12 +12,13 @@ config_version=5
 
 config/name="PraxisGodotComponents"
 run/main_scene="res://PraxisMapper/Scenes/LoginScene.tscn"
-config/features=PackedStringArray("4.1", "Mobile")
+config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://PraxisMapper/Resources/PraxisMapperIcon.png"
 
 [autoload]
 
 PraxisCore="*res://PraxisMapper/Scripts/PraxisMapper.gd"
+PraxisServer="*res://PraxisMapper/Scripts/PraxisServer.gd"
 
 [display]
 
@@ -29,6 +30,10 @@ window/handheld/orientation=1
 [dotnet]
 
 project/assembly_name="PraxisGodotComponents"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/PraxisMapperGPSPlugin/plugin.cfg")
 
 [input_devices]
 

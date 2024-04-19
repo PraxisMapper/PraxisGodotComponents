@@ -20,8 +20,8 @@ var noiseTex : NoiseTexture2D
 signal user_tapped(plusCode) 
 
 func getTappedCode(x, y):
-	var cellsX = PraxisMapper.mapTileWidth / 20
-	var cellsY = PraxisMapper.mapTileHeight / 20
+	var cellsX = PraxisCore.mapTileWidth / 20
+	var cellsY = PraxisCore.mapTileHeight / 20
 	#TODO: this needs adjusted to match the screen being centered?
 	var tappedCell = PlusCodes.ShiftCode(currentTile + "22", x / cellsX, (400 - y) / cellsY )
 	return tappedCell
@@ -68,11 +68,11 @@ func LoadTile(plusCode):
 	else:
 		request.response_data.connect(tile_called)
 	
-		print("getting " + PraxisMapper.serverURL + "/MapTile/Area/" + plusCode + "/" + styleSet)
+		print("getting " + PraxisServer.serverURL + "/MapTile/Area/" + plusCode + "/" + styleSet)
 		request.DrawMapTile(plusCode, styleSet)
 	
 func GetTile(plusCode):	
-	if PraxisMapper.currentPlusCode.substr(0,8) == PraxisMapper.lastPlusCode.substr(0,8):
+	if PraxisCore.currentPlusCode.substr(0,8) == PraxisCore.lastPlusCode.substr(0,8):
 		return
 	
 	currentTile = plusCode.substr(0,8)
@@ -87,15 +87,13 @@ func OnPlusCodeChanged(current, previous):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	#TODO: make NoiseTexture a proper node to reference multiple times?
 	noiseTex = NoiseTexture2D.new()
-	noiseTex.width = PraxisMapper.mapTileWidth
-	noiseTex.height = PraxisMapper.mapTileHeight
+	noiseTex.width = PraxisCore.mapTileWidth
+	noiseTex.height = PraxisCore.mapTileHeight
 	noiseTex.noise = FastNoiseLite.new()
 	texRect.texture = noiseTex
 	
 	if (autoRefresh == true):
 		timer.one_shot = false
 		timer.autostart = true
-		timer.wait_time = autoRefreshSeconds
 		timer.start()

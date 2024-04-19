@@ -19,8 +19,8 @@ func response_received(result, responseCode, headers, body):
 
 func callEndpoint(url, method = null, body = null):
 	var headers = [
-		"AuthKey: " + PraxisMapper.authKey,
-		"PraxisAuthKey: " + PraxisMapper.headerKey,
+		"AuthKey: " + PraxisServer.authKey,
+		"PraxisAuthKey: " + PraxisServer.headerKey,
 		"User-Agent: Pirulo/1.0 (Godot)",
 		"Accept: */*"
 	]
@@ -34,10 +34,10 @@ func callEndpoint(url, method = null, body = null):
 	request.request_completed.connect(response_received)
 	var ok
 	if (body != null): 
-		ok = request.request(PraxisMapper.serverURL + url, headers, method, body)
+		ok = request.request(PraxisServer.serverURL + url, headers, method, body)
 	else:
-		ok = request.request(PraxisMapper.serverURL + url, headers, method)
-	print(PraxisMapper.serverURL + url)
+		ok = request.request(PraxisServer.serverURL + url, headers, method)
+	print(PraxisServer.serverURL + url)
 	print('request called')
 	
 	#TODO: check if OK isn't OK and handle pre-call errors.
@@ -198,7 +198,7 @@ func ExpireTiles(place, styleSet): #expires all map tiles in styleSet that conta
 	callEndpoint("/MapTile/Expire/" + place + "/" + styleSet)
 	
 func GetTileGenerationID(plusCode, styleSet): #Gets the current generation ID (creation count) for a tile. -1 is "expired"
-	callEndpoint("/MapTile/Generation/" + plusCode + "/" + styleSet)
+	callEndpoint("/MapTile/Generatiion/" + plusCode + "/" + styleSet)
 
 #Demo endpoint API calls, so this can server immediately as a test client.
 func DemoSplatterEnter(plusCode): #Grants the player 1 splat point when walking into a Cell10 the first time in 24 hours

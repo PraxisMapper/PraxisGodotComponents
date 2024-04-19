@@ -1,19 +1,8 @@
-extends RefCounted
+extends Node
 class_name PlusCodes
 
 var SEPARATOR_ = '+'
 static var CODE_ALPHABET_ = '23456789CFGHJMPQRVWX'
-
-#var GRID_COLUMNS_ = 4
-#var GRID_ROWS_ = 5
-#note: a reasonable alternative would be a 3x3 grid in a 9-char code set. 
-#would be longer codes but could be number-only, and then indexable similar to S2 codes but 
-#in regular rectangles instead.
-
-#for decoding the 11th digit?
-#var GRID_ROW_MULTIPLIER = 3125
-#var GRID_COL_MULTIPLIER = 1024
-
 
 static func EncodeLatLon(lat, lon):
 	return EncodeLatLonSize(lat, lon, 10)
@@ -95,3 +84,35 @@ static func ShiftCode(code, xChange, yChange):
 		newCode = newCode + CODE_ALPHABET_[yVals[i]] + CODE_ALPHABET_[xVals[i]]
 	
 	return newCode
+	
+static func Decode(plusCode):
+	var lat = -90.0
+	var lon = -180.0
+	plusCode = plusCode.replace("+", "")
+	var totalChars = plusCode.length()
+	var charsProcessed = 0
+	var precision = 20
+	var xVal = 0
+	var yVal = 0
+	while (charsProcessed < totalChars):
+		if (charsProcessed < 10):
+			xVal = PlusCodes.GetLetterIndex(plusCode[charsProcessed + 1])
+			yVal = PlusCodes.GetLetterIndex(plusCode[charsProcessed])
+			
+			lat += precision * yVal
+			lon += precision * xVal
+			precision /= 20.0
+			charsProcessed += 2
+		else:			
+			#lat/row is /, column/lon is %
+			xVal = PlusCodes.GetLetterIndex(plusCode[charsProcessed]) % 4
+			yVal = PlusCodes.GetLetterIndex(plusCode[charsProcessed]) / 4
+			
+			lon += (xVal * (precision / (4.0 ** (charsProcessed - 9))))
+			lat += (yVal * (precision / (5.0 ** (charsProcessed - 9))))
+			
+			charsProcessed += 1
+	return Vector2(lon, lat) #x, y!
+	
+static func GetLetterIndex(letter):
+	return CODE_ALPHABET_.find(letter)

@@ -1,6 +1,6 @@
 extends Node2D
 
-#A default input-blocking 
+#A default input-blocking modal.
 
 @onready var spinner: Sprite2D = $ColorRect/Spinner
 
