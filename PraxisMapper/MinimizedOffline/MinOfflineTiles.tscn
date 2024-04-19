@@ -20,6 +20,7 @@ render_target_update_mode = 4
 script = ExtResource("2_5a5q0")
 
 [node name="subcam" type="Camera2D" parent="svc/SubViewport"]
+anchor_mode = 0
 
 [node name="svc2" type="SubViewportContainer" parent="."]
 offset_right = 40.0
@@ -33,6 +34,7 @@ render_target_update_mode = 4
 script = ExtResource("3_x476w")
 
 [node name="subcam" type="Camera2D" parent="svc2/SubViewport"]
+anchor_mode = 0
 
 [node name="svc3" type="SubViewportContainer" parent="."]
 offset_right = 40.0
@@ -46,3 +48,4 @@ render_target_update_mode = 4
 script = ExtResource("4_5es4l")
 
 [node name="subcam" type="Camera2D" parent="svc3/SubViewport"]
+anchor_mode = 0
