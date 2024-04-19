@@ -108,6 +108,14 @@ func GetStyle(style):
 		json.parse(styleData.get_as_text())
 		return json.get_data()
 
+#This needs to be called by a node that exists in a tree, not just a static script, so its here.
+func MakeMinimizedOfflineTiles(plusCode):
+	var offlineNode = preload("res://PraxisMapper/MinimizedOffline/MinOfflineTiles.tscn")
+	var offlineInst = offlineNode.instantiate()
+	add_child(offlineInst)
+	await offlineInst.GetAndProcessData(plusCode,"suggestedmini")
+	remove_child(offlineInst)
+
 func DistanceDegreesToMetersLat(degrees):
 	return degrees * metersPerDegree
 

@@ -11,14 +11,14 @@ config_version=5
 [application]
 
 config/name="PraxisGodotComponents"
-run/main_scene="res://PraxisMapper/Scenes/LoginScene.tscn"
+run/main_scene="res://Scenes/SimpleTest.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://PraxisMapper/Resources/PraxisMapperIcon.png"
 
 [autoload]
 
-PraxisCore="*res://PraxisMapper/Scripts/PraxisMapper.gd"
 PraxisServer="*res://PraxisMapper/Scripts/PraxisServer.gd"
+PraxisCore="*res://PraxisMapper/Scripts/PraxisCore.gd"
 
 [display]
 
