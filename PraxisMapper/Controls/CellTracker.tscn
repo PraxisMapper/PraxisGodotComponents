@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2hnhr1t57jm7"]
+
+[ext_resource type="Script" path="res://PraxisMapper/Controls/CellTracker.gd" id="1_gnhcs"]
+
+[node name="CellTracker" type="Node2D"]
+script = ExtResource("1_gnhcs")
