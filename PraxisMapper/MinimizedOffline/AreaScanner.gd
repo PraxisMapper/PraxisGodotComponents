@@ -1,6 +1,10 @@
 extends Node2D
 class_name AreaScanner
 
+#TODO: set styleData from outside or load a default choice Remember this only works on
+#minimized suggestedMini data, so probably force-load that.
+var styleData #loaded from outside
+
 func PickPlace(area, terrainID = 0, requirement = ""):
 	#Find a place in placeData that isn't visited and is allowed by options
 	#and is not ignored.
@@ -65,7 +69,7 @@ func ReadPlaces(plusCode, terrainID, requirements, options = null, ignoreList = 
 				if maybeParent.has("nid"):
 					place.parentName = areaData.nameTable[str(maybeParent.nid)]
 				else:
-					place.parentName = "an unnamed " + GameGlobals.styleData[str(maybeParent.tid)].name
+					place.parentName = "an unnamed " + str(maybeParent.tid) # + GameGlobals.styleData[str(maybeParent.tid)].name
 				continue
 		
 		var center = place.c.split(",")

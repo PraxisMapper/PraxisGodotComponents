@@ -69,6 +69,8 @@ func CreateAllTiles():
 	viewport2.size = Vector2i(400 * scale, 400 * scale)
 	viewport3.size = Vector2i(400 * scale, 400 * scale)
 	await RenderingServer.frame_post_draw
+	await RenderingServer.frame_post_draw #In some cases, this IS necessary
+	#Exact details on when/why require more research.
 	
 	var img1 = viewport1.get_texture().get_image() # Get rendered image
 	img1.save_png("user://MapTiles/" + plusCode + ".png") # Save to disk

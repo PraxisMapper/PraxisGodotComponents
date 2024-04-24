@@ -25,7 +25,7 @@ var mapData
 @export var makeNameTile = true
 @export var makeBoundsTile = true
 
-func GetAndProcessData(plusCode):
+func GetAndProcessData(plusCode, scale = 1):
 	var oneTile = null
 	$Banner.visible = true
 	$Banner/lblStatus.text = "Preparing to draw...."
@@ -33,7 +33,7 @@ func GetAndProcessData(plusCode):
 	plusCode6 = plusCode.substr(0,6)
 	if (plusCode.length() == 8):
 		oneTile = plusCode.substr(6,2)
-	scaleVal = 1
+	scaleVal = scale
 	await RenderingServer.frame_post_draw
 	var styleData = PraxisCore.GetStyle(drawnStyle)
 	$svc/SubViewport/fullMap.style = styleData
@@ -81,9 +81,9 @@ func CreateAllTiles(oneTile = null):
 	#Fullmap at 0, name map at 40k, bounds map at 80k, terrain at 120k
 	print("CreateAllTilesCalled")
 	$svc/SubViewport/fullMap.position.y = 0
-	$svc2/SubViewport/nameMap.position.y = 40000
-	$svc3/SubViewport/boundsMap.position.y = 80000
-	$svc4/SubViewport/terrainMap.position.y = 120000
+	$svc2/SubViewport/nameMap.position.y = 40000 * scaleVal
+	$svc3/SubViewport/boundsMap.position.y = 80000 * scaleVal
+	$svc4/SubViewport/terrainMap.position.y = 120000 * scaleVal
 	
 	$Banner/lblStatus.text = "Drawing " + plusCode6 + "..."
 	if makeMapTile == true:
@@ -92,7 +92,7 @@ func CreateAllTiles(oneTile = null):
 	if makeNameTile == true:
 		print("drawing name")
 		await $svc2/SubViewport/nameMap.DrawOfflineNameTile(mapData.entries["mapTiles"], scaleVal)
-	if makeBoundsTile == true:
+	if makeBoundsTile == true and mapData.entries.has("adminBoundsFilled"): #dont draw if theres no data.
 		print("drawing bounds")
 		await $svc3/SubViewport/boundsMap.DrawOfflineBoundsTile(mapData.entries["adminBoundsFilled"], scaleVal)
 	if makeTerrainTile == true:

@@ -30,8 +30,7 @@ func _draw():
 	#REMEMBER: PlusCode origin is at the BOTTOM-left, these draw calls use the TOP left.
 	#This should do the same invert drawing that PraxisMapper does server-side.
 	draw_set_transform(Vector2(0,0), 0, Vector2(1,-1))
-	
-	#TODO jamming in a background drawing bit here
+
 	var bgCoords = PackedVector2Array()
 	bgCoords.append(Vector2(0,0))
 	bgCoords.append(Vector2(width * scale,0))
@@ -39,7 +38,8 @@ func _draw():
 	bgCoords.append(Vector2(0,height * scale))
 	bgCoords.append(Vector2(0,0))
 	draw_colored_polygon(bgCoords, style["9999"].drawOps[0].color) 
-	
+	var orderedDrawCommands = {}
+
 	#entries has a dictionary, each entry is a big list of coord sets as strings
 	for entry in theseentries:
 		#TODO get style rule color and size for drawing here
@@ -57,16 +57,29 @@ func _draw():
 			var workVector = Vector2(int(point[0]) * scale, int(point[1]) * scale)
 			polyCoords.append(workVector)
 		
+		for possibleDraw in style:
+			var pd = style[possibleDraw].drawOps
+			for do in pd:
+				if !orderedDrawCommands.has(do.drawOrder):
+					orderedDrawCommands[do.drawOrder] = []
+		
 		for s in thisStyle.drawOps:
-			if (entry.gt == 1):
+			orderedDrawCommands[s.drawOrder].push_back({gt = entry.gt, p = polyCoords, size = s.sizePx, color = s.color})
+		
+	var drawLevels = orderedDrawCommands.keys()
+	drawLevels.sort()
+	drawLevels.reverse()
+	for entries in drawLevels:
+		for odc in orderedDrawCommands[entries]:
+			if (odc.gt == 1):
 				#this is just a circle for single points, size is roughly a Cell10
 				#4.5 looks good for POIs, but bad for Trees, which there are quite a few of.
 				#trees are size 0.2, so I should probably make other elements larger?
 				#MOST of them shouldn't be points, but lines shouldn't be a Cell10 wide either.
-				draw_circle(polyCoords[0], s.sizePx * 2.0 * scale * 5, s.color)
-			elif (entry.gt == 2):
+				draw_circle(odc.p[0], odc.size * 2.0 * scale * 5, odc.color)
+			elif (odc.gt == 2):
 				#This is significantly faster than calling draw_line for each of these.
-				draw_polyline(polyCoords, s.color, s.sizePx * scale * 5, true) #antialias display image only.
-			elif entry.gt == 3:
-				#A single color, which is what I generally use. TODO: decide how the texture2d part should work.
-				draw_colored_polygon(polyCoords, s.color) 
+				draw_polyline(odc.p, odc.color, odc.size * scale, true) #antialias display image only.
+			elif odc.gt == 3:
+				#A single color, which is what I generally use.
+				draw_colored_polygon(odc.p, odc.color) 
