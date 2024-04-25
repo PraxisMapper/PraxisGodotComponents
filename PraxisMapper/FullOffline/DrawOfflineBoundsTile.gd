@@ -65,7 +65,7 @@ func _draw():
 			#for s in thisStyle.drawOps:
 			if (entry.gt == 1):
 				#this is just a circle for single points, size is roughly a Cell10
-				draw_circle(polyCoords[0], 20 * 2.0 * scale * 5, nameColor)
+				draw_circle(polyCoords[0], 20 * 10.0 * scale, nameColor)
 			elif (entry.gt == 2):
 				#This is significantly faster than calling draw_line for each of these.
 				draw_polyline(polyCoords, nameColor, 5 * scale * 5) #no antialiasing, colors matter.

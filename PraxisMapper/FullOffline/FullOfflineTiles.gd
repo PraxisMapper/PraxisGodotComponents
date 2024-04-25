@@ -110,13 +110,13 @@ func CreateAllTiles(oneTile = null):
 	var scale = scaleVal
 	
 	camera1.position = Vector2(0,0)
-	camera2.position = Vector2(0,40000)
-	camera3.position = Vector2(0,80000)
-	camera4.position = Vector2(0,120000)
+	camera2.position = Vector2(0,40000 * scaleVal)
+	camera3.position = Vector2(0,80000 * scaleVal)
+	camera4.position = Vector2(0,120000 * scaleVal)
 	viewport1.size = Vector2i(320 * scale, 500 * scale)
-	viewport2.size = Vector2i(320 * scale, 500 * scale)
-	viewport3.size = Vector2i(320 * scale, 500 * scale)
-	viewport4.size = Vector2i(320 * scale, 500 * scale)
+	viewport2.size = Vector2i(320, 500) #non-visible images don't need scaled up.
+	viewport3.size = Vector2i(320, 500)
+	viewport4.size = Vector2i(320, 500)
 	await RenderingServer.frame_post_draw
 	
 	var xList = PlusCodes.CODE_ALPHABET_
@@ -130,15 +130,15 @@ func CreateAllTiles(oneTile = null):
 		#This kept complaining about can't - a Vector2 and an Int so I had to do this.
 		#yPos -= (PlusCodes.CODE_ALPHABET_.find(yChar) * 20 * scale)
 		camera1.position.y -= (500 * scale)
-		camera2.position.y -= (500 * scale)
-		camera3.position.y -= (500 * scale)
-		camera4.position.y -= (500 * scale)
+		camera2.position.y -= (500)
+		camera3.position.y -= (500)
+		camera4.position.y -= (500)
 			
 		for xChar in xList:
 			camera1.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320 * scale)
-			camera2.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320 * scale)
-			camera3.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320 * scale)
-			camera4.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320 * scale)
+			camera2.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320)
+			camera3.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320)
+			camera4.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320)
 			await RenderingServer.frame_post_draw
 			if makeMapTile == true:
 				var img1 = viewport1.get_texture().get_image() # Get rendered image
