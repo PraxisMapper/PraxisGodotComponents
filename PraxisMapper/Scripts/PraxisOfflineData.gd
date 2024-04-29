@@ -51,8 +51,6 @@ static func GetPlacesPresent(plusCode):
 	for category in data.entries:
 		for entry in data.entries[category]:
 			if entry.has("nid"):
-				if data.nameTable[str(entry.nid)] == "Oakville Road":
-					print("Debug!")
 				if IsPointInPlace(point, entry):
 					print("Found " + data.nameTable[str(entry.nid)] + " at " + plusCode)
 					results.push_back({ 
