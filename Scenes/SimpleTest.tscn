@@ -1,9 +1,29 @@
-[gd_scene load_steps=3 format=3 uid="uid://c4b6p4t02k1fo"]
+[gd_scene load_steps=5 format=3 uid="uid://c4b6p4t02k1fo"]
 
 [ext_resource type="Script" path="res://Scenes/SimpleTest.gd" id="1_6vkws"]
 [ext_resource type="PackedScene" uid="uid://dlr56hkndvvt0" path="res://PraxisMapper/MinimizedOffline/MinOfflineTiles.tscn" id="2_p3ufm"]
+[ext_resource type="PackedScene" uid="uid://b6cfprdbul55o" path="res://PraxisMapper/FullOffline/FullOfflineTiles.tscn" id="3_r55nv"]
+[ext_resource type="Texture2D" uid="uid://xvyj5uj4aqpi" path="res://PraxisMapper/Resources/LoadingOverlay.png" id="4_wkf1d"]
 
 [node name="SimpleTest" type="Node2D"]
 script = ExtResource("1_6vkws")
 
 [node name="MinOfflineTiles" parent="." instance=ExtResource("2_p3ufm")]
+process_mode = 4
+
+[node name="FullOfflineTiles" parent="." instance=ExtResource("3_r55nv")]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 248.0
+offset_top = 167.0
+offset_right = 418.0
+offset_bottom = 337.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(96, 96)
+texture = ExtResource("4_wkf1d")

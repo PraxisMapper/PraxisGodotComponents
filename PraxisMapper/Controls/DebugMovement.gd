@@ -4,16 +4,16 @@ extends Node2D
 @onready var label : Label = $CanvasLayer/ColorRect/Label
 
 func GoNorth():
-	PraxisCore.forceChange(PlusCodes.ShiftCode(PraxisCore.currentPlusCode, 0, 1))
+	PraxisCore.ForceChange(PlusCodes.ShiftCode(PraxisCore.currentPlusCode, 0, 1))
 	
 func GoSouth():
-	PraxisCore.forceChange(PlusCodes.ShiftCode(PraxisCore.currentPlusCode, 0, -1))
+	PraxisCore.ForceChange(PlusCodes.ShiftCode(PraxisCore.currentPlusCode, 0, -1))
 	
 func GoEast():
-	PraxisCore.forceChange(PlusCodes.ShiftCode(PraxisCore.currentPlusCode, 1, 0))
+	PraxisCore.ForceChange(PlusCodes.ShiftCode(PraxisCore.currentPlusCode, 1, 0))
 	
 func GoWest():
-	PraxisCore.forceChange(PlusCodes.ShiftCode(PraxisCore.currentPlusCode, -1, 0))
+	PraxisCore.ForceChange(PlusCodes.ShiftCode(PraxisCore.currentPlusCode, -1, 0))
 
 func _process(delta):
 	label.text = PraxisCore.currentPlusCode	

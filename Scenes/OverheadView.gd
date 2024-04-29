@@ -27,7 +27,7 @@ func _unhandled_input(event):
 		var subY =  int(event.position.y) % PraxisCore.mapTileHeight #- position.y
 		
 		var innerNode = get_node("mapTile_" + str(innerX) + "_" + str(innerY))
-		var tappedCode = innerNode.getTappedCode(subX, subY)
+		var tappedCode = innerNode.GetTappedCode(subX, subY)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

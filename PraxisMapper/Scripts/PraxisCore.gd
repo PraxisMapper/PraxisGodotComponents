@@ -1,7 +1,7 @@
 extends Node
 
 #Any universally-helpful functions that aren't specific to an operating mode go here
-#Server calls go to PraxisServer. Offline data loading goes to an Offline script.
+#Server calls go to PraxisServer. Offline data loading goes to PraxisOfflineData.
 
 #This variable should exist for debugging purposes, but I've provided a few choices for convenience.
 #var debugStartingPlusCode = "85633QG4VV" #Elysian Park, Los Angeles, CA, USA
@@ -27,9 +27,9 @@ const resolutionCell2 = 20;
 const metersPerDegree = 111111
 const oneMeterLat = 1 / metersPerDegree
 
-#system config values.
-var mapTileWidth = 320 #TODO: load these from the server eventually
-var mapTileHeight = 400
+#system config values. These are for Cell12 resolution images.
+var mapTileWidth = 320 
+var mapTileHeight = 500
 
 #storage values for global access at any time.
 var currentPlusCode = '' #The Cell10 we are currently in.
@@ -42,7 +42,7 @@ signal location_changed(dictionary) #For stuff that wants raw GPS data or small 
 #Plugin for gps info
 var gps_provider
 
-func forceChange(newCode):
+func ForceChange(newCode):
 	if newCode.find("+") == -1:
 		newCode = newCode.substr(0,8) + "+" + newCode.substr(8)
 	lastPlusCode = currentPlusCode

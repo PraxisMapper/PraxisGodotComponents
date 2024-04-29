@@ -8,12 +8,14 @@ class_name PraxisEndpoints
 signal response_data(body)
 
 func response_received(result, responseCode, headers, body):
-	#TODO: automatic reauth if possible.
 	print('response received:' + str(responseCode) + "| " + str(result))
 
 	request.request_completed.disconnect(response_received)
 	if responseCode >= 200 and responseCode < 299:
 		response_data.emit(body)
+	elif responseCode == PraxisServer.reauthCode:
+		PraxisServer.Reauth()
+		response_data.emit("ERROR")
 	else:
 		response_data.emit("ERROR")
 

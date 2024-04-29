@@ -1,6 +1,7 @@
 extends Node
 class_name PraxisOfflineData
 
+#Once we read a file from disk, keep it in memory. Odds are high the player will read it again.
 static var allData = {}
 
 static func GetDataFromZip(plusCode): #full, drawable offline data.
@@ -39,7 +40,7 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 				polyCoords.append(workVector)
 			entry.p = polyCoords
 	
-	allData.plusCode = jsonData
+	allData[plusCode] = jsonData
 	return jsonData
 	
 static func GetPlacesPresent(plusCode):

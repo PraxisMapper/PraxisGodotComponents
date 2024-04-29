@@ -1,7 +1,6 @@
 extends Node2D
 
 #This one loads up and displays a map tile.
-#TODO declare components separately, start with static texture until image is loaded?
 
 @onready var request: PraxisEndpoints = $PraxisEndpoints
 @onready var texRect: TextureRect = $TextureRect
@@ -19,7 +18,7 @@ var noiseTex : NoiseTexture2D
 #fires off a signal indicating the user tapped this tile, and what the target PlusCode they tapped is
 signal user_tapped(plusCode) 
 
-func getTappedCode(x, y):
+func GetTappedCode(x, y):
 	var cellsX = PraxisCore.mapTileWidth / 20
 	var cellsY = PraxisCore.mapTileHeight / 20
 	#TODO: this needs adjusted to match the screen being centered?

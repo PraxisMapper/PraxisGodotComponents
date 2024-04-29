@@ -21,9 +21,9 @@ static func reauthListener(result, response_code, headers, body):
 		isReauthing = false
 	else:
 		OS.delay_msec(1000)
-		PraxisServer.reauth()
+		PraxisServer.Reauth()
 
-static func reauth():
+static func Reauth():
 	if (isReauthing == true):
 		return #TODO better handling/retry logic.
 		

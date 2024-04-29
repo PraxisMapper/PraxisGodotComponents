@@ -13,7 +13,6 @@ signal style_ready()
 signal data_saved()
 signal data_ready()
 signal tiles_saved()
-#signal nametiles_saved()
 
 var plusCode6 = ""
 var scaleVal = 1
@@ -21,9 +20,9 @@ var mapData
 
 @export var drawnStyle = "mapTiles"
 @export var makeMapTile = true
-@export var makeTerrainTile = true
-@export var makeNameTile = true
-@export var makeBoundsTile = true
+@export var makeTerrainTile = false
+@export var makeNameTile = false
+@export var makeBoundsTile = false
 
 func GetAndProcessData(plusCode, scale = 1):
 	var oneTile = null
@@ -47,10 +46,10 @@ func GetAndProcessData(plusCode, scale = 1):
 	
 	mapData = await PraxisOfflineData.GetDataFromZip(plusCode6) 
 	$Banner/lblStatus.text = "Data Loaded. Processing, please wait...." 
-	#Game is probably going to freeze for a couple seconds here while Godot draws stuff.
+	#Game is probably going to freeze for a couple seconds here while Godot draws stuff to the node
 
 	print("being tile making")
-	await CreateAllTiles(oneTile)
+	await CreateAllTiles(oneTile) #Godot runs slow while this does work and waits for frames.
 	
 	$Banner/lblStatus.text = "Tiles Drawn for " + plusCode
 	await get_tree().create_timer(2).timeout
@@ -141,6 +140,6 @@ func CreateAllTiles(oneTile = null):
 	
 	tiles_saved.emit()
 
-func DownloadFullData(plusCode6):
+func xDownloadFullData(plusCode6):
 	#TODO: figure out the URL for these files. Possibly a PraxisMapper URL, possibly just a filehost.
 	pass
