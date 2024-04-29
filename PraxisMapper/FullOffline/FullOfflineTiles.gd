@@ -34,15 +34,21 @@ func GetAndProcessData(plusCode, scale = 1):
 	if (plusCode.length() == 8):
 		oneTile = plusCode.substr(6,2)
 	scaleVal = scale
-	await RenderingServer.frame_post_draw
-	var styleData = PraxisCore.GetStyle(drawnStyle)
+	await RenderingServer.frame_post_draw #THIS is the slow part!?
+	
+	$Banner/lblStatus.text = "Getting Style"
+	var styleData = await PraxisCore.GetStyle(drawnStyle)
+	$Banner/lblStatus.text = "Style loaded."
 	$svc/SubViewport/fullMap.style = styleData
 	$svc2/SubViewport/nameMap.style = styleData
 	$svc4/SubViewport/terrainMap.style = styleData
 	if makeBoundsTile: #Always uses its own style
-		$svc3/SubViewport/boundsMap.style = PraxisCore.GetStyle("adminBoundsFilled")
+		$svc3/SubViewport/boundsMap.style = await PraxisCore.GetStyle("adminBoundsFilled")
 	
-	await GetDataFromZip(plusCode6) 
+	mapData = await PraxisOfflineData.GetDataFromZip(plusCode6) 
+	$Banner/lblStatus.text = "Data Loaded. Processing, please wait...." 
+	#Game is probably going to freeze for a couple seconds here while Godot draws stuff.
+
 	print("being tile making")
 	await CreateAllTiles(oneTile)
 	
@@ -52,31 +58,6 @@ func GetAndProcessData(plusCode, scale = 1):
 	fade_tween.tween_property($Banner, 'modulate:a', 0.0, 1.0)
 	fade_tween.tween_callback($Banner.hide)
 	
-func GetDataFromZip(plusCode):
-	#This needs to live nicely with the MinOffline version, and if the game is limited in
-	#scope it could use the same source folder. The odds of the game using both built-in are 0.
-	#though its possible it could include the minimum format as a fallback and download the full data.
-	#Plus its unruly to handle the biggest zipped full-data files at the CEll2 level (8F is 5GB alone)
-	#so these will be Cell4s in OfflineData or a downloaded directory TBD
-	var code2 = plusCode.substr(0, 2)
-	var code4 = plusCode.substr(2, 2)
-	var zipReader = ZIPReader.new()
-	
-	var err = zipReader.open("res://OfflineData/" + code2 + "/" + code2 + code4 + ".zip")
-	if (err != OK):
-		if FileAccess.file_exists("user://Data/" + code2 + code4 + ".zip"):
-			err = zipReader.open("user://Data/" + code2 + code4 + ".zip")
-			if err != OK:
-				print("No FullOffline data found built-in or downloaded for " + plusCode)
-				return 
-		
-	var rawdata := zipReader.read_file(plusCode + ".json")
-	var realData = rawdata.get_string_from_utf8()
-	var json = JSON.new()
-	json.parse(realData)
-	mapData = json.data
-	data_ready.emit()
-	
 func CreateAllTiles(oneTile = null):
 	#Fullmap at 0, name map at 40k, bounds map at 80k, terrain at 120k
 	print("CreateAllTilesCalled")
@@ -84,6 +65,29 @@ func CreateAllTiles(oneTile = null):
 	$svc2/SubViewport/nameMap.position.y = 40000 * scaleVal
 	$svc3/SubViewport/boundsMap.position.y = 80000 * scaleVal
 	$svc4/SubViewport/terrainMap.position.y = 120000 * scaleVal
+	
+	var viewport1 = $svc/SubViewport
+	var viewport2 = $svc2/SubViewport
+	var viewport3 = $svc3/SubViewport
+	var viewport4 = $svc4/SubViewport
+	var camera1 = $svc/SubViewport/subcam
+	var camera2 = $svc2/SubViewport/subcam
+	var camera3 = $svc3/SubViewport/subcam
+	var camera4 = $svc4/SubViewport/subcam
+	var scale = scaleVal
+	
+	print("cameras set")
+	camera1.position = Vector2(0,0)
+	camera2.position = Vector2(0,40000 * scaleVal)
+	camera3.position = Vector2(0,80000 * scaleVal)
+	camera4.position = Vector2(0,120000 * scaleVal)
+	viewport1.size = Vector2i(320 * scale, 500 * scale)
+	viewport2.size = Vector2i(320, 500) #non-visible images don't need scaled up.
+	viewport3.size = Vector2i(320, 500)
+	viewport4.size = Vector2i(320, 500)
+	print("viewports set")
+	await RenderingServer.frame_post_draw #set this before loading entities, skips a wasted draw call.
+	print("frame waited")
 	
 	$Banner/lblStatus.text = "Drawing " + plusCode6 + "..."
 	if makeMapTile == true:
@@ -99,26 +103,7 @@ func CreateAllTiles(oneTile = null):
 		print("drawing terrain")
 		await $svc4/SubViewport/terrainMap.DrawOfflineTerrainTile(mapData.entries["mapTiles"], scaleVal)
 	
-	var viewport1 = $svc/SubViewport
-	var viewport2 = $svc2/SubViewport
-	var viewport3 = $svc3/SubViewport
-	var viewport4 = $svc4/SubViewport
-	var camera1 = $svc/SubViewport/subcam
-	var camera2 = $svc2/SubViewport/subcam
-	var camera3 = $svc3/SubViewport/subcam
-	var camera4 = $svc4/SubViewport/subcam
-	var scale = scaleVal
-	
-	camera1.position = Vector2(0,0)
-	camera2.position = Vector2(0,40000 * scaleVal)
-	camera3.position = Vector2(0,80000 * scaleVal)
-	camera4.position = Vector2(0,120000 * scaleVal)
-	viewport1.size = Vector2i(320 * scale, 500 * scale)
-	viewport2.size = Vector2i(320, 500) #non-visible images don't need scaled up.
-	viewport3.size = Vector2i(320, 500)
-	viewport4.size = Vector2i(320, 500)
-	await RenderingServer.frame_post_draw
-	
+	print("starting draw loops")
 	var xList = PlusCodes.CODE_ALPHABET_
 	var yList = PlusCodes.CODE_ALPHABET_
 	
@@ -141,17 +126,17 @@ func CreateAllTiles(oneTile = null):
 			camera4.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320)
 			await RenderingServer.frame_post_draw
 			if makeMapTile == true:
-				var img1 = viewport1.get_texture().get_image() # Get rendered image
-				img1.save_png("user://MapTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
+				var img1 = await viewport1.get_texture().get_image() # Get rendered image
+				await img1.save_png("user://MapTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
 			if makeNameTile == true:
-				var img2 = viewport2.get_texture().get_image() # Get rendered image
-				img2.save_png("user://NameTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
+				var img2 = await viewport2.get_texture().get_image() # Get rendered image
+				await img2.save_png("user://NameTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
 			if makeBoundsTile == true:
-				var img3 = viewport3.get_texture().get_image() # Get rendered image
-				img3.save_png("user://BoundsTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
+				var img3 = await viewport3.get_texture().get_image() # Get rendered image
+				await img3.save_png("user://BoundsTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
 			if makeTerrainTile == true:
-				var img4 = viewport4.get_texture().get_image() # Get rendered image
-				img4.save_png("user://TerrainTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
+				var img4 = await viewport4.get_texture().get_image() # Get rendered image
+				await img4.save_png("user://TerrainTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
 			$Banner/lblStatus.text = "Saved Tiles for " + plusCode6 + yChar + xChar
 	
 	tiles_saved.emit()

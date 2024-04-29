@@ -22,8 +22,6 @@ func _draw():
 	if theseentries == null:
 		return
 	
-	#TODO: determine background color for image and fill that first. Depends on style.
-	#for dev testing, this is the default x1 scale for a Cell8 image
 	var scale = thisscale
 	var width = 320 * 20 # 6400
 	var height = 500 * 20 #= 10000
@@ -42,21 +40,9 @@ func _draw():
 
 	#entries has a dictionary, each entry is a big list of coord sets as strings
 	for entry in theseentries:
-		#TODO get style rule color and size for drawing here
-		#TODO: loop here for each style draw rule entry.
-		
 		var thisStyle = style[str(entry.tid)]
 		var lineSize = 1.0 * scale
-		
-		#entry.p is a string of coords separated by a pipe
-		#EX: 0,0|20,0|20,20|20,0|0,0 is a basic square.
-		var coords = entry.p.split("|", false)
-		var polyCoords = PackedVector2Array()
-		for i in coords.size():
-			var point = coords[i].split(",")
-			var workVector = Vector2(int(point[0]) * scale, int(point[1]) * scale)
-			polyCoords.append(workVector)
-		
+
 		for possibleDraw in style:
 			var pd = style[possibleDraw].drawOps
 			for do in pd:
@@ -64,22 +50,36 @@ func _draw():
 					orderedDrawCommands[do.drawOrder] = []
 		
 		for s in thisStyle.drawOps:
-			orderedDrawCommands[s.drawOrder].push_back({gt = entry.gt, p = polyCoords, size = s.sizePx, color = s.color})
+			orderedDrawCommands[s.drawOrder].push_back({gt = entry.gt, p = entry.p, size = s.sizePx, color = s.color})
 		
 	var drawLevels = orderedDrawCommands.keys()
 	drawLevels.sort()
 	drawLevels.reverse()
 	for entries in drawLevels:
+		#These items are sorted server-side when the JSON is created, don't re-order them again.
+		#orderedDrawCommands[entries].sort_custom(func(a,b) : return a.size > b.size)
+
 		for odc in orderedDrawCommands[entries]:
+			var points = odc.p
+			if (scale != 1):
+				points = odc.p.duplicate()
+				for point in points:
+					point = point * Vector2(scale, scale)
+			
 			if (odc.gt == 1):
 				#this is just a circle for single points, size is roughly a Cell10
 				#4.5 looks good for POIs, but bad for Trees, which there are quite a few of.
 				#trees are size 0.2, so I should probably make other elements larger?
 				#MOST of them shouldn't be points, but lines shouldn't be a Cell10 wide either.
-				draw_circle(odc.p[0], odc.size * 2.0 * scale * 5, odc.color)
+				await draw_circle(points[0], odc.size * 10.0 * scale, odc.color)
 			elif (odc.gt == 2):
 				#This is significantly faster than calling draw_line for each of these.
-				draw_polyline(odc.p, odc.color, odc.size * scale, true) #antialias display image only.
+				await draw_polyline(points, odc.color, odc.size * scale, true) #antialias display image only.
 			elif odc.gt == 3:
 				#A single color, which is what I generally use.
-				draw_colored_polygon(odc.p, odc.color) 
+				await draw_colored_polygon(points, odc.color) 
+
+func sortDrawCommands(a, b):
+	if a.size < b.size:
+		return true
+	return false

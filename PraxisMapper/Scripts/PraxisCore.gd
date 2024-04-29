@@ -115,6 +115,13 @@ func MakeMinimizedOfflineTiles(plusCode):
 	add_child(offlineInst)
 	await offlineInst.GetAndProcessData(plusCode,"suggestedmini")
 	remove_child(offlineInst)
+	
+func MakeOfflineTiles(plusCode, scale = 1):
+	var offlineNode = preload("res://PraxisMapper/FullOffline/FullOfflineTiles.tscn")
+	var offlineInst = offlineNode.instantiate()
+	add_child(offlineInst)
+	await offlineInst.GetAndProcessData(plusCode, scale)
+	remove_child(offlineInst)
 
 func DistanceDegreesToMetersLat(degrees):
 	return degrees * metersPerDegree

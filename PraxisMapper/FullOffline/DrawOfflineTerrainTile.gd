@@ -41,17 +41,10 @@ func _draw():
 		var lineSize = 1.0 * scale
 		var thisStyle = style[str(entry.tid)]
 		
-		var coords = entry.p.split("|", false)
-		var polyCoords = PackedVector2Array()
-		for i in coords.size():
-			var point = coords[i].split(",")
-			var workVector = Vector2(int(point[0]) * scale, int(point[1]) * scale)
-			polyCoords.append(workVector)
-		
 		for s in thisStyle.drawOps:
 			if (entry.gt == 1):
-				draw_circle(polyCoords[0], s.sizePx * 2.0 * scale * 5, terrainColor)
+				await draw_circle(entry.p[0], s.sizePx * 10.0 * scale, terrainColor)
 			elif (entry.gt == 2):
-				draw_polyline(polyCoords, terrainColor, s.sizePx * scale * 5)
+				await draw_polyline(entry.p, terrainColor, s.sizePx * scale)
 			elif entry.gt == 3:
-				draw_colored_polygon(polyCoords, terrainColor) 
+				await draw_colored_polygon(entry.p, terrainColor) 
