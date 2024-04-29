@@ -27,7 +27,6 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 	var json = JSON.new()
 	json.parse(realData)
 	var jsonData = json.data
-	#New: moving the point-processing part here, so we can reuse that data later.
 	for category in jsonData.entries:
 		for entry in jsonData.entries[category]:
 			#entry.p is a string of coords separated by a pipe in the text file.
