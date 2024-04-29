@@ -45,16 +45,16 @@ PraxisCore is intended to be an Autoload entry, always present and available. It
 * const oneMeterLat = 1 / metersPerDegree : How many degrees one meter takes up at the equator.
 
 ### Functions
-* GetCompassHeading(): Returns the compass heading for the direction the device is facing. Is in radians, so can be directly set to a Texture2D's rotation property.
-* ForceChange(plusCode): Sets currentPlusCode to the given PlusCode value. Used by the debug GPS control.
-* GetFixedRNGForPluscode(plusCode): Returns an RNG instance seeded with the hash of the given PlusCode. Useful for ensuring all players see the same thing at the same place. Not guarenteed to be universally unique on Cell6 or bigger cells, duplicate results will appear somewhere on the planet with Cell8 or smaller cells.
-* GetStyle(styleName): Loads JSON style data to be used by another node. PraxisGodotComponents current has 3: mapTiles (duplicates mapTiles drawing on the server, roughly based on OSMCarto), suggestedmini(specific for minimized offline data), adminBoundsFilled(mirrors the same style on the server).
-* MakeMinimizedOfflineTiles(plusCode): Given a Cell6 PlusCode, creates the images used to display and identify locations and names.
-* MakeOfflineTiles(plusCode, scale = 1): Given a Cell6 or Cell8 PlusCode, creates the visible map tile. If a Cell6, draws all 400 Cell8 maptiles contained. If a Cell8, draws only the requested one (though all Cell6 data must be loaded and draw to do this)
 * DistanceDegreesToMetersLat(degrees): Returns the distance in meters that the given degrees distance is long.
 * DistanceDegreesToMetersLon(degrees, lat): Returns the distance in meters that the given degrees distance is long, adjusting for the current latitude.
 * DistanceMetersToDegreesLat(meters): Returns the distance in degrees that the given meters distance is long.
 * DistanceMetersToDegreesLon(meters, lat): Returns the distance in degrees that the given meters distance is long, adjusting for the current latitude.
+* ForceChange(plusCode): Sets currentPlusCode to the given PlusCode value. Used by the debug GPS control.
+* GetCompassHeading(): Returns the compass heading for the direction the device is facing. Is in radians, so can be directly set to a Texture2D's rotation property.
+* GetFixedRNGForPluscode(plusCode): Returns an RNG instance seeded with the hash of the given PlusCode. Useful for ensuring all players see the same thing at the same place. Not guarenteed to be universally unique on Cell6 or bigger cells, duplicate results will appear somewhere on the planet with Cell8 or smaller cells.
+* GetStyle(styleName): Loads JSON style data to be used by another node. PraxisGodotComponents current has 3: mapTiles (duplicates mapTiles drawing on the server, roughly based on OSMCarto), suggestedmini(specific for minimized offline data), adminBoundsFilled(mirrors the same style on the server).
+* MakeMinimizedOfflineTiles(plusCode): Given a Cell6 PlusCode, creates the images used to display and identify locations and names.
+* MakeOfflineTiles(plusCode, scale = 1): Given a Cell6 or Cell8 PlusCode, creates the visible map tile. If a Cell6, draws all 400 Cell8 maptiles contained. If a Cell8, draws only the requested one (though all Cell6 data must be loaded and draw to do this)
 * MetersToFeet(meters): A convenience method for getting imperial values from metric distances.
 
 ## PraxisOfflineData
@@ -74,25 +74,22 @@ PlusCodes is the static class that handles all things related to Open Location C
 * CODE_ALPHABET_: The character used by PlusCodes, in grid order.
 
 ### Functions
-* ShiftCode(code, xChange, yChange): Returns the PlusCode that is X and Y cells away from the given one, at the same size. EX: if passed in (223344, 1,1), it returns 223355. Can handle negative numbers for going west/south.
 * Decode(plusCode): return a Vector2(lon,lat) for the coord pair representing the southwest corner of the given PlusCode
 * EncodeLatLon(lat, lon): returns the Cell10 PlusCode (format 22334455+66) for the given coordinate point
 * EncodeLatLonSize(lat, lon, size): returns the Cell(size) PlusCode for the given coordinate point. Takes 2,4,6,8,10, or 11 as size values. Cell-11 values are possible on mobile devices, but these are only accurate under ideal conditions and the PraxisGodotComponents do not currently support Cell-11 resolution values everywhere.
-* RemovePlus(plusCode): a helper to trim the + out of a plusCode, so that processing the string can be done with a simple incrementing index without consideration for the + in position 8.
 * GetLetterIndex(character): Returns the index of the given letter in CODE_ALPHABET_, or -1 if its not in that string.
+* RemovePlus(plusCode): a helper to trim the + out of a plusCode, so that processing the string can be done with a simple incrementing index without consideration for the + in position 8.
+* ShiftCode(code, xChange, yChange): Returns the PlusCode that is X and Y cells away from the given one, at the same size. EX: if passed in (223344, 1,1), it returns 223355. Can handle negative numbers for going west/south.
 
 # Controls and Nodes
 * PraxisMapper/APICalls/PraxisEndpoints: A node with a function for each default PraxisMapper API endpoint. All call the same response_data signal when completed, so one node can handle one request at a time. The preferred class to use right now.
 * PraxisMapper/APICalls/PraxisAPICall: A class with a function for each default PraxisMapper API endpoint that waits for a response and returns a properly-shaped object in the same call. Not properly async, but slightly simpler to use. Not recommended but available.
+* PraxisMapper/Controls/CellTracker: Tracks Cell10s visited by calling Add(plusCode) and Delete(plusCode) as necessary. Auto-saves on each call.
 * PraxisMapper/Controls/DebugMovement: A small box with 4 directional arrows and a label indicating the current PlusCode. Arrows will shift the game's current position 1 cell in the appropriate direction. Automatically attached by PraxisCore when no GPS hardware is found, as on a PC.
 * PraxisMapper/Controls/MapTile: A node that handles display a MapTile from the PraxisMapper server. Can be set to draw from an offset of the current PlusCode automatically, to refresh on a timer, and more.
-* PraxisMapper/Controls/CellTracker: Tracks Cell10s visited by calling Add(plusCode) and Delete(plusCode) as necessary. Auto-saves on each call.
 * PraxisMapper/FullOffline/FullOfflineTiles: Creates all map tiles for a Cell6 when GetAndProcessData(plusCode6, scale = 1) is called. Scale can be increased for higher-res textures. Has its own display banner to inform the user of processing. Automatically added and removed from the tree by PraxisCore.MakeOfflineTiles(plusCode6, scale = 1)
 * PraxisMapper/MinimizedOffline/MinOfflineTiles: Creates all map tiles for a Cell6 when GetAndProcessData(plusCode6, styleSet) is called. styleSet must be "suggestedmini" with the default styles. Processes silently and invisibly, no notification to the user is given. Automatically added and removed from the tree by PraxisCore.MakeMinimizedOfflineTiles(plusCode6)
-* PraxisMapper/Scripts/PlusCodes: A script with static methods for manipulating PlusCodes. 
-* PraxisMapper/Scripts/PraxisMapper: The core class for PraxisMapper. Should probably be an autoload class in your project to maintain global availability. Many static methods and properties, as the instanced stuff is primarily for communicating with the Android GPS plugin.
 
 ## Scenes:
 * PraxisMapper/Scenes/LoadingModal: A simple blocking popup. Discards inputs while it's visible on-screen.
 * PraxisMapper/Scenes/LoginScene: An example login screen. Takes a username and password (and for development, a server URL) to connect with. Can create an account by filling in username and password and clicking Create instead of Login. Auto-saves successful credentials and auto-connects on future launches. The default screen in the included project
-
