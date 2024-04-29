@@ -63,8 +63,8 @@ func _draw():
 			var points = odc.p
 			if (scale != 1):
 				points = odc.p.duplicate()
-				for point in points:
-					point = point * Vector2(scale, scale)
+				for i in points.size():
+					points[i] = points[i] * Vector2(scale, scale)
 			
 			if (odc.gt == 1):
 				#this is just a circle for single points, size is roughly a Cell10
