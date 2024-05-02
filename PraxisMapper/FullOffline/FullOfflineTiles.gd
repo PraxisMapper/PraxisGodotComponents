@@ -59,7 +59,7 @@ func GetAndProcessData(plusCode, scale = 1):
 		$svc/SubViewport.size = Vector2i(320 * 20 * (1 / scale) * thumbnailScale, 500 * 20 * (1 / scale) * thumbnailScale)
 		await RenderingServer.frame_post_draw
 		var img = await $svc/SubViewport.get_texture().get_image() # Get rendered image
-		await img.save_png("user://MapTiles/" + plusCode6 + ".png") # Save to disk
+		await img.save_png("user://MapTiles/" + plusCode6 + "-thumb.png") # Save to disk, -thumb doesnt overwrite Min output files
 		
 	
 	$Banner/lblStatus.text = "Tiles Drawn for " + plusCode

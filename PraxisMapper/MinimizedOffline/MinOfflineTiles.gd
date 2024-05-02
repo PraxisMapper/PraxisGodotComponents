@@ -37,6 +37,9 @@ func GetData():
 func CreateAllTiles():
 	#This is Cell6 data drawn with Cell10 pixels, so each image is 400x400
 	#I don't need to subdivide these images any further.
+	#Note for future self: SubViewports are their own separate instanced world,
+	#so I can overlap them and the camera in each sees stuff correctly. But it will
+	#draw in the scene, so this node should be offscreen by a fair margin.
 	
 	$svc/SubViewport/fullMap.position.y = 400
 	$svc2/SubViewport/nameMap.position.y = 400
