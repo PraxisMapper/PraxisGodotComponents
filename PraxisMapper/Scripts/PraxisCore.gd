@@ -79,6 +79,8 @@ func _ready():
 	DirAccess.make_dir_absolute("user://TerrainTiles")
 	DirAccess.make_dir_absolute("user://Offline")
 	DirAccess.make_dir_absolute("user://Data") #used to store tracker data in JSON, rather than images.
+	DirAccess.make_dir_absolute("user://Data/Min") 
+	DirAccess.make_dir_absolute("user://Data/Full") 
 	
 	get_tree().on_request_permissions_result.connect(perm_check)
 	

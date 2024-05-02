@@ -9,20 +9,20 @@ static func GetDataFromZip(plusCode):
 	var code2 = plusCode.substr(0, 2)
 	var code4 = plusCode.substr(2, 2)        
 	
-	if !FileAccess.file_exists("user://Data/" + code2 + code4 + ".zip"):
+	if !FileAccess.file_exists("user://Data/Min/" + code2 + code4 + ".zip"):
 		var zipReaderA = ZIPReader.new()
-		var err = zipReaderA.open("res://OfflineData/" + code2 + ".zip")
+		var err = zipReaderA.open("res://OfflineData/Min/" + code2 + ".zip")
 		if (err != OK):
 			print("Read Error on " + code2 + ".zip: " + error_string(err))
 			return null
 		
 		var innerFile = zipReaderA.read_file(code2 + code4 + ".zip")
-		var destFile = FileAccess.open("user://Data/" + code2 + code4 + ".zip", FileAccess.WRITE)
+		var destFile = FileAccess.open("user://Data/Min/" + code2 + code4 + ".zip", FileAccess.WRITE)
 		destFile.store_buffer(innerFile)
 		destFile.close()
 	
 	var zipReaderB = ZIPReader.new()
-	var err = zipReaderB.open("user://Data/" + code2 + code4 + ".zip")
+	var err = zipReaderB.open("user://Data/Min/" + code2 + code4 + ".zip")
 	if (err != OK):
 		print("Read Error on " + code2 + code4 + ".zip: " + error_string(err))
 		return null
@@ -34,13 +34,7 @@ static func GetDataFromZip(plusCode):
 	return json.data
 
 static func GetStyle(style):
-	var styleData = FileAccess.open("res://PraxisMapper/Styles/" + style + ".json", FileAccess.READ)
-	if (styleData == null):
-		print("HEY DEV - go make and save the " + style + " style json here!")
-	else:
-		var json = JSON.new()
-		json.parse(styleData.get_as_text())
-		return json.get_data()
+	return PraxisCore.GetStyle("suggestedmini")
 
 func MakeMinimizedOfflineTiles(plusCode):
 	var offlineNode = preload("res://PraxisMapper/MinimizedOffline/MinOfflineTiles.tscn")

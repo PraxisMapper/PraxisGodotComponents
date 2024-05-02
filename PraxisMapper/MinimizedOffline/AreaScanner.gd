@@ -30,7 +30,7 @@ func ReadPlaces(plusCode, terrainID, requirements, options = null, ignoreList = 
 	if ignoreList.has(plusCode):
 		ignoreArray = ignoreList[plusCode]
 	if areaData == null:
-		print("No data on this area")
+		#print("No data on this area")
 		return possiblePlaces
 	
 	for place in areaData.entries["suggestedmini"]:
@@ -115,7 +115,8 @@ func ScanForPlaces(plusCode, terrainID = 0, requirements = "", fixedDistance = 0
 			for y in range(-(fixedDistance -1), fixedDistance):
 				scannedAreas.append(PlusCodes.ShiftCode(plusCode, x, y))
 	else: #Scan the current area (Distance 0) before looping on Distance 1+
-		ReadPlaces(plusCode, terrainID, requirements)
+		var placesHere = ReadPlaces(plusCode, terrainID, requirements)
+		possiblePlaces.append_array(placesHere)
 		scannedAreas.append(plusCode)
 
 	while maxDistance >= startDistance and keepGoing == true:
@@ -151,9 +152,8 @@ func IsInside(outerPlace, innerPlace):
 	
 	var outerCoords = outerPlace.c.split(",")
 	var innerCoords = innerPlace.c.split(",")
-	var a_sqared = (int(outerCoords[0]) - int(innerCoords[0])) ** 2
-	var b_sqared = (int(outerCoords[1]) - int(innerCoords[1])) ** 2
-	var c_squared = a_sqared + b_sqared
-	var distance = sqrt(c_squared)
+	var a = Vector2(int(outerCoords[0]), int(outerCoords[1]))
+	var b = Vector2(int(innerCoords[0]), int(innerCoords[1]))
+	var distance = a.distance_to(b)
 	
 	return distance <= outerPlace.r

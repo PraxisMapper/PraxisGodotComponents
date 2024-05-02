@@ -10,30 +10,22 @@ var style = "suggestedmini"
 var scaleVal = 1
 var mapData
 
-func GetAndProcessData(pluscode6, styleSet):
+func GetAndProcessData(pluscode6):
 	plusCode = pluscode6
 	scaleVal = 1
-	style = styleSet
 	await GetStyle()
 	mapData = await MinimizedOffline.GetDataFromZip(pluscode6)
 	print("begin tile making for " + pluscode6)
 	await CreateAllTiles()
 	
 func GetStyle():
-	var styleData = FileAccess.open("res://PraxisMapper/Styles/" + style + ".json", FileAccess.READ)
-	if (styleData == null):
-		print("HEY DEV - go make and save the style json here!")
-	else:
-		var json = JSON.new()
-		json.parse(styleData.get_as_text())
-		var info = json.get_data()
-		$svc/SubViewport/fullMap.style = info
-		$svc2/SubViewport/nameMap.style = info
-		$svc3/SubViewport/terrainMap.style = info
-		styleData.close()
+	var styleData = PraxisCore.GetStyle(style)
+	$svc/SubViewport/fullMap.style = styleData
+	$svc2/SubViewport/nameMap.style = styleData
+	$svc3/SubViewport/terrainMap.style = styleData
 
 func GetData():
-	var locationData = FileAccess.open("user://Offline/" + plusCode + ".json", FileAccess.READ)
+	var locationData = FileAccess.open("user://Offline/Min/" + plusCode + ".json", FileAccess.READ)
 	if (locationData == null):
 		print("HEY DEV - minOffline failed to get data.")
 	else:
@@ -46,9 +38,9 @@ func CreateAllTiles():
 	#This is Cell6 data drawn with Cell10 pixels, so each image is 400x400
 	#I don't need to subdivide these images any further.
 	
-	$svc/SubViewport/fullMap.position.y = 0
+	$svc/SubViewport/fullMap.position.y = 400
 	$svc2/SubViewport/nameMap.position.y = 400
-	$svc3/SubViewport/terrainMap.position.y = 1200
+	$svc3/SubViewport/terrainMap.position.y = 400
 	
 	$svc/SubViewport/fullMap.DrawOfflineTile(mapData.entries["suggestedmini"], scaleVal)
 	$svc2/SubViewport/nameMap.DrawOfflineNameTile(mapData.entries["suggestedmini"], scaleVal)
@@ -62,9 +54,9 @@ func CreateAllTiles():
 	var camera3 = $svc3/SubViewport/subcam
 	var scale = scaleVal
 	
-	camera1.position = Vector2(0,-400)
+	camera1.position = Vector2(0,0)
 	camera2.position = Vector2(0,0)
-	camera3.position = Vector2(0,800)
+	camera3.position = Vector2(0,0)
 	viewport1.size = Vector2i(400 * scale, 400 * scale)
 	viewport2.size = Vector2i(400 * scale, 400 * scale)
 	viewport3.size = Vector2i(400 * scale, 400 * scale)

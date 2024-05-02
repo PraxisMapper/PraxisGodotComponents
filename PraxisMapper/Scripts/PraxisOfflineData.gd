@@ -6,7 +6,7 @@ static var allData = {}
 
 static func GetDataFromZip(plusCode): #full, drawable offline data.
 	if allData.has(plusCode):
-		return allData.plusCode
+		return allData[plusCode]
 	#This needs to live nicely with the MinOffline version, and if the game is limited in
 	#scope it could use the same source folder. The odds of the game using both built-in are 0.
 	#though its possible it could include the minimum format as a fallback and download the full data.
@@ -14,19 +14,21 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 	var code4 = plusCode.substr(2, 2)
 	var zipReader = ZIPReader.new()
 	
-	var err = zipReader.open("res://OfflineData/" + code2 + "/" + code2 + code4 + ".zip")
+	var err = await zipReader.open("res://OfflineData/" + code2 + "/" + code2 + code4 + ".zip")
 	if (err != OK):
 		if FileAccess.file_exists("user://Data/" + code2 + code4 + ".zip"):
-			err = zipReader.open("user://Data/" + code2 + code4 + ".zip")
+			err = await zipReader.open("user://Data/" + code2 + code4 + ".zip")
 			if err != OK:
 				print("No FullOffline data found built-in or downloaded for " + plusCode)
 				return 
 		
-	var rawdata := zipReader.read_file(plusCode + ".json")
-	var realData = rawdata.get_string_from_utf8()
+	var rawdata := await zipReader.read_file(plusCode + ".json")
+	var realData = await rawdata.get_string_from_utf8()
 	var json = JSON.new()
-	json.parse(realData)
+	await json.parse(realData)
 	var jsonData = json.data
+	if jsonData == null: #no file in this zip, this area is missing or empty.
+		return 
 	for category in jsonData.entries:
 		for entry in jsonData.entries[category]:
 			#entry.p is a string of coords separated by a pipe in the text file.
@@ -43,7 +45,7 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 	return jsonData
 	
 static func GetPlacesPresent(plusCode):
-	var data = GetDataFromZip(plusCode.substr(0,6))
+	var data = await GetDataFromZip(plusCode.substr(0,6))
 	var point = PlusCodeToDataCoords(plusCode)
 	var results = []
 	

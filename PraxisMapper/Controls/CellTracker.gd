@@ -7,6 +7,7 @@ var visited = {}
 
 func _ready():
 	Load()
+	PraxisCore.plusCode_changed.connect(AutoUpdate)
 
 func Load():
 	var recentFile = FileAccess.open(fileName, FileAccess.READ)
@@ -27,6 +28,9 @@ func Save():
 	var json = JSON.new()
 	recentFile.store_string(json.stringify(visited))
 	recentFile.close()
+	
+func AutoUpdate(current, old):
+	Add(current)
 
 func Add(plusCode10):
 	visited[plusCode10.replace("+", "")] = true

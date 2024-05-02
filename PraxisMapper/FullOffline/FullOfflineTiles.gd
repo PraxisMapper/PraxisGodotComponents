@@ -23,6 +23,8 @@ var mapData
 @export var makeTerrainTile = false
 @export var makeNameTile = false
 @export var makeBoundsTile = false
+@export var makeThumbnail = false
+@export var thumbnailScale = 0.08
 
 func GetAndProcessData(plusCode, scale = 1):
 	var oneTile = null
@@ -33,7 +35,7 @@ func GetAndProcessData(plusCode, scale = 1):
 	if (plusCode.length() == 8):
 		oneTile = plusCode.substr(6,2)
 	scaleVal = scale
-	await RenderingServer.frame_post_draw #THIS is the slow part!?
+	await RenderingServer.frame_post_draw
 	
 	$Banner/lblStatus.text = "Getting Style"
 	var styleData = await PraxisCore.GetStyle(drawnStyle)
@@ -50,6 +52,15 @@ func GetAndProcessData(plusCode, scale = 1):
 
 	print("being tile making")
 	await CreateAllTiles(oneTile) #Godot runs slow while this does work and waits for frames.
+	
+	if makeThumbnail:
+		$svc/SubViewport/fullMap.scale = Vector2((1 / scale) * thumbnailScale, (1 / scale) * thumbnailScale)
+		$svc/SubViewport/subcam.position = Vector2(0,-500 * 20 * (1 / scale) * thumbnailScale)
+		$svc/SubViewport.size = Vector2i(320 * 20 * (1 / scale) * thumbnailScale, 500 * 20 * (1 / scale) * thumbnailScale)
+		await RenderingServer.frame_post_draw
+		var img = await $svc/SubViewport.get_texture().get_image() # Get rendered image
+		await img.save_png("user://MapTiles/" + plusCode6 + ".png") # Save to disk
+		
 	
 	$Banner/lblStatus.text = "Tiles Drawn for " + plusCode
 	await get_tree().create_timer(2).timeout
