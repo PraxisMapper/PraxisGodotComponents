@@ -57,23 +57,31 @@ func ReadPlaces(plusCode, category, terrainID, requirements, options = [], ignor
 		reportedData.type = styleData[str(place.tid)].name
 		
 		#Estimate center. For horseshoe-shaped places, this will often not actually be in-bounds.
-		var min = Vector2i(6400,10000)
-		var max = Vector2i(0,0)
-		for point in place.p:
-			if point.x < min.x:
-				min.x = point.x
-			if point.y < min.y:
-				min.y = point.y
-			if point.x > max.x:
-				max.x = point.x
-			if point.y > min.y:
-				max.y = point.y
-		
-		var centerVector = (min + max) / 2
+		var centerVector = Vector2i(0,0)
+		if place.p.size() == 1:
+			centerVector = Vector2i(place.p[0])
+		else:
+			var min = Vector2i(6400,10000)
+			var max = Vector2i(0,0)
+			for point in place.p:
+				if point.x < min.x:
+					min.x = point.x
+				if point.y < min.y:
+					min.y = point.y
+				if point.x > max.x:
+					max.x = point.x
+				if point.y > min.y:
+					max.y = point.y
+			centerVector = (min + max) / 2
+
 		var xCode8 = centerVector.x / 320
 		var xCode10 = centerVector.x % 20
 		var yCode8 = centerVector.y / 500
 		var yCode10 = centerVector.y  % 20
+
+		#quick hack
+		if xCode8 == 20:
+			xCode8 = 19
 		
 		var centerCode = plusCode + PlusCodes.CODE_ALPHABET_[yCode8]+ PlusCodes.CODE_ALPHABET_[xCode8] + "+" + PlusCodes.CODE_ALPHABET_[yCode10]+ PlusCodes.CODE_ALPHABET_[xCode10]
 		reportedData.center = centerCode
