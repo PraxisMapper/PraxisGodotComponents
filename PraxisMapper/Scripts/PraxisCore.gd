@@ -6,12 +6,12 @@ extends Node
 #This variable should exist for debugging purposes, but I've provided a few choices for convenience.
 #var debugStartingPlusCode = "85633QG4VV" #Elysian Park, Los Angeles, CA, USA
 #var debugStartingPlusCode = "87G8Q2JMGF" #Central Park, New York City, NY, USA
-#var debugStartingPlusCode = "8FW4V75W25" #Eiffel Tower Garden, France
+var debugStartingPlusCode = "8FW4V75W25" #Eiffel Tower Garden, France
 #var debugStartingPlusCode = "9C3XGV349C" #The Green Park, London, UK
 #var debugStartingPlusCode = "8Q7XMQJ595" #Kokyo Kien National Garden, Tokyo, Japan
 #var debugStartingPlusCode = "8Q336FJCRV" #Peoples Park, Shanghai, China
 #var debugStartingPlusCode = "7JWVP5923M" #Shalimar Bagh, Delhi, India
-var debugStartingPlusCode = "86FRXXXPM8" #Ohio State University, Columbus, OH, USA
+#var debugStartingPlusCode = "86FRXXXPM8" #Ohio State University, Columbus, OH, USA
 
 #System global values
 #Resolution of PlusCode cells in degrees
@@ -31,6 +31,10 @@ const oneMeterLat = 1 / metersPerDegree
 var mapTileWidth = 320 
 var mapTileHeight = 500
 
+
+var autoPrecision = true #let the game decide on plusCode to use based on GPS results
+var precision = 10 #use this value always for plusCode size if autoPrecision is false
+
 #storage values for global access at any time.
 var currentPlusCode = '' #The Cell10 we are currently in.
 var lastPlusCode = '' #the previous Cell10 we visited.
@@ -38,6 +42,7 @@ var lastPlusCode = '' #the previous Cell10 we visited.
 #signals for components that need to respond to it.
 signal plusCode_changed(current, previous) #For when you just need to know your grid position changed
 signal location_changed(dictionary) #For stuff that wants raw GPS data or small changes in position.
+var last_location = {}
 
 #Plugin for gps info
 var gps_provider
@@ -55,9 +60,16 @@ func GetFixedRNGForPluscode(pluscode):
 	return rng
 	
 func on_monitoring_location_result(location: Dictionary) -> void:
+	last_location = location
 	location_changed.emit(location)
 	print("location changed" + str(location))
-	var plusCode = PlusCodes.EncodeLatLon(location["latitude"], location["longitude"])
+	var plusCode = ""
+	var accuracy = float(location["accuracy"])
+	if (autoPrecision and accuracy <= 6) or precision == 11:
+		plusCode = PlusCodes.EncodeLatLonSize(location["latitude"], location["longitude"], 11)
+	else:
+		plusCode = PlusCodes.EncodeLatLonSize(location["latitude"], location["longitude"], 10)
+	
 	if (plusCode != currentPlusCode):
 		lastPlusCode = currentPlusCode
 		currentPlusCode = plusCode
@@ -65,8 +77,6 @@ func on_monitoring_location_result(location: Dictionary) -> void:
 		print("new plusCode: " + plusCode)
 		
 func perm_check(permName, wasGranted):
-	print("permissions: " + permName)
-	print(wasGranted)
 	if permName == "android.permission.ACCESS_FINE_LOCATION" and wasGranted == true:
 		print("enabling GPS")
 		gps_provider.onLocationUpdates.connect(on_monitoring_location_result)
@@ -115,8 +125,8 @@ func MakeMinimizedOfflineTiles(plusCode):
 	var offlineNode = preload("res://PraxisMapper/MinimizedOffline/MinOfflineTiles.tscn")
 	var offlineInst = offlineNode.instantiate()
 	add_child(offlineInst)
-	await offlineInst.GetAndProcessData(plusCode,"suggestedmini")
-	remove_child(offlineInst)
+	await offlineInst.GetAndProcessData(plusCode)
+	remove_child.call_deferred(offlineInst)
 	
 func MakeOfflineTiles(plusCode, scale = 1):
 	var offlineNode = preload("res://PraxisMapper/FullOffline/FullOfflineTiles.tscn")
@@ -124,6 +134,21 @@ func MakeOfflineTiles(plusCode, scale = 1):
 	add_child(offlineInst)
 	await offlineInst.GetAndProcessData(plusCode, scale)
 	remove_child(offlineInst)
+
+func GetCell8Tile(plusCode8):
+	if FileAccess.file_exists("user://MapTiles/" + plusCode8 + ".png"):
+		return ImageTexture.create_from_image(Image.load_from_file("user://MapTiles/" + plusCode8 + ".png"))
+	
+	var results = await MakeOneOfflineTiles(plusCode8)
+	return results
+
+func MakeOneOfflineTiles(plusCode, scale = 1):
+	var offlineNode = preload("res://PraxisMapper/FullOffline/FullSingleTile.tscn")
+	var offlineInst = offlineNode.instantiate()
+	add_child(offlineInst)
+	var texture = await offlineInst.GetAndProcessData(plusCode, scale)
+	remove_child(offlineInst)
+	return texture #TODO is this an image or a texture?
 
 func DistanceDegreesToMetersLat(degrees):
 	return degrees * metersPerDegree

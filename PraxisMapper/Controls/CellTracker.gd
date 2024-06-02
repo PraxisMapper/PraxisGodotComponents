@@ -33,9 +33,11 @@ func AutoUpdate(current, old):
 	Add(current)
 
 func Add(plusCode10):
-	visited[plusCode10.replace("+", "")] = true
+	plusCode10 = plusCode10.replace("+", "").substr(0,10)
+	visited[plusCode10] = true
 	Save()
 	
 func Remove(plusCode10):
-	visited.erase(plusCode10.replace("+", ""))
+	plusCode10 = plusCode10.replace("+", "").substr(0,10)
+	visited.erase(plusCode10)
 	Save()

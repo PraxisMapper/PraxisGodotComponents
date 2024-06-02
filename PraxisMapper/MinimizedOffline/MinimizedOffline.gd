@@ -20,14 +20,18 @@ static func GetDataFromZip(plusCode):
 		var destFile = FileAccess.open("user://Data/Min/" + code2 + code4 + ".zip", FileAccess.WRITE)
 		destFile.store_buffer(innerFile)
 		destFile.close()
+	else:
+		print("zip file exists and is ready to go.")
 	
 	var zipReaderB = ZIPReader.new()
 	var err = zipReaderB.open("user://Data/Min/" + code2 + code4 + ".zip")
 	if (err != OK):
 		print("Read Error on " + code2 + code4 + ".zip: " + error_string(err))
 		return null
-		
+
 	var rawdata := zipReaderB.read_file(plusCode + ".json")
+	if (rawdata != null):
+		print("raw data loaded")
 	var realData = rawdata.get_string_from_utf8()
 	var json = JSON.new()
 	json.parse(realData)

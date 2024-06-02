@@ -6,16 +6,19 @@ class_name PlaceTracker
 var allPlaces = {} 
 var fileName = "user://Data/Visited.json"
 var styleData = {}
+var styleDataFull = {}
 var checkedPlusCode = ""
 #These store the image used, so we don't have to load all of these from disk every call
 var currentData
 var currentNameTile
 var currentTerrainTile
+var currentPlaces = []
 
 signal place_changed(newplace)
 
 func _ready():
 	styleData = PraxisCore.GetStyle("suggestedmini") 
+	styleDataFull = PraxisCore.GetStyle("mapTiles") 
 	Load()
 
 func Load():
@@ -76,9 +79,14 @@ func HasVisited(name, plusCode6):
 	return true
 
 func CheckForPlace(plusCode10):
+	plusCode10 = plusCode10.replace("+", "")
+	#if we have full data, use it instead. TODO: core check for this file.
+	if FileAccess.file_exists("user://Data/Full/" + plusCode10.substr(0,4) + ".zip"):
+		return await CheckForPlaceFull(plusCode10)
+	
 	#This math here uses my minimized offline format image
 	#400x400, each pixel is a Cell10.
-	plusCode10 = plusCode10.replace("+", "")
+	
 	var filename = PraxisCore.currentPlusCode.substr(0,6)
 	if (filename != checkedPlusCode.substr(0,6)):
 		#load new data. These are drawn by GameGlobals if they're available to draw
@@ -119,3 +127,24 @@ func GetDataOnPoint(plusCode10):
 		return ""
 	
 	return name + "|" + terrain
+	
+func CheckForPlaceFull(plusCode10):
+	#this is for using the full drawable data to detect which place you're at
+	
+	plusCode10 = plusCode10.replace("+", "")
+	var data = await GetDataOnPointFull(plusCode10)
+	currentPlaces = data
+	if data.size() == 0:
+		return [""]
+		
+	var smallest = data.back()
+	return smallest.split("|") #if split, doesnt updateCurrentPlace?
+
+func GetDataOnPointFull(plusCode10):
+	var results = []
+	var places = await PraxisOfflineData.GetPlacesPresent(plusCode10)
+	for place in places:
+		if place.category == "mapTiles":
+			results.push_back(place.name + "|" + str(place.typeId))
+	
+	return results

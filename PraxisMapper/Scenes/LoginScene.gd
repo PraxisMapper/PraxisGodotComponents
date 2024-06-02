@@ -40,7 +40,6 @@ func login_completed(result):
 	var json = JSON.new()
 	json.parse(result.get_string_from_utf8())
 	var data = json.get_data()
-	print(data)
 	#if successful, save name/pwd/server to file to load as auto-login next time.
 	var authData = FileAccess.open_encrypted_with_pass("user://savedData.access", FileAccess.WRITE, "passkeyGoesHere")
 	authData.store_string(txtUsername.text + "|" + txtPassword.text + "|" +txtServer.text)
@@ -69,8 +68,7 @@ func createCompleted(result):
 	var json = JSON.new()
 	json.parse(result.get_string_from_utf8())
 	var data = json.get_data()
-	print(data)
-	if (data == true): #
+	if (data == true): 
 		_on_btn_login_pressed()
 	else:
 		lblError.text = "Account creation failed."

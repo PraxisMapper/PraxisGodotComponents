@@ -14,6 +14,8 @@ signal data_saved()
 signal data_ready()
 signal tiles_saved()
 
+signal tile_created(texture)
+
 var plusCode6 = ""
 var scaleVal = 1
 var mapData
@@ -47,10 +49,14 @@ func GetAndProcessData(plusCode, scale = 1):
 		$svc3/SubViewport/boundsMap.style = await PraxisCore.GetStyle("adminBoundsFilled")
 	
 	mapData = await PraxisOfflineData.GetDataFromZip(plusCode6) 
-	$Banner/lblStatus.text = "Data Loaded. Processing, please wait...." 
+	if (mapData == null):
+		$Banner/lblStatus.text = "Error getting map data. Try again." 
+		return
+		
+	$Banner/lblStatus.text = "Data Loaded. Processing " + str(mapData.entries["mapTiles"].size()) + " items, please wait...." 
+	await RenderingServer.frame_post_draw
 	#Game is probably going to freeze for a couple seconds here while Godot draws stuff to the node
 
-	print("being tile making")
 	await CreateAllTiles(oneTile) #Godot runs slow while this does work and waits for frames.
 	
 	if makeThumbnail:
@@ -59,7 +65,7 @@ func GetAndProcessData(plusCode, scale = 1):
 		$svc/SubViewport.size = Vector2i(320 * 20 * (1 / scale) * thumbnailScale, 500 * 20 * (1 / scale) * thumbnailScale)
 		await RenderingServer.frame_post_draw
 		var img = await $svc/SubViewport.get_texture().get_image() # Get rendered image
-		await img.save_png("user://MapTiles/" + plusCode6 + "-thumb.png") # Save to disk, -thumb doesnt overwrite Min output files
+		await img.save_png("user://MapTiles/" + plusCode6 + "-thumb.png") # Save to disk
 		
 	
 	$Banner/lblStatus.text = "Tiles Drawn for " + plusCode
@@ -70,7 +76,6 @@ func GetAndProcessData(plusCode, scale = 1):
 	
 func CreateAllTiles(oneTile = null):
 	#Fullmap at 0, name map at 40k, bounds map at 80k, terrain at 120k
-	print("CreateAllTilesCalled")
 	$svc/SubViewport/fullMap.position.y = 0
 	$svc2/SubViewport/nameMap.position.y = 40000 * scaleVal
 	$svc3/SubViewport/boundsMap.position.y = 80000 * scaleVal
@@ -86,7 +91,6 @@ func CreateAllTiles(oneTile = null):
 	var camera4 = $svc4/SubViewport/subcam
 	var scale = scaleVal
 	
-	print("cameras set")
 	camera1.position = Vector2(0,0)
 	camera2.position = Vector2(0,40000 * scaleVal)
 	camera3.position = Vector2(0,80000 * scaleVal)
@@ -95,9 +99,7 @@ func CreateAllTiles(oneTile = null):
 	viewport2.size = Vector2i(320, 500) #non-visible images don't need scaled up.
 	viewport3.size = Vector2i(320, 500)
 	viewport4.size = Vector2i(320, 500)
-	print("viewports set")
 	await RenderingServer.frame_post_draw #set this before loading entities, skips a wasted draw call.
-	print("frame waited")
 	
 	$Banner/lblStatus.text = "Drawing " + plusCode6 + "..."
 	if makeMapTile == true:
@@ -113,7 +115,6 @@ func CreateAllTiles(oneTile = null):
 		print("drawing terrain")
 		await $svc4/SubViewport/terrainMap.DrawOfflineTerrainTile(mapData.entries["mapTiles"], scaleVal)
 	
-	print("starting draw loops")
 	var xList = PlusCodes.CODE_ALPHABET_
 	var yList = PlusCodes.CODE_ALPHABET_
 	
@@ -121,6 +122,7 @@ func CreateAllTiles(oneTile = null):
 		xList = oneTile[1]
 		yList = oneTile[0]
 
+	var tex1
 	for yChar in yList:
 		#This kept complaining about can't - a Vector2 and an Int so I had to do this.
 		#yPos -= (PlusCodes.CODE_ALPHABET_.find(yChar) * 20 * scale)
@@ -136,7 +138,8 @@ func CreateAllTiles(oneTile = null):
 			camera4.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320)
 			await RenderingServer.frame_post_draw
 			if makeMapTile == true:
-				var img1 = await viewport1.get_texture().get_image() # Get rendered image
+				tex1 = await viewport1.get_texture()
+				var img1 = tex1.get_image() # Get rendered image
 				await img1.save_png("user://MapTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
 			if makeNameTile == true:
 				var img2 = await viewport2.get_texture().get_image() # Get rendered image
@@ -148,6 +151,7 @@ func CreateAllTiles(oneTile = null):
 				var img4 = await viewport4.get_texture().get_image() # Get rendered image
 				await img4.save_png("user://TerrainTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
 			$Banner/lblStatus.text = "Saved Tiles for " + plusCode6 + yChar + xChar
+			tile_created.emit(tex1) #Exclusive logic to this prototype.
 	
 	tiles_saved.emit()
 
