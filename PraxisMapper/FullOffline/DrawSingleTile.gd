@@ -105,11 +105,11 @@ func _draw():  #DrawCell8(plusCode):
 				#4.5 looks good for POIs, but bad for Trees, which there are quite a few of.
 				#trees are size 0.2, so I should probably make other elements larger?
 				#MOST of them shouldn't be points, but lines shouldn't be a Cell10 wide either.
-				await draw_circle(points[0], odc.size * 5.0 * scale, odc.color)
-				await draw_arc(points[0],1 + odc.size * 5.0 * scale, 0, TAU, 17, Color.BLACK)
+				draw_circle(points[0], odc.size * 5.0 * scale, odc.color)
+				draw_arc(points[0],1 + odc.size * 5.0 * scale, 0, TAU, 17, Color.BLACK)
 			elif (odc.gt == 2):
 				#This is significantly faster than calling draw_line for each of these.
-				await draw_polyline(points, odc.color, odc.size * scale, true) #antialias display image only.
+				draw_polyline(points, odc.color, odc.size * scale, true) #antialias display image only.
 			elif odc.gt == 3:
 				#A single color, which is what I generally use.
-				await draw_colored_polygon(points, odc.color) 
+				draw_colored_polygon(points, odc.color) 

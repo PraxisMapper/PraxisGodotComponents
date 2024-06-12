@@ -4,9 +4,9 @@ extends Node
 #Server calls go to PraxisServer. Offline data loading goes to PraxisOfflineData.
 
 #This variable should exist for debugging purposes, but I've provided a few choices for convenience.
-#var debugStartingPlusCode = "85633QG4VV" #Elysian Park, Los Angeles, CA, USA
+var debugStartingPlusCode = "85633QG4VV" #Elysian Park, Los Angeles, CA, USA
 #var debugStartingPlusCode = "87G8Q2JMGF" #Central Park, New York City, NY, USA
-var debugStartingPlusCode = "8FW4V75W25" #Eiffel Tower Garden, France
+#var debugStartingPlusCode = "8FW4V75W25" #Eiffel Tower Garden, France
 #var debugStartingPlusCode = "9C3XGV349C" #The Green Park, London, UK
 #var debugStartingPlusCode = "8Q7XMQJ595" #Kokyo Kien National Garden, Tokyo, Japan
 #var debugStartingPlusCode = "8Q336FJCRV" #Peoples Park, Shanghai, China

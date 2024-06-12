@@ -1,0 +1,64 @@
+[gd_scene load_steps=5 format=3 uid="uid://i7s1o6y03ab0"]
+
+[ext_resource type="Script" path="res://PraxisMapper/Controls/ScrollingCenteredMap.gd" id="1_17115"]
+[ext_resource type="PackedScene" uid="uid://b16445g8mkbaa" path="res://PraxisMapper/FullOffline/FullSingleTile.tscn" id="2_cuosq"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kj4ua"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_u0blj"]
+
+[node name="ScrollingCenteredMap" type="Node2D"]
+script = ExtResource("1_17115")
+
+[node name="trPlayer" type="TextureRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="mapBase" type="Node2D" parent="."]
+
+[node name="MapTile-11" type="TextureRect" parent="mapBase"]
+texture = SubResource("NoiseTexture2D_kj4ua")
+
+[node name="MapTile01" type="TextureRect" parent="mapBase"]
+offset_left = 320.0
+offset_right = 320.0
+texture = SubResource("NoiseTexture2D_u0blj")
+
+[node name="MapTile11" type="TextureRect" parent="mapBase"]
+offset_left = 640.0
+offset_right = 640.0
+
+[node name="MapTile-10" type="TextureRect" parent="mapBase"]
+offset_top = 500.0
+offset_bottom = 500.0
+
+[node name="MapTile00" type="TextureRect" parent="mapBase"]
+offset_left = 320.0
+offset_top = 500.0
+offset_right = 320.0
+offset_bottom = 500.0
+
+[node name="MapTile10" type="TextureRect" parent="mapBase"]
+offset_left = 640.0
+offset_top = 500.0
+offset_right = 640.0
+offset_bottom = 500.0
+
+[node name="MapTile-1-1" type="TextureRect" parent="mapBase"]
+offset_top = 1000.0
+offset_bottom = 1000.0
+
+[node name="MapTile0-1" type="TextureRect" parent="mapBase"]
+offset_left = 320.0
+offset_top = 1000.0
+offset_right = 320.0
+offset_bottom = 1000.0
+
+[node name="MapTile1-1" type="TextureRect" parent="mapBase"]
+offset_left = 640.0
+offset_top = 1000.0
+offset_right = 640.0
+offset_bottom = 1000.0
+
+[node name="TileDrawer" parent="." instance=ExtResource("2_cuosq")]
+alwaysDrawNewTile = false
