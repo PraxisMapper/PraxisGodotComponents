@@ -39,6 +39,11 @@ var precision = 10 #use this value always for plusCode size if autoPrecision is 
 var currentPlusCode = '' #The Cell10 we are currently in.
 var lastPlusCode = '' #the previous Cell10 we visited.
 
+#Local proxy-play values, if we want to pretend we're somewhere else.
+var proxyPlay = false #set to true to use
+var proxyBase = Vector2(0,0) #Set this to the in-game starting point we'll pretend to be at.
+var playerStart = Vector2(0,0) #This is the player's first detected position when proxy-playing.
+
 #signals for components that need to respond to it.
 signal plusCode_changed(current, previous) #For when you just need to know your grid position changed
 signal location_changed(dictionary) #For stuff that wants raw GPS data or small changes in position.
@@ -60,6 +65,17 @@ func GetFixedRNGForPluscode(pluscode):
 	return rng
 	
 func on_monitoring_location_result(location: Dictionary) -> void:
+	
+	if proxyPlay == true:
+		var playerRealPoint = Vector2(location["longitude"], location["latitude"])
+		if playerStart == Vector2(0,0):
+			playerStart = playerRealPoint
+		
+		var diff = playerStart - playerRealPoint
+		var inGamePoint = proxyBase + diff
+		location["longitude"] = inGamePoint.x
+		location["latitude"] = inGamePoint.y
+
 	last_location = location
 	location_changed.emit(location)
 	print("location changed" + str(location))
