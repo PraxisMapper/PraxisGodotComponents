@@ -1,0 +1,60 @@
+[gd_scene load_steps=4 format=3 uid="uid://iyll55elbeed"]
+
+[ext_resource type="Script" path="res://Scenes/ProxyPlayTest.gd" id="1_lsghb"]
+[ext_resource type="PackedScene" uid="uid://i7s1o6y03ab0" path="res://PraxisMapper/Controls/ScrollingCenteredMap.tscn" id="2_echss"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d0s40"]
+bg_color = Color(0.262745, 0, 0.52549, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[node name="ProxyPlayTest" type="Node2D"]
+script = ExtResource("1_lsghb")
+
+[node name="ScrollingCenteredMap" parent="." instance=ExtResource("2_echss")]
+position = Vector2(-260, -290)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 1080.0
+offset_bottom = 337.0
+color = Color(0.0901961, 0, 0.0156863, 1)
+
+[node name="Label" type="Label" parent="."]
+offset_top = 32.0
+offset_right = 1082.0
+offset_bottom = 79.0
+theme_override_font_sizes/font_size = 34
+text = "ScrolingCenteredMap and ProxyPlay Demo"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="."]
+offset_left = 52.0
+offset_top = 111.0
+offset_right = 1058.0
+offset_bottom = 283.0
+theme_override_font_sizes/font_size = 24
+text = "This scene uses ProxyPlay to start you at 85633QG4+VV in-game and translates your real world movements relative to that position. The map will scroll and center itself as you move. Tiles will be drawn as needed from OfflineData for the selected area."
+autowrap_mode = 3
+
+[node name="Button" type="Button" parent="."]
+offset_left = 708.0
+offset_top = 261.0
+offset_right = 889.0
+offset_bottom = 292.0
+scale = Vector2(2, 2)
+theme_override_colors/icon_normal_color = Color(0, 0.854902, 0.952941, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_d0s40")
+text = "Return to Main Screen
+"
+
+[node name="lblProxy" type="Label" parent="."]
+offset_left = 29.0
+offset_top = 287.0
+offset_right = 154.0
+offset_bottom = 319.0
+theme_override_font_sizes/font_size = 23
+text = "Proxied to: "
+
+[connection signal="button_down" from="Button" to="." method="Close"]
