@@ -23,4 +23,3 @@ func _process(delta):
 func Close():
 	PraxisCore.SetProxyPlay(false)
 	get_tree().change_scene_to_file("res://Scenes/SimpleTest.tscn")
-	#Whatever returns us to the main scene.

@@ -24,3 +24,6 @@ func print_location_info(location: Dictionary) -> void:
 
 func _ready():
 	PraxisCore.location_changed.connect(on_monitoring_location_result)
+
+func Close():
+	get_tree().change_scene_to_file("res://Scenes/SimpleTest.tscn")
