@@ -16,7 +16,9 @@ func _ready():
 
 func onPluscodeChanged(current, _old):
 	$lblProxy.text = "Proxied to: " + current
-
+	
+func _process(delta):
+	$playerArrow.rotation = PraxisCore.GetCompassHeading()
 
 func Close():
 	PraxisCore.SetProxyPlay(false)
