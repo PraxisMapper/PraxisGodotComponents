@@ -1,17 +1,22 @@
-[gd_scene load_steps=5 format=3 uid="uid://c4b6p4t02k1fo"]
+[gd_scene load_steps=8 format=3 uid="uid://c4b6p4t02k1fo"]
 
 [ext_resource type="Script" path="res://Scenes/SimpleTest.gd" id="1_6vkws"]
 [ext_resource type="PackedScene" uid="uid://dlr56hkndvvt0" path="res://PraxisMapper/MinimizedOffline/MinOfflineTiles.tscn" id="2_p3ufm"]
 [ext_resource type="PackedScene" uid="uid://b6cfprdbul55o" path="res://PraxisMapper/FullOffline/FullOfflineTiles.tscn" id="3_r55nv"]
 [ext_resource type="Texture2D" uid="uid://xvyj5uj4aqpi" path="res://PraxisMapper/Resources/LoadingOverlay.png" id="4_wkf1d"]
+[ext_resource type="Script" path="res://PraxisMapper/FullOffline/DrawOfflineTile.gd" id="5_j6odq"]
+[ext_resource type="Script" path="res://PraxisMapper/FullOffline/FullAreaScanner.gd" id="6_rrd5t"]
+[ext_resource type="Script" path="res://PraxisMapper/FullOffline/DrawSingleTileBackground.gd" id="7_g0not"]
 
 [node name="SimpleTest" type="Node2D"]
 script = ExtResource("1_6vkws")
 
 [node name="MinOfflineTiles" parent="." instance=ExtResource("2_p3ufm")]
-process_mode = 4
+position = Vector2(-800, 0)
 
 [node name="FullOfflineTiles" parent="." instance=ExtResource("3_r55nv")]
+makeMapTile = false
+makeThumbnail = true
 
 [node name="TextureRect" type="TextureRect" parent="."]
 anchors_preset = 8
@@ -27,3 +32,34 @@ grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(96, 96)
 texture = ExtResource("4_wkf1d")
+
+[node name="drawtest" type="Node2D" parent="."]
+position = Vector2(0, 900)
+script = ExtResource("5_j6odq")
+
+[node name="Button" type="Button" parent="."]
+offset_left = 608.0
+offset_top = 214.0
+offset_right = 684.0
+offset_bottom = 245.0
+scale = Vector2(3, 3)
+text = "Run Test"
+
+[node name="AreaScanner" type="Node2D" parent="."]
+script = ExtResource("6_rrd5t")
+
+[node name="testbgdraw" type="Node2D" parent="."]
+position = Vector2(100, 600)
+script = ExtResource("7_g0not")
+
+[node name="btnProxyTest" type="Button" parent="."]
+offset_left = 139.0
+offset_top = 453.0
+offset_right = 388.0
+offset_bottom = 484.0
+scale = Vector2(3, 3)
+text = "ProxyPlay and ScrollMap Demo
+"
+
+[connection signal="pressed" from="Button" to="." method="RunTest"]
+[connection signal="button_down" from="btnProxyTest" to="." method="ProxyDemo"]
