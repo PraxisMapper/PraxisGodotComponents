@@ -63,16 +63,11 @@ func _draw():  #DrawCell8(plusCode):
 
 	#entries has a dictionary, each entry is a big list of coord pairs
 	for entry in theseentries:
-		#determine if this item needs to be drawn.
-		#AABB math
-		#var areawidth = entry.envelope.max - entry.envelope.min
-		#var check1 = minPoint.x < entry.envelope.max.x
-		#var check2 = maxPoint.x > entry.envelope.min.x
-		#var check3 = minPoint.y < entry.envelope.max.y
-		#var check4 = maxPoint.y > entry.envelope.min.y
+		#If this entry isn't in our current style, skip it.
+		if !style.has(str(entry.tid)):
+			continue
 		
-		#if (check1 and check2 and check3 and check4) == false:
-		#new code, use built-in stuff
+		#if this entry doesn't possibly touch this tile, skip it.
 		if !entry.envelope.intersects(thisArea):
 			continue
 

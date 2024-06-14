@@ -4,7 +4,7 @@ var theseentries = null
 var thisscale = 1
 
 #This is set from outside.
-var style #admin bounds style, not maptiles.
+var style #admin bounds styles
 
 
 func DrawOfflineBoundsTile(entries, scale):
@@ -34,6 +34,10 @@ func _draw():
 	
 	#entries has a big list of coord sets as strings
 	for entry in theseentries:
+		#If this entry isn't in our current style, skip it.
+		if !style.has(str(entry.tid)):
+			continue
+		
 		if (entry.has("nid")):
 			#THESE are the integer values, but Godot only makes colors with 0-1 range when passing them in.
 			var r = (int(entry.nid) % 256) / 256.0
@@ -53,4 +57,3 @@ func _draw():
 			elif entry.gt == 3:
 				#A single color, which is all I need for names
 				await draw_colored_polygon(entry.p, nameColor) 
-

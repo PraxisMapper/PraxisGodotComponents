@@ -38,9 +38,13 @@ func _draw():
 	bgCoords.append(Vector2(0,0))
 	draw_colored_polygon(bgCoords, style["9999"].drawOps[0].color) 
 	var orderedDrawCommands = {}
-
+	
 	#entries has a dictionary, each entry is a big list of coord pairs
 	for entry in theseentries:
+		#If this entry isn't in our current style, skip it.
+		if !style.has(str(entry.tid)):
+			continue
+		
 		var thisStyle = style[str(entry.tid)]
 		var lineSize = 1.0 * scale
 
@@ -79,4 +83,3 @@ func _draw():
 			elif odc.gt == 3:
 				#A single color, which is what I generally use.
 				await draw_colored_polygon(points, odc.color) 
-
