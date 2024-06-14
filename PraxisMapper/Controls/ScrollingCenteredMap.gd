@@ -1,5 +1,6 @@
 extends Node2D
 
+var process = true
 
 #TODO: I may want to pause movement/change scenes to draw all the tiles in the Cell6. Doing
 #them one at a time mid-op means they occasionally fail to draw.
@@ -11,19 +12,20 @@ func _ready():
 	PraxisCore.plusCode_changed.connect(plusCode_changed)
 
 func plusCode_changed(current, old):
-	pass
+	if process == false:
+		return
 	#TODO: check for data files. Download them if possible/configured, otherwise static.
 	#TODO: ponder scrollview instead of repositioning mapBase node and children.
-	#TODO: consider having a 5x5 grid available, to present a guarenteed wider area than 320x500
 	
 	if current.substr(0,8) != lastPlusCode.substr(0,8): # old.substr(0,8):
 		#We need to reset all the bg tiles now
+		process = false
 		var base = current.substr(0,8)
 		var node
 		var code
 		var tex
-		for x in [-1,0,1]:
-			for y in [-1,0,1]:
+		for x in [-2,-1,0,1,2]:
+			for y in [-2,-1,0,1,2]:
 				code = PlusCodes.ShiftCode(base, x, y)
 				tex = await $TileDrawer.GetAndProcessData(code, 1)
 				node = get_node("mapBase/MapTile" + str(x) + str(y))
@@ -43,3 +45,8 @@ func plusCode_changed(current, old):
 	$mapBase.position.y = -yShift
 	
 	lastPlusCode = current
+	if process == false:
+		process = true
+		if current != PraxisCore.currentPlusCode:
+			plusCode_changed(PraxisCore.currentPlusCode, lastPlusCode)
+			
