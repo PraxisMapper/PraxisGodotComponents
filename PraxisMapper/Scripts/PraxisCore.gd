@@ -82,7 +82,7 @@ func on_monitoring_location_result(location: Dictionary) -> void:
 			playerStart = playerRealPoint
 		
 		var diff = playerStart - playerRealPoint
-		var inGamePoint = proxyBase + diff
+		var inGamePoint = proxyBase - diff
 		location["longitude"] = inGamePoint.x
 		location["latitude"] = inGamePoint.y
 
