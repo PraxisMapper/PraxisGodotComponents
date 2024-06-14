@@ -27,12 +27,9 @@ func RunTest():
 	#var places  = await $AreaScanner.ReadPlaces("85633Q", "mapTiles", 0, "")
 	#for place in places:
 	#print(place)	
-	
-	#in testing now
-	$testbgdraw.FastDraw("85633Q2222")
+	#$testbgdraw.FastDraw("85633Q2222")
 	
 
-	
 	pass
 	
 
