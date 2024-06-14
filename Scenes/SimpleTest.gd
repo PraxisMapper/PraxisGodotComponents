@@ -40,6 +40,9 @@ func _process(delta):
 func GPSDemo():
 	get_tree().change_scene_to_file("res://Scenes/GpsTest.tscn")
 
+func StyleDemo():
+	get_tree().change_scene_to_file("res://Scenes/StyleTest.tscn")
+
 func ProxyDemo():
 	PraxisCore.SetProxyPlay(true)
 	#NOTE: need to set current plus code here now, before the scene starts processing stuff.

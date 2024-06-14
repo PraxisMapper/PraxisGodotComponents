@@ -95,7 +95,8 @@ func CreateTile(oneTile = null):
 			if makeMapTile == true:
 				tex1 = await viewport1.get_texture()
 				img1 = await tex1.get_image() # Get rendered image
-				await img1.save_png("user://MapTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
+				if !alwaysDrawNewTile: #If you always want the tile redrawn, why save it?
+					await img1.save_png("user://MapTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
 				await RenderingServer.frame_post_draw
 	#tile_created.emit(img1) #WSC fired this here.
 	
