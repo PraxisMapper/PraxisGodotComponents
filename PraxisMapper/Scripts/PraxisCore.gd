@@ -41,7 +41,8 @@ var lastPlusCode = '' #the previous Cell10 we visited.
 
 #Local proxy-play values, if we want to pretend we're somewhere else.
 var proxyPlay = false #set to true to use
-var proxyBase = Vector2(0,0) #Set this to the in-game starting point we'll pretend to be at.
+var proxyCode = "85633QG4VV" #Set this to the in-game starting point we'll pretend to be at.
+var proxyBase = Vector2(0,0) #Math values for proxy play logic
 var playerStart = Vector2(0,0) #This is the player's first detected position when proxy-playing.
 
 #signals for components that need to respond to it.
@@ -51,6 +52,16 @@ var last_location = {}
 
 #Plugin for gps info
 var gps_provider
+
+func SetProxyPlay(state):
+	proxyPlay = state
+	if proxyPlay == true:
+		proxyBase = PlusCodes.Decode(proxyCode)
+		if currentPlusCode != "":
+			playerStart = PlusCodes.Decode(currentPlusCode)
+		lastPlusCode = currentPlusCode
+		currentPlusCode = proxyCode
+		PraxisCore.plusCode_changed.emit(currentPlusCode, lastPlusCode)
 
 func ForceChange(newCode):
 	if newCode.find("+") == -1:
@@ -65,7 +76,6 @@ func GetFixedRNGForPluscode(pluscode):
 	return rng
 	
 func on_monitoring_location_result(location: Dictionary) -> void:
-	
 	if proxyPlay == true:
 		var playerRealPoint = Vector2(location["longitude"], location["latitude"])
 		if playerStart == Vector2(0,0):
