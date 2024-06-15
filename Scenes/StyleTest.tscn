@@ -43,6 +43,7 @@ offset_left = 25.0
 offset_top = 62.0
 offset_right = 1072.0
 offset_bottom = 111.0
+theme_override_font_sizes/font_size = 20
 text = "Map data can be drawn with multiple styles, and custom styles can be made to fit your game. The same source data is drawn here in 3 styles. The third ignores most areas, and only draws tertiary roads and residential areas."
 autowrap_mode = 3
 
@@ -75,6 +76,7 @@ offset_left = 738.0
 offset_top = 300.0
 offset_right = 1058.0
 offset_bottom = 323.0
+theme_override_font_sizes/font_size = 20
 text = "Neon (Only roads and residential)"
 horizontal_alignment = 1
 
@@ -83,6 +85,7 @@ offset_left = 379.0
 offset_top = 300.0
 offset_right = 699.0
 offset_bottom = 323.0
+theme_override_font_sizes/font_size = 20
 text = "Inverted MapTiles"
 horizontal_alignment = 1
 
@@ -91,6 +94,7 @@ offset_left = 21.0
 offset_top = 300.0
 offset_right = 341.0
 offset_bottom = 323.0
+theme_override_font_sizes/font_size = 20
 text = "OSM-style map tiles default"
 horizontal_alignment = 1
 
