@@ -123,7 +123,7 @@ static func GetDistanceDegrees(plusCode1, plusCode2):
 static func GetDirection(plusCode1, plusCode2):
 	#adjust the values to have north == 0 instead of east.
 	var vec1 = PlusCodes.Decode(plusCode1).rotated(-PI / 2)
-	var vec2 = PlusCodes.Decode(plusCode2).rotate(-PI / 2)
+	var vec2 = PlusCodes.Decode(plusCode2).rotated(-PI / 2)
 	var vecDir = vec1.direction_to(vec2)
 	return rad_to_deg(vecDir.angle())
 
