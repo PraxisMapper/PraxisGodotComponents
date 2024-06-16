@@ -23,6 +23,8 @@ func print_location_info(location: Dictionary) -> void:
 	lb_location_info.text = text
 
 func _ready():
+	if PraxisCore.last_location != null:
+		on_monitoring_location_result(PraxisCore.last_location)
 	PraxisCore.location_changed.connect(on_monitoring_location_result)
 
 func Close():

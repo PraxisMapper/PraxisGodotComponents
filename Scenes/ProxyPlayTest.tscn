@@ -27,7 +27,7 @@ offset_top = 32.0
 offset_right = 1082.0
 offset_bottom = 79.0
 theme_override_font_sizes/font_size = 34
-text = "ScrolingCenteredMap and ProxyPlay Demo"
+text = "ProxyPlay and ScrollMap Demo"
 horizontal_alignment = 1
 
 [node name="Label2" type="Label" parent="."]

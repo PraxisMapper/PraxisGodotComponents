@@ -46,28 +46,39 @@ script = ExtResource("7_g0not")
 
 [node name="btnGpsTest" type="Button" parent="."]
 offset_left = 154.0
-offset_top = 163.0
+offset_top = 286.0
 offset_right = 403.0
-offset_bottom = 194.0
+offset_bottom = 317.0
 scale = Vector2(3, 3)
+disabled = true
 text = "GPS Test
 "
 
+[node name="btnGetPerms" type="Button" parent="."]
+offset_left = 154.0
+offset_top = 125.0
+offset_right = 403.0
+offset_bottom = 156.0
+scale = Vector2(3, 3)
+text = "Request GPS Permissions"
+
 [node name="btnProxyTest" type="Button" parent="."]
 offset_left = 154.0
-offset_top = 348.0
+offset_top = 442.0
 offset_right = 403.0
-offset_bottom = 379.0
+offset_bottom = 473.0
 scale = Vector2(3, 3)
+disabled = true
 text = "ProxyPlay and ScrollMap Demo
 "
 
 [node name="btnStyleTest" type="Button" parent="."]
 offset_left = 154.0
-offset_top = 546.0
+offset_top = 625.0
 offset_right = 403.0
-offset_bottom = 577.0
+offset_bottom = 656.0
 scale = Vector2(3, 3)
+disabled = true
 text = "Styles Demo
 "
 
@@ -79,5 +90,6 @@ text = "PraxisMapper Demos"
 horizontal_alignment = 1
 
 [connection signal="button_down" from="btnGpsTest" to="." method="GPSDemo"]
+[connection signal="button_down" from="btnGetPerms" to="." method="RequestPerms"]
 [connection signal="button_down" from="btnProxyTest" to="." method="ProxyDemo"]
 [connection signal="button_down" from="btnStyleTest" to="." method="StyleDemo"]

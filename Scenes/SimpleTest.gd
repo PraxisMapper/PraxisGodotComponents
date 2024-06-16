@@ -10,8 +10,18 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass
-
+	#This is a better way to confirm this than saving the results to file like WSC(P) does.
+	#The old way wont check if the user rescinded perms from setting. This will.
+	var perms = OS.get_granted_permissions()
+	if perms.has("android.permission.ACCESS_FINE_LOCATION"):
+		HavePerms()
+		
+	
+func HavePerms():
+	$btnGpsTest.disabled = false
+	$btnProxyTest.disabled = false
+	$btnStyleTest.disabled = false
+	
 func RunTest():
 	#Working
 	#await $MinOfflineTiles.GetAndProcessData("85633Q")
@@ -44,7 +54,11 @@ func StyleDemo():
 	get_tree().change_scene_to_file("res://Scenes/StyleTest.tscn")
 
 func ProxyDemo():
-	PraxisCore.SetProxyPlay(true)
-	#NOTE: need to set current plus code here now, before the scene starts processing stuff.
-	#Maybe I set proxyplay on with a function call that does stuff to handle this situation?
+	PraxisCore.SetProxyPlay(true) #Set proxyplay on AND sets current plus code to proxyBase.
 	get_tree().change_scene_to_file("res://Scenes/ProxyPlayTest.tscn")
+
+func RequestPerms():
+	var granted = OS.request_permissions()
+	if granted == true:
+		PraxisCore.perm_check("android.permission.ACCESS_FINE_LOCATION", true)
+		HavePerms()
