@@ -6,6 +6,7 @@ var process = true
 #them one at a time mid-op means they occasionally fail to draw.
 
 var lastPlusCode = '' #Might be replaceable with odl in the change call
+var currentOffset = Vector2(0,0)
 
 func _ready():
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
@@ -43,6 +44,7 @@ func plusCode_changed(current, old):
 	
 	$mapBase.position.x = xShift
 	$mapBase.position.y = -yShift
+	currentOffset = Vector2($mapBase.position)
 	
 	lastPlusCode = current
 	if process == false:

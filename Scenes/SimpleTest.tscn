@@ -82,6 +82,16 @@ disabled = true
 text = "Styles Demo
 "
 
+[node name="btnSplatDemo" type="Button" parent="."]
+offset_left = 154.0
+offset_top = 794.0
+offset_right = 403.0
+offset_bottom = 825.0
+scale = Vector2(3, 3)
+disabled = true
+text = "Splatter Demo
+"
+
 [node name="Label" type="Label" parent="."]
 offset_right = 1080.0
 offset_bottom = 110.0
@@ -93,3 +103,4 @@ horizontal_alignment = 1
 [connection signal="button_down" from="btnGetPerms" to="." method="RequestPerms"]
 [connection signal="button_down" from="btnProxyTest" to="." method="ProxyDemo"]
 [connection signal="button_down" from="btnStyleTest" to="." method="StyleDemo"]
+[connection signal="button_down" from="btnSplatDemo" to="." method="SplatDemo"]

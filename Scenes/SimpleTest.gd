@@ -53,6 +53,9 @@ func GPSDemo():
 func StyleDemo():
 	get_tree().change_scene_to_file("res://Scenes/StyleTest.tscn")
 
+func SplatDemo():
+	get_tree().change_scene_to_file("res://Scenes/SplatScene/SplatDemo.tscn")
+
 func ProxyDemo():
 	PraxisCore.SetProxyPlay(true) #Set proxyplay on AND sets current plus code to proxyBase.
 	get_tree().change_scene_to_file("res://Scenes/ProxyPlayTest.tscn")

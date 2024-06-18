@@ -1,0 +1,43 @@
+[gd_scene load_steps=4 format=3 uid="uid://cb8gwdf6c25p7"]
+
+[ext_resource type="Script" path="res://Scenes/SplatScene/SplatDemo.gd" id="1_3qwbp"]
+[ext_resource type="PackedScene" uid="uid://i7s1o6y03ab0" path="res://PraxisMapper/Controls/ScrollingCenteredMap.tscn" id="2_4j683"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uuixt"]
+bg_color = Color(0.901961, 0, 0.317647, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 6
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="SplatDemo" type="Node2D"]
+script = ExtResource("1_3qwbp")
+
+[node name="ScrollingCenteredMap" parent="." instance=ExtResource("2_4j683")]
+position = Vector2(-260, -290)
+
+[node name="btnReturn" type="Button" parent="."]
+offset_left = 21.0
+offset_top = 1813.0
+offset_right = 187.0
+offset_bottom = 1836.0
+scale = Vector2(3, 3)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_uuixt")
+text = "Return to Main Scene
+"
+
+[node name="btnSplat" type="Button" parent="."]
+offset_left = 925.0
+offset_top = 1822.0
+offset_right = 969.0
+offset_bottom = 1845.0
+scale = Vector2(3, 3)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_uuixt")
+text = "Splat!"
+
+[node name="splats" type="Node2D" parent="."]
+
+[connection signal="button_down" from="btnReturn" to="." method="Return"]
+[connection signal="button_down" from="btnSplat" to="." method="Splat"]

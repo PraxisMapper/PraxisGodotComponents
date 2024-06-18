@@ -119,6 +119,29 @@ static func GetDistanceDegrees(plusCode1, plusCode2):
 	var vec2 = PlusCodes.Decode(plusCode2)
 	return vec1.distance_to(vec2)
 
+#This picks out distances on both axes in Cell10 spaces
+#so the results can be adjusted to pixels fairly easily by multiplying the results
+#by Vector2(4,5) for cell11s or Vector2(16,25) for cell12s
+static func GetDistanceCell10s(plusCode1, plusCode2):
+	plusCode1 = PlusCodes.RemovePlus(plusCode1)
+	plusCode2 = PlusCodes.RemovePlus(plusCode2)
+	var diffY = 0
+	var diffX = 0
+	var diff = 0
+	var multipliers = [160000, 8000, 400, 20, 1] #how many Cell10s to multiply
+	var ycoords = [0, 2, 4, 6, 8]
+	var xcoords = [1, 3, 5, 7, 9]
+	for y in ycoords:
+		diff = PlusCodes.GetLetterIndex(plusCode1[y]) - PlusCodes.GetLetterIndex(plusCode2[y])
+		diff *= multipliers[ycoords.find(y)]
+		diffY += diff
+	for x in xcoords:
+		diff = PlusCodes.GetLetterIndex(plusCode1[x]) - PlusCodes.GetLetterIndex(plusCode2[x])
+		diff *= multipliers[xcoords.find(x)]
+		diffX += diff
+
+	return Vector2(diffX, diffY)
+
 #NOTE: 0 is NORTH on this function, whereas in most Godot values its EAST
 static func GetDirection(plusCode1, plusCode2):
 	#adjust the values to have north == 0 instead of east.
