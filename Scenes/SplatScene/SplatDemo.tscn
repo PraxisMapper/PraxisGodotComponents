@@ -38,6 +38,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_uuixt")
 text = "Splat!"
 
 [node name="splats" type="Node2D" parent="."]
+position = Vector2(-260, -290)
 
 [connection signal="button_down" from="btnReturn" to="." method="Return"]
 [connection signal="button_down" from="btnSplat" to="." method="Splat"]

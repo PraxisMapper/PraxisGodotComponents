@@ -6,7 +6,10 @@ var process = true
 #them one at a time mid-op means they occasionally fail to draw.
 
 var lastPlusCode = '' #Might be replaceable with odl in the change call
-var currentOffset = Vector2(0,0)
+var currentOffset = Vector2(0,0) #Pixels offset for scrolling purposes, referenced by other controls
+var plusCodeBase = '22334455+2X' #The plusCode used for the upper-left corner of the area,
+# and referenced by other
+
 
 func _ready():
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
@@ -21,6 +24,7 @@ func plusCode_changed(current, old):
 	if current.substr(0,8) != lastPlusCode.substr(0,8): # old.substr(0,8):
 		#We need to reset all the bg tiles now
 		process = false
+		plusCodeBase = PlusCodes.ShiftCode(current.substr(0,8), -2, 2) + "2X"
 		var base = current.substr(0,8)
 		var node
 		var code

@@ -21,6 +21,7 @@ func HavePerms():
 	$btnGpsTest.disabled = false
 	$btnProxyTest.disabled = false
 	$btnStyleTest.disabled = false
+	$btnSplatDemo.disabled = false
 	
 func RunTest():
 	#Working

@@ -7,18 +7,12 @@ extends Node2D
 #and I may need a little bit of buffer vertically still?
 
 #NOTE: this is still occasionally failing to draw map tiles again.
-#re-check that I have stuff in place that should minimize that.
+#re-check that I have stuff in place that should minimize that. Did I 
+#only fix it for horizontal scrolling?
 
 
 #Preload images in here, so we can draw them faster later.
 var splats = []
-
-var saveEntry = {
-	coords = "22334455+66", #centered in the Cell10, not on a corner
-	color = "FFEECC", #randomized per splat
-	shape = 0, #random 0-35
-	angle= 0, #rotate splats randomly for additional visual variety.
-}
 
 #Dict of saveEntry items to reference when drawing.
 #Each cell10 can have 1 splat, can be overwritten by future splat calls.
@@ -69,11 +63,14 @@ func _ready():
 	PraxisCore.plusCode_changed.connect(plusCode_changed)
 	
 	#load save data and draw for area.
-	var saveData = PraxisCore.LoadData("user://Data/splats.json")
+	saveData = PraxisCore.LoadData("user://Data/splats.json")
+	if saveData == null:
+		saveData = {}
+	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
 
 func Splat():
 	var splat = {
-		color = Color(randf(), randf(), randf(), 0.53), #randomized per splat
+		color = Color(randf(), randf(), randf(), 0.53).to_html(), #randomized per splat
 		shape = randi_range(0, 35),
 		angle= randf_range(-TAU, TAU), #rotate splats randomly for additional visual variety.
 	}
@@ -87,15 +84,19 @@ func Splat():
 	var sprite = MakeSprite(splat, PraxisCore.currentPlusCode)
 	$splats.add_child(sprite)
 	
-func redrawSplats(plusCodeCenter):
+func redrawSplats(plusCodeBase):
+	#plusCodeBase should be the upper-left corner of the area being drawn, to match up with
+	#ScrollableMap positions.
 	#if we have moved to the next cell8, drop and re-calc which splats to draw and where to draw them
 	var drop = $splats.get_children()
 	for splat in drop:
 		splat.queue_free()
 	
+	print(saveData.size())
 	var drawSplats = []
+	var drawDist = PraxisCore.resolutionCell8 * 4
 	for coord in saveData: #this gets keys.
-		if abs(PlusCodes.GetDistanceDegrees(plusCodeCenter, coord)) < (PraxisCore.resolutionCell8 * 4):
+		if PlusCodes.GetDistanceDegrees(plusCodeBase, coord) < drawDist:
 			drawSplats.append(coord)
 	
 	for drawThis in drawSplats:
@@ -106,44 +107,27 @@ func redrawSplats(plusCodeCenter):
 
 func MakeSprite(splat, plusCode):
 	var sprite = Sprite2D.new()
-	sprite.texture = splats[splat.shape] #ImageTexture.create_from_image(splats[splat.shape])
+	sprite.texture = splats[splat.shape]
 	sprite.rotation = splat.angle
 	sprite.modulate = splat.color
 	
-	#IGNORE THIS - this offset is what the splats node should be set to, not the children.
-	#print($ScrollingCenteredMap.currentOffset) #Only applies to the current PlusCode.
-	#So, would work for new splats, but not ones we made in a different Cell8.
-	#sprite.position = $ScrollingCenteredMap.currentOffset #Vector2(500,600) #Temp test coords
+
+	#This is pretty close, but it doesn't look like currentPlusCode splats are going in the center
+	#theyre still a little north-east of where I expect them to be.
+	var offset = PlusCodes.GetDistanceCell10s($ScrollingCenteredMap.plusCodeBase, plusCode)
+	sprite.position = offset * Vector2(-16,25) + Vector2(8, 13) #add half to center the splat.
 	
-	#This doesnt work if we're standing on the current plus code, so dont use that.
-	#I need a few layers of stuff.
-	# 1 - relative positon between drawing plus code and displayed plus code grid. This is 
-	#     the accurate base data.
-	# 2 - Scrolled offset of all nodes - this is the operation that gets stuff centered and 
-	#     correct relative to the players vision.
-	#
-	var offset = PlusCodes.GetDistanceCell10s(PraxisCore.currentPlusCode.substr(0,8) + "22", plusCode)
-	sprite.position = Vector2(640, 1000) + offset * Vector2(-16,25) + Vector2(8, 13) #add half to center the splat.
-	#Adding that first Vector2 offset helps a lot, and confirms that these cover a Cell8, so I have
-	#the offsets correct for the CURRENT cell8, not ALL of them.
 	
 	#Ok so maps are 5x5. For current plusCode, I'd want to shift the Cell8 value by (-2, 2), and then 
 	#set the Cell10 values to 2X to get the top corner of the possible drawing area.
 	#With that, I should be able to position everything else correctly based on the distance.
-	
-	
-	#TODO: confirm position stays at its values when its added as a child to splats. 
-	#Pretty sure it does but if not i need to move stuff.
 	return sprite
-
 
 func plusCode_changed(cur, old):
 	#move splats to match new code if in same Cell8. if not, redraw whole thing.
 	$splats.position = $ScrollingCenteredMap.currentOffset
 	if cur.substr(0,8) != old.substr(0,8):
 		redrawSplats(cur)
-
-
 
 func Return():
 	get_tree().change_scene_to_file("res://Scenes/SimpleTest.tscn")
