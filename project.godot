@@ -12,7 +12,7 @@ config_version=5
 
 config/name="PraxisGodotComponents"
 run/main_scene="res://Scenes/SimpleTest.tscn"
-config/features=PackedStringArray("4.2", "Mobile")
+config/features=PackedStringArray("4.3", "Mobile")
 config/icon="res://PraxisMapper/Resources/PraxisMapperIcon.png"
 
 [autoload]

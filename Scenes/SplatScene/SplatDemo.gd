@@ -83,7 +83,7 @@ func Splat():
 	#TODO: If there was an existing splat in the same spot, how do I remove that sprite?
 	var sprite = MakeSprite(splat, PraxisCore.currentPlusCode)
 	$splats.add_child(sprite)
-	
+
 func redrawSplats(plusCodeBase):
 	#plusCodeBase should be the upper-left corner of the area being drawn, to match up with
 	#ScrollableMap positions.
@@ -110,17 +110,10 @@ func MakeSprite(splat, plusCode):
 	sprite.texture = splats[splat.shape]
 	sprite.rotation = splat.angle
 	sprite.modulate = splat.color
-	
 
-	#This is pretty close, but it doesn't look like currentPlusCode splats are going in the center
-	#theyre still a little north-east of where I expect them to be.
 	var offset = PlusCodes.GetDistanceCell10s($ScrollingCenteredMap.plusCodeBase, plusCode)
-	sprite.position = offset * Vector2(-16,25) + Vector2(8, 13) #add half to center the splat.
-	
-	
-	#Ok so maps are 5x5. For current plusCode, I'd want to shift the Cell8 value by (-2, 2), and then 
-	#set the Cell10 values to 2X to get the top corner of the possible drawing area.
-	#With that, I should be able to position everything else correctly based on the distance.
+	#First vector converts to pixels, 2nd accommodates non-origin position of map, 3rd centers splat in cell10
+	sprite.position = offset * Vector2(-16,25) + Vector2(-260, -280) + Vector2(8, 13)
 	return sprite
 
 func plusCode_changed(cur, old):
@@ -131,7 +124,3 @@ func plusCode_changed(cur, old):
 
 func Return():
 	get_tree().change_scene_to_file("res://Scenes/SimpleTest.tscn")
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass

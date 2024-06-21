@@ -24,7 +24,7 @@ func plusCode_changed(current, old):
 	if current.substr(0,8) != lastPlusCode.substr(0,8): # old.substr(0,8):
 		#We need to reset all the bg tiles now
 		process = false
-		plusCodeBase = PlusCodes.ShiftCode(current.substr(0,8), -2, 2) + "2X"
+		plusCodeBase = PlusCodes.ShiftCode(current.substr(0,8), -2, 2) + "X2"
 		var base = current.substr(0,8)
 		var node
 		var code
@@ -48,7 +48,7 @@ func plusCode_changed(current, old):
 	
 	$mapBase.position.x = xShift
 	$mapBase.position.y = -yShift
-	currentOffset = Vector2($mapBase.position)
+	currentOffset = $mapBase.position
 	
 	lastPlusCode = current
 	if process == false:

@@ -40,9 +40,11 @@ static func GetDataFromZip(plusCode):
 static func GetStyle(style):
 	return PraxisCore.GetStyle("suggestedmini")
 
+#TODO: this no longer loads in Godot 4.3 beta. Why?
 func MakeMinimizedOfflineTiles(plusCode):
-	var offlineNode = preload("res://PraxisMapper/MinimizedOffline/MinOfflineTiles.tscn")
-	var offlineInst = offlineNode.instantiate()
-	add_child(offlineInst)
-	await offlineInst.GetAndProcessData(plusCode,"suggestedmini")
-	remove_child(offlineInst)
+	pass
+	#var offlineNode = preload("res://PraxisMapper/MinimizedOffline/MinOfflineTiles.tscn")
+	#var offlineInst = offlineNode.instantiate()
+	#add_child(offlineInst)
+	#await offlineInst.GetAndProcessData(plusCode,"suggestedmini")
+	#remove_child(offlineInst)
