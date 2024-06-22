@@ -1,9 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://cb8gwdf6c25p7"]
+[gd_scene load_steps=7 format=3 uid="uid://cb8gwdf6c25p7"]
 
 [ext_resource type="Script" path="res://Scenes/SplatScene/SplatDemo.gd" id="1_3qwbp"]
 [ext_resource type="PackedScene" uid="uid://i7s1o6y03ab0" path="res://PraxisMapper/Controls/ScrollingCenteredMap.tscn" id="2_4j683"]
 [ext_resource type="PackedScene" uid="uid://bev1jin6r7t6n" path="res://PraxisMapper/Controls/GetFile.tscn" id="3_5csr0"]
 [ext_resource type="Texture2D" uid="uid://c3033wigb05gp" path="res://PraxisMapper/Resources/kenney_arrow.png" id="4_xb3fa"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5cyqf"]
+bg_color = Color(0.901961, 0, 0.317647, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uuixt"]
 bg_color = Color(0.901961, 0, 0.317647, 1)
@@ -18,17 +21,6 @@ script = ExtResource("1_3qwbp")
 [node name="ScrollingCenteredMap" parent="." instance=ExtResource("2_4j683")]
 position = Vector2(-260, -270)
 
-[node name="btnReturn" type="Button" parent="."]
-offset_left = 21.0
-offset_top = 1813.0
-offset_right = 187.0
-offset_bottom = 1836.0
-scale = Vector2(3, 3)
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_styles/normal = SubResource("StyleBoxFlat_uuixt")
-text = "Return to Main Scene
-"
-
 [node name="btnSplat" type="Button" parent="."]
 offset_left = 925.0
 offset_top = 1822.0
@@ -36,6 +28,7 @@ offset_right = 969.0
 offset_bottom = 1845.0
 scale = Vector2(3, 3)
 theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/focus = SubResource("StyleBoxFlat_5cyqf")
 theme_override_styles/normal = SubResource("StyleBoxFlat_uuixt")
 text = "Splat!"
 
@@ -46,21 +39,35 @@ position = Vector2(-260, -290)
 
 [node name="ColorRect" type="ColorRect" parent="."]
 offset_right = 1084.0
-offset_bottom = 170.0
+offset_bottom = 218.0
 color = Color(0.271375, 0.123972, 0.00455868, 1)
 
 [node name="Label" type="Label" parent="."]
-offset_right = 40.0
-offset_bottom = 23.0
+offset_right = 1080.0
+offset_bottom = 55.0
+theme_override_font_sizes/font_size = 40
 text = "Splat Demo"
+horizontal_alignment = 1
 
 [node name="Label2" type="Label" parent="."]
 offset_left = 20.0
-offset_top = 79.0
+offset_top = 60.0
 offset_right = 1053.0
-offset_bottom = 128.0
+offset_bottom = 125.0
+theme_override_font_sizes/font_size = 22
 text = "This demo will download the offline map data for your actual position from praxismapper.org, and allow you to splatter paint the map. Splats will save data to your device only. "
 autowrap_mode = 3
+
+[node name="btnReturn" type="Button" parent="."]
+offset_left = 724.0
+offset_top = 143.0
+offset_right = 898.0
+offset_bottom = 174.0
+scale = Vector2(2, 2)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_uuixt")
+text = "Return to Main Scene
+"
 
 [node name="playerArrow" type="TextureRect" parent="."]
 anchors_preset = 8
@@ -77,5 +84,5 @@ grow_vertical = 2
 pivot_offset = Vector2(20, 20)
 texture = ExtResource("4_xb3fa")
 
-[connection signal="button_down" from="btnReturn" to="." method="Return"]
 [connection signal="button_down" from="btnSplat" to="." method="Splat"]
+[connection signal="button_down" from="btnReturn" to="." method="Return"]

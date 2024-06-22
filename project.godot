@@ -13,6 +13,7 @@ config_version=5
 config/name="PraxisGodotComponents"
 run/main_scene="res://Scenes/SimpleTest.tscn"
 config/features=PackedStringArray("4.3", "Mobile")
+boot_splash/image="res://PraxisMapper/Resources/PraxisMapper Splash Screen.png"
 config/icon="res://PraxisMapper/Resources/PraxisMapperIcon.png"
 
 [autoload]

@@ -60,14 +60,13 @@ func _ready():
 	splats.append(preload("res://Scenes/SplatScene/splat34.png"))
 	splats.append(preload("res://Scenes/SplatScene/splat35.png"))
 	
-	
-	$ScrollingCenteredMap/TileDrawer/Banner.position = Vector2(260,460)
+	#This puts the drawing banner on-screen.
+	$ScrollingCenteredMap/TileDrawer/Banner.position = Vector2(260,485)
 	$ScrollingCenteredMap/TileDrawer/Banner.visible = false
 	PraxisCore.plusCode_changed.connect(plusCode_changed)
 	
 	#load save data and draw for area.
 	saveData = PraxisCore.LoadData("user://Data/splats.json")
-	print("save entries: " + str(saveData.size()))
 	if saveData == null:
 		saveData = {}
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
@@ -93,6 +92,9 @@ func redrawSplats(plusCodeBase):
 	
 	$ScrollingCenteredMap.clearAllTrackedChildren()
 	
+	if saveData == null:
+		return
+	
 	var drawSplats = []
 	var drawDist = PraxisCore.resolutionCell8 * 4
 	for coord in saveData: #this gets keys.
@@ -102,7 +104,7 @@ func redrawSplats(plusCodeBase):
 	for drawThis in drawSplats:
 		var splat = saveData[drawThis]
 		var sprite = MakeSprite(splat)
-		$ScrollingCenteredMap.trackChildOnMap(sprite)
+		$ScrollingCenteredMap.trackChildOnMap(sprite, drawThis)
 
 func MakeSprite(splat):
 	var sprite = Sprite2D.new()

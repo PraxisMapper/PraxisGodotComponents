@@ -30,7 +30,7 @@ offset_right = 606.0
 offset_bottom = 1862.0
 grow_horizontal = 2
 grow_vertical = 2
-pivot_offset = Vector2(96, 96)
+pivot_offset = Vector2(85, 85)
 texture = ExtResource("4_wkf1d")
 
 [node name="drawtest" type="Node2D" parent="."]
