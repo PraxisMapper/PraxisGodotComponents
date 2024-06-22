@@ -60,13 +60,18 @@ func _ready():
 	splats.append(preload("res://Scenes/SplatScene/splat34.png"))
 	splats.append(preload("res://Scenes/SplatScene/splat35.png"))
 	
+	
+	$ScrollingCenteredMap/TileDrawer/Banner.position = Vector2(260,460)
+	$ScrollingCenteredMap/TileDrawer/Banner.visible = false
 	PraxisCore.plusCode_changed.connect(plusCode_changed)
 	
 	#load save data and draw for area.
 	saveData = PraxisCore.LoadData("user://Data/splats.json")
+	print("save entries: " + str(saveData.size()))
 	if saveData == null:
 		saveData = {}
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
+	redrawSplats(PraxisCore.currentPlusCode) #force-loads them on start.
 
 func Splat():
 	var splat = {
@@ -78,21 +83,16 @@ func Splat():
 	PraxisCore.SaveData("user://Data/splats.json", saveData)
 	
 	#Now update drawing with new splat.
-	#May just be adding a splat texture as a chile to splats.
-	
-	#TODO: If there was an existing splat in the same spot, how do I remove that sprite?
-	var sprite = MakeSprite(splat, PraxisCore.currentPlusCode)
-	$splats.add_child(sprite)
+	var sprite = MakeSprite(splat)
+	$ScrollingCenteredMap.trackChildOnMap(sprite, PraxisCore.currentPlusCode)
 
 func redrawSplats(plusCodeBase):
 	#plusCodeBase should be the upper-left corner of the area being drawn, to match up with
 	#ScrollableMap positions.
 	#if we have moved to the next cell8, drop and re-calc which splats to draw and where to draw them
-	var drop = $splats.get_children()
-	for splat in drop:
-		splat.queue_free()
 	
-	print(saveData.size())
+	$ScrollingCenteredMap.clearAllTrackedChildren()
+	
 	var drawSplats = []
 	var drawDist = PraxisCore.resolutionCell8 * 4
 	for coord in saveData: #this gets keys.
@@ -101,26 +101,30 @@ func redrawSplats(plusCodeBase):
 	
 	for drawThis in drawSplats:
 		var splat = saveData[drawThis]
-		#create the actual texture now and append it to splats node.
-		var sprite = MakeSprite(splat, drawThis)
-		$splats.add_child(sprite)
+		var sprite = MakeSprite(splat)
+		$ScrollingCenteredMap.trackChildOnMap(sprite)
 
-func MakeSprite(splat, plusCode):
+func MakeSprite(splat):
 	var sprite = Sprite2D.new()
 	sprite.texture = splats[splat.shape]
 	sprite.rotation = splat.angle
 	sprite.modulate = splat.color
 
-	var offset = PlusCodes.GetDistanceCell10s($ScrollingCenteredMap.plusCodeBase, plusCode)
-	#First vector converts to pixels, 2nd accommodates non-origin position of map, 3rd centers splat in cell10
-	sprite.position = offset * Vector2(-16,25) + Vector2(-260, -280) + Vector2(8, 13)
 	return sprite
 
 func plusCode_changed(cur, old):
+	#NOTE: the map scrolls independely of this, so I may need to chain it to 
+	#this call if I want it to wait until there's data to draw. Get downloads working first.
+	if !FileAccess.file_exists("user://Data/Offline/" + cur.substr(0,6) + ".json"):
+		if await $GetFile.getCell6File(cur.substr(0,6)): #NOTE: this is a weird race condition. Dont do this.
+			await $GetFile.file_downloaded
 	#move splats to match new code if in same Cell8. if not, redraw whole thing.
-	$splats.position = $ScrollingCenteredMap.currentOffset
+	#$splats.position = $ScrollingCenteredMap.currentOffset
 	if cur.substr(0,8) != old.substr(0,8):
 		redrawSplats(cur)
 
 func Return():
 	get_tree().change_scene_to_file("res://Scenes/SimpleTest.tscn")
+
+func _process(delta):
+	$playerArrow.rotation = PraxisCore.GetCompassHeading()

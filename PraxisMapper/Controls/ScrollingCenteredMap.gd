@@ -2,9 +2,6 @@ extends Node2D
 
 var process = true
 
-#TODO: I may want to pause movement/change scenes to draw all the tiles in the Cell6. Doing
-#them one at a time mid-op means they occasionally fail to draw.
-
 var lastPlusCode = '' #Might be replaceable with odl in the change call
 var currentOffset = Vector2(0,0) #Pixels offset for scrolling purposes, referenced by other controls
 var plusCodeBase = '22334455+2X' #The plusCode used for the upper-left corner of the area,
@@ -48,6 +45,7 @@ func plusCode_changed(current, old):
 	
 	$mapBase.position.x = xShift
 	$mapBase.position.y = -yShift
+	$trackedChildren.position = $mapBase.position - position #works but doesnt feel right for some reason.
 	currentOffset = $mapBase.position
 	
 	lastPlusCode = current
@@ -55,4 +53,22 @@ func plusCode_changed(current, old):
 		process = true
 		if current != PraxisCore.currentPlusCode:
 			plusCode_changed(PraxisCore.currentPlusCode, lastPlusCode)
-			
+
+func getDrawingOffset(plusCode):
+	var offset = PlusCodes.GetDistanceCell10s(plusCodeBase, plusCode)
+	#First vector converts to Cell12 pixels, 2nd accommodates non-origin position of ma
+	return offset * Vector2(-16,25) + position 
+	if PlusCodes.RemovePlus(plusCode).length == 11:
+		var charVal = PlusCodes.GetLetterIndex(plusCode.right(1))
+		offset += Vector2(charVal % 4, charVal / 4)
+	else:
+		#centers item in cell10 instead of lower-left corner
+		offset += Vector2(8, 13)
+	
+func trackChildOnMap(node, plusCodePosition):
+	node.position = getDrawingOffset(plusCodePosition)
+	$trackedChildren.add_child(node)
+
+func clearAllTrackedChildren():
+	for tc in $trackedChildren.get_children():
+		tc.queue_free()

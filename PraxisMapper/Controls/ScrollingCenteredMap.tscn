@@ -276,3 +276,5 @@ metadata/_edit_use_anchors_ = true
 
 [node name="TileDrawer" parent="." instance=ExtResource("2_cuosq")]
 alwaysDrawNewTile = false
+
+[node name="trackedChildren" type="Node2D" parent="."]
