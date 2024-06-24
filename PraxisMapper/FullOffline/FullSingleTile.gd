@@ -42,10 +42,16 @@ func GetAndProcessData(plusCode, scale = 1):
 	var styleData = await PraxisCore.GetStyle(drawnStyle)
 	$svc/SubViewport/fullMap.style = styleData
 	
-	mapData = await PraxisOfflineData.GetDataFromZip(plusCode6) 
-	if (mapData == null):
-		#$Banner/lblStatus.text = "Error getting map data. Try again." 
-		return
+	if FileAccess.file_exists("user://Data/Full/" + plusCode.substr(0,6) + ".json"):
+		var soloFile = FileAccess.open("user://Data/Full/" + plusCode.substr(0,6) + ".json", FileAccess.READ)
+		var json = JSON.new()
+		json.parse(soloFile.get_as_text())
+		mapData = await PraxisOfflineData.ProcessData(json.data)
+	else:
+		mapData = await PraxisOfflineData.GetDataFromZip(plusCode6) 
+		if (mapData == null):
+			#$Banner/lblStatus.text = "Error getting map data. Try again." 
+			return
 		
 	#$Banner/lblStatus.text = "Data Loaded. Processing " + str(mapData.entries["mapTiles"].size()) + " items, please wait...." 
 	await RenderingServer.frame_post_draw

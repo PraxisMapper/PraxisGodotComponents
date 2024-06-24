@@ -118,8 +118,10 @@ func plusCode_changed(cur, old):
 	#NOTE: the map scrolls independely of this, so I may need to chain it to 
 	#this call if I want it to wait until there's data to draw. Get downloads working first.
 	if !FileAccess.file_exists("user://Data/Offline/" + cur.substr(0,6) + ".json"):
+		$ScrollingCenteredMap.process = false
 		if await $GetFile.getCell6File(cur.substr(0,6)): #NOTE: this is a weird race condition. Dont do this.
 			await $GetFile.file_downloaded
+		$ScrollingCenteredMap.process = true
 	#move splats to match new code if in same Cell8. if not, redraw whole thing.
 	#$splats.position = $ScrollingCenteredMap.currentOffset
 	if cur.substr(0,8) != old.substr(0,8):

@@ -41,6 +41,9 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 	if jsonData == null: #no file in this zip, this area is missing or empty.
 		return 
 	
+	return ProcessData(jsonData)
+	
+static func ProcessData(jsonData):
 	var minVector = Vector2i(20000,20000)
 	var maxVector = Vector2i(0,0)
 	for category in jsonData.entries:
@@ -68,7 +71,7 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 			entry.p = polyCoords
 			entry.envelope = Rect2(minVector, (maxVector - minVector))
 	
-	allData[plusCode] = jsonData
+	allData[jsonData.olc] = jsonData
 	return jsonData
 	
 static func GetPlacesPresent(plusCode):
