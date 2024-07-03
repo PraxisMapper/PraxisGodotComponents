@@ -1,5 +1,8 @@
 extends Node2D
 
+#TODO: this hits issues if it starts drawing mid-download. It cant tell the difference between 
+#a partial and complete download.
+
 var process = true
 
 var lastPlusCode = '' #Might be replaceable with odl in the change call
@@ -32,6 +35,10 @@ func plusCode_changed(current, old):
 				tex = await $TileDrawer.GetAndProcessData(code, 1)
 				node = get_node("mapBase/MapTile" + str(x) + str(y))
 				node.texture = ImageTexture.create_from_image(tex) #update might be faster?
+		
+		var children = $trackedChildren.get_children()
+		for c in children:
+			c.position = getDrawingOffset(c.get_meta("originalLocation", ""))
 	
 	#Now scroll mapBase to the right spot.
 	var currentXPos = PlusCodes.RemovePlus(current).substr(9,1)
@@ -47,6 +54,7 @@ func plusCode_changed(current, old):
 	$mapBase.position.y = -yShift
 	$trackedChildren.position = $mapBase.position - position #works but doesnt feel right for some reason.
 	currentOffset = $mapBase.position
+
 	
 	lastPlusCode = current
 	if process == false:
@@ -67,6 +75,7 @@ func getDrawingOffset(plusCode):
 	
 func trackChildOnMap(node, plusCodePosition):
 	node.position = getDrawingOffset(plusCodePosition)
+	node.set_meta("originalLocation", plusCodePosition)
 	$trackedChildren.add_child(node)
 
 func clearAllTrackedChildren():
