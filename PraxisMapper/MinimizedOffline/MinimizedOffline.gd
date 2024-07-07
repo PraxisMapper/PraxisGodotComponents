@@ -29,7 +29,7 @@ static func GetDataFromZip(plusCode):
 		print("Read Error on " + code2 + code4 + ".zip: " + error_string(err))
 		return null
 
-	var rawdata := zipReaderB.read_file(plusCode + ".json")
+	var rawdata := zipReaderB.read_file(plusCode.substr(0,6) + ".json")
 	if (rawdata != null):
 		print("raw data loaded")
 	var realData = rawdata.get_string_from_utf8()
