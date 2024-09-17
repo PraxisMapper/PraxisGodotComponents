@@ -27,7 +27,8 @@ func plusCode_changed(current, old):
 		return
 	
 	if current.substr(0,8) != lastPlusCode.substr(0,8): # old.substr(0,8):
-		RefreshTiles(current)
+		process = false
+		await RefreshTiles(current)
 		var children = $trackedChildren.get_children()
 		for c in children:
 			var offset = getDrawingOffset(c.get_meta("originalLocation", ""))
