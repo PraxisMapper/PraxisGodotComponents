@@ -11,6 +11,9 @@ func _ready():
 	$lblProxy.text = "Proxied to: " + PraxisCore.currentPlusCode
 	PraxisCore.plusCode_changed.connect(onPluscodeChanged)
 	
+	#Move the banner to match the scenes layout.
+	$ScrollingCenteredMap/TileDrawer/Banner.position = Vector2(260, 627)
+	
 	#NOTE: To center the 5x5 scrolling map on a 1080p screen
 	#set its position to -260, -290
 

@@ -62,6 +62,9 @@ func ProxyDemo():
 	get_tree().change_scene_to_file("res://Scenes/ProxyPlayTest.tscn")
 
 func RequestPerms():
+	if OS.get_name() == "Windows":
+		HavePerms()
+		return
 	var granted = OS.request_permissions()
 	if granted == true:
 		PraxisCore.perm_check("android.permission.ACCESS_FINE_LOCATION", true)
