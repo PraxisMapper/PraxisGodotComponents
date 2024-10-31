@@ -1,6 +1,7 @@
 extends Node2D
 
 #This one loads up and displays a map tile.
+#TODO: rename and make this one as an Online map tile, since this wants to pull from a server.
 
 @onready var request: PraxisEndpoints = $PraxisEndpoints
 @onready var texRect: TextureRect = $TextureRect

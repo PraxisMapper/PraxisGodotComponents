@@ -9,7 +9,7 @@ var plusCodeBase = '22334455+2X' #The plusCode used for the upper-left corner of
 
 func _ready():
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
-	PraxisCore.plusCode_changed.connect(plusCode_changed) 
+	#PraxisCore.plusCode_changed.connect(plusCode_changed) 
 
 func plusCode_changed(current, old):
 	if process == false:

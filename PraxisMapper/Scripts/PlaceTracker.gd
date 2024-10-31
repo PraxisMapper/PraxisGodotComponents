@@ -80,8 +80,8 @@ func HasVisited(name, plusCode6):
 
 func CheckForPlace(plusCode10):
 	plusCode10 = plusCode10.replace("+", "")
-	#if we have full data, use it instead. TODO: core check for this file.
-	if FileAccess.file_exists("user://Data/Full/" + plusCode10.substr(0,4) + ".zip"):
+	#if we have full data, use it instead. TODO: check
+	if PraxisOfflineData.OfflineDataExists(plusCode10.substr(0,4)):
 		return await CheckForPlaceFull(plusCode10)
 	
 	#This math here uses my minimized offline format image

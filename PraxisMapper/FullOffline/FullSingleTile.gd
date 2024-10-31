@@ -11,6 +11,7 @@ signal tile_created(texture)
 var plusCode6 = ""
 var scaleVal = 1
 var mapData
+var wait = false
 
 @export var drawnStyle = "mapTiles"
 @export var makeMapTile = true
@@ -25,14 +26,19 @@ var mapData
 func GetAndProcessData(plusCode, scale = 1):
 	#save some time
 	if FileAccess.file_exists("user://MapTiles/" + plusCode + ".png") and !alwaysDrawNewTile:
-		var img = await Image.load_from_file("user://MapTiles/" + plusCode + ".png")
-		tile_created.emit(img)
-		return img #ImageTexture.create_from_image(img)
+		var fileForSize = FileAccess.open("user://MapTiles/" + plusCode + ".png", FileAccess.READ)
+		if !fileForSize.get_length() <= 1539: #magic number that lines up to a blank image.
+			var img = await Image.load_from_file("user://MapTiles/" + plusCode + ".png")
+			tile_created.emit(img)
+			fileForSize.close()
+			wait = false
+			return img #ImageTexture.create_from_image(img)
+		fileForSize.close()
 	
 	var oneTile = null
 	$Banner.visible = true
 	$Banner/Status.text = "Drawing " + plusCode.substr(0,8)
-	print("processing full offline data")
+	print("processing full offline data for single tile " + plusCode)
 	plusCode6 = plusCode.substr(0,6)
 	if (plusCode.length() >= 8):
 		oneTile = plusCode.substr(6,2)
@@ -42,16 +48,12 @@ func GetAndProcessData(plusCode, scale = 1):
 	var styleData = await PraxisCore.GetStyle(drawnStyle)
 	$svc/SubViewport/fullMap.style = styleData
 	
-	if FileAccess.file_exists("user://Data/Full/" + plusCode.substr(0,6) + ".json"):
-		var soloFile = FileAccess.open("user://Data/Full/" + plusCode.substr(0,6) + ".json", FileAccess.READ)
-		var json = JSON.new()
-		json.parse(soloFile.get_as_text())
-		mapData = await PraxisOfflineData.ProcessData(json.data)
-	else:
-		mapData = await PraxisOfflineData.GetDataFromZip(plusCode6) 
-		if (mapData == null):
-			#$Banner/lblStatus.text = "Error getting map data. Try again." 
-			return
+	mapData = await PraxisOfflineData.GetDataFromZip(plusCode6) 
+	if (mapData == null):
+		$Banner.visible = false
+		wait = false
+		tile_created.emit()
+		return
 		
 	#$Banner/lblStatus.text = "Data Loaded. Processing " + str(mapData.entries["mapTiles"].size()) + " items, please wait...." 
 	await RenderingServer.frame_post_draw
@@ -60,9 +62,14 @@ func GetAndProcessData(plusCode, scale = 1):
 	print("being tile making")
 	var tex = await CreateTile(oneTile) #Godot runs slow while this does work and waits for frames.
 	$Banner.visible = false
+	wait = false
+	tile_created.emit(tex)
 	return tex
 	
 func CreateTile(oneTile = null):
+	if mapData == null:
+		return
+		
 	print("CreateTileCalled")
 	$svc/SubViewport/fullMap.position.y = 0
 	
@@ -70,15 +77,15 @@ func CreateTile(oneTile = null):
 	var camera1 = $svc/SubViewport/subcam
 	var scale = scaleVal
 	
-	print("cameras set")
+	#print("cameras set")
 	camera1.position = Vector2(0,0)
 	viewport1.size = Vector2i(320 * scale, 500 * scale)
-	print("viewports set")
+	#print("viewports set")
 	await RenderingServer.frame_post_draw #set this before loading entities, skips a wasted draw call.
-	print("frame waited")
+	#print("frame waited")
 	
 	if makeMapTile == true:
-		print("drawing map")
+		print("drawing map (single)")
 		await $svc/SubViewport/fullMap.DrawSingleTile(mapData.entries["mapTiles"], scaleVal, plusCode6 + oneTile)
 	
 	var xList = PlusCodes.CODE_ALPHABET_

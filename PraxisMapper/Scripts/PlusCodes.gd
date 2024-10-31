@@ -43,12 +43,19 @@ static func EncodeLatLonSize(lat, lon, size):
 	return code.substr(0, 8) + "+" + code.substr(8, -1)
 	
 static func RemovePlus(code):
+	if code == null:
+		return null
 	return code.replace("+", "")
 	
 static func ShiftCode(code, xChange, yChange):
-	#This function is not intended to move a code more than 20 cells in a direction to force carry
-	#more than 1 carry/borrow digit right now.
-	#that should be done by supplying the substring to move at that level.
+	if code == "":
+		return ""
+		
+	if (abs(xChange) > 20 or abs(yChange) > 20):
+		#recursive call
+		code = ShiftCode(code.substr(0, code.length() - 2), xChange / 20, yChange / 20) + code.substr(code.length() - 2, 2)
+		xChange = xChange % 20
+		yChange = yChange % 20	
 	code = RemovePlus(code)
 	var xVals = []
 	var yVals = []
@@ -65,20 +72,19 @@ static func ShiftCode(code, xChange, yChange):
 			if (xVals[i] > 19):
 				xVals[i -1] = xVals[i - 1] + (1)
 				xVals[i] = xVals[i] - 20
-			if (xVals[i] < 0):
+			elif (xVals[i] < 0):
 				xVals[i -1] = xVals[i - 1] - (1)
+				
 				xVals[i] = xVals[i] + 20
-		
 	if yChange != 0:
 		yVals[yVals.size() -1] += yChange
 		for i in range(yVals.size() -1, 0, -1):
 			if (yVals[i] > 19):
 				yVals[i -1] = yVals[i - 1] + (1)
 				yVals[i] = yVals[i] - 20
-			if (yVals[i] < 0):
+			elif (yVals[i] < 0):
 				yVals[i -1] = yVals[i - 1] - (1)
 				yVals[i] = yVals[i] + 20
-
 	var newCode = ''
 	for i in code.length() / 2:
 		newCode = newCode + CODE_ALPHABET_[yVals[i]] + CODE_ALPHABET_[xVals[i]]
@@ -123,6 +129,8 @@ static func GetDistanceDegrees(plusCode1, plusCode2):
 #so the results can be adjusted to pixels fairly easily by multiplying the results
 #by Vector2(4,5) for cell11s or Vector2(16,25) for cell12s
 static func GetDistanceCell10s(plusCode1, plusCode2):
+	if plusCode1 == null or plusCode2 == null:
+		return 0
 	plusCode1 = PlusCodes.RemovePlus(plusCode1)
 	plusCode2 = PlusCodes.RemovePlus(plusCode2)
 	var diffY = 0
@@ -152,3 +160,10 @@ static func GetDirection(plusCode1, plusCode2):
 
 static func GetLetterIndex(letter):
 	return CODE_ALPHABET_.find(letter)
+	
+static func GetNearbyCells(code, distance): #TODO: use this instead of manual loops in places
+	var cells = []
+	for y in range(-distance, distance + 1):
+		for x in range(-distance, distance + 1):
+			cells.push_back(PlusCodes.ShiftCode(code, x, y))
+	return cells

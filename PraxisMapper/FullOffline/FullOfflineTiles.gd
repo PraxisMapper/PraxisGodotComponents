@@ -103,7 +103,7 @@ func CreateAllTiles(oneTile = null):
 	
 	$Banner/lblStatus.text = "Drawing " + plusCode6 + "..."
 	if makeMapTile == true:
-		print("drawing map")
+		print("drawing map (full)")
 		await $svc/SubViewport/fullMap.DrawOfflineTile(mapData.entries["mapTiles"], scaleVal)
 	if makeNameTile == true:
 		print("drawing name")

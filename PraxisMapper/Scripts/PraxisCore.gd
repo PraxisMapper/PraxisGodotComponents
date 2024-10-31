@@ -27,7 +27,12 @@ const resolutionCell2 = 20;
 const metersPerDegree = 111111
 const oneMeterLat = 1 / metersPerDegree
 
-#system config values. These are for Cell12 resolution images.
+const safetyTips = [
+	"Pay more attention to your surroundings than your phone.",
+	 "If a place isn't safe to go to, don't go there! You can re-roll destinations.",
+]
+
+#system config values. These are for Cell12 resolution images from detailed data.
 var mapTileWidth = 320 
 var mapTileHeight = 500
 
@@ -36,7 +41,7 @@ var autoPrecision = true #let the game decide on plusCode to use based on GPS re
 var precision = 10 #use this value always for plusCode size if autoPrecision is false
 
 #storage values for global access at any time.
-var currentPlusCode = '' #The Cell10 we are currently in.
+var currentPlusCode = debugStartingPlusCode #The Cell10 we are currently in.
 var lastPlusCode = '' #the previous Cell10 we visited.
 
 #Local proxy-play values, if we want to pretend we're somewhere else.
@@ -174,8 +179,8 @@ func MakeOneOfflineTiles(plusCode, scale = 1):
 	add_child(offlineInst)
 	var texture = await offlineInst.GetAndProcessData(plusCode, scale)
 	remove_child(offlineInst)
-	return texture #TODO is this an image or a texture?
-
+	return texture 
+	
 func DistanceDegreesToMetersLat(degrees):
 	return degrees * metersPerDegree
 
