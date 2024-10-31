@@ -1,131 +1,40 @@
-[gd_scene load_steps=23 format=3 uid="uid://i7s1o6y03ab0"]
+[gd_scene load_steps=3 format=3 uid="uid://i7s1o6y03ab0"]
 
 [ext_resource type="Script" path="res://PraxisMapper/Controls/ScrollingCenteredMap.gd" id="1_17115"]
 [ext_resource type="PackedScene" uid="uid://b16445g8mkbaa" path="res://PraxisMapper/FullOffline/FullSingleTile.tscn" id="2_cuosq"]
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_nn7p7"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_jxqpj"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6af3r"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_2mq4u"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_pxoml"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_xcjk5"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kj4ua"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_u0blj"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_yn15i"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_06l0t"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_266gg"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_p16x2"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ywe2i"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_nujc7"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_64vaa"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_w25gu"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_r4whl"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_cwljv"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_stqcx"]
-width = 320
-height = 500
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_mnwim"]
-width = 320
-height = 500
-
 [node name="ScrollingCenteredMap" type="Node2D"]
 script = ExtResource("1_17115")
-
-[node name="trPlayer" type="TextureRect" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
-metadata/_edit_use_anchors_ = true
 
 [node name="mapBase" type="Node2D" parent="."]
 
 [node name="MapTile-22" type="TextureRect" parent="mapBase"]
-texture = SubResource("NoiseTexture2D_nn7p7")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile-12" type="TextureRect" parent="mapBase"]
 offset_left = 320.0
 offset_right = 320.0
-texture = SubResource("NoiseTexture2D_jxqpj")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile02" type="TextureRect" parent="mapBase"]
 offset_left = 640.0
 offset_right = 640.0
-texture = SubResource("NoiseTexture2D_6af3r")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile12" type="TextureRect" parent="mapBase"]
 offset_left = 960.0
 offset_right = 960.0
-texture = SubResource("NoiseTexture2D_2mq4u")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile22" type="TextureRect" parent="mapBase"]
 offset_left = 1280.0
 offset_right = 1280.0
-texture = SubResource("NoiseTexture2D_pxoml")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile-21" type="TextureRect" parent="mapBase"]
 offset_top = 500.0
 offset_right = 320.0
 offset_bottom = 1000.0
-texture = SubResource("NoiseTexture2D_xcjk5")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile-11" type="TextureRect" parent="mapBase"]
@@ -133,7 +42,6 @@ offset_left = 320.0
 offset_top = 500.0
 offset_right = 640.0
 offset_bottom = 1000.0
-texture = SubResource("NoiseTexture2D_kj4ua")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile01" type="TextureRect" parent="mapBase"]
@@ -141,7 +49,6 @@ offset_left = 640.0
 offset_top = 500.0
 offset_right = 960.0
 offset_bottom = 1000.0
-texture = SubResource("NoiseTexture2D_u0blj")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile11" type="TextureRect" parent="mapBase"]
@@ -149,7 +56,6 @@ offset_left = 960.0
 offset_top = 500.0
 offset_right = 960.0
 offset_bottom = 500.0
-texture = SubResource("NoiseTexture2D_yn15i")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile21" type="TextureRect" parent="mapBase"]
@@ -157,13 +63,11 @@ offset_left = 1280.0
 offset_top = 500.0
 offset_right = 1600.0
 offset_bottom = 1000.0
-texture = SubResource("NoiseTexture2D_06l0t")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile-20" type="TextureRect" parent="mapBase"]
 offset_top = 1000.0
 offset_bottom = 1000.0
-texture = SubResource("NoiseTexture2D_266gg")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile-10" type="TextureRect" parent="mapBase"]
@@ -171,7 +75,6 @@ offset_left = 320.0
 offset_top = 1000.0
 offset_right = 640.0
 offset_bottom = 1500.0
-texture = SubResource("NoiseTexture2D_p16x2")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile00" type="TextureRect" parent="mapBase"]
@@ -179,7 +82,6 @@ offset_left = 640.0
 offset_top = 1000.0
 offset_right = 640.0
 offset_bottom = 1000.0
-texture = SubResource("NoiseTexture2D_ywe2i")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile10" type="TextureRect" parent="mapBase"]
@@ -187,7 +89,6 @@ offset_left = 960.0
 offset_top = 1000.0
 offset_right = 960.0
 offset_bottom = 1000.0
-texture = SubResource("NoiseTexture2D_nujc7")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile20" type="TextureRect" parent="mapBase"]
@@ -195,13 +96,11 @@ offset_left = 1280.0
 offset_top = 1000.0
 offset_right = 1600.0
 offset_bottom = 1500.0
-texture = SubResource("NoiseTexture2D_06l0t")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile-2-1" type="TextureRect" parent="mapBase"]
 offset_top = 1500.0
 offset_bottom = 1500.0
-texture = SubResource("NoiseTexture2D_64vaa")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile-1-1" type="TextureRect" parent="mapBase"]
@@ -209,7 +108,6 @@ offset_left = 320.0
 offset_top = 1500.0
 offset_right = 320.0
 offset_bottom = 1500.0
-texture = SubResource("NoiseTexture2D_w25gu")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile0-1" type="TextureRect" parent="mapBase"]
@@ -217,7 +115,6 @@ offset_left = 640.0
 offset_top = 1500.0
 offset_right = 640.0
 offset_bottom = 1500.0
-texture = SubResource("NoiseTexture2D_r4whl")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile1-1" type="TextureRect" parent="mapBase"]
@@ -225,7 +122,6 @@ offset_left = 960.0
 offset_top = 1500.0
 offset_right = 960.0
 offset_bottom = 1500.0
-texture = SubResource("NoiseTexture2D_cwljv")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile2-1" type="TextureRect" parent="mapBase"]
@@ -233,13 +129,11 @@ offset_left = 1280.0
 offset_top = 1500.0
 offset_right = 1280.0
 offset_bottom = 1500.0
-texture = SubResource("NoiseTexture2D_stqcx")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile-2-2" type="TextureRect" parent="mapBase"]
 offset_top = 2000.0
 offset_bottom = 2000.0
-texture = SubResource("NoiseTexture2D_mnwim")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile-1-2" type="TextureRect" parent="mapBase"]
@@ -247,7 +141,6 @@ offset_left = 320.0
 offset_top = 2000.0
 offset_right = 640.0
 offset_bottom = 2500.0
-texture = SubResource("NoiseTexture2D_06l0t")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile0-2" type="TextureRect" parent="mapBase"]
@@ -255,7 +148,6 @@ offset_left = 640.0
 offset_top = 2000.0
 offset_right = 640.0
 offset_bottom = 2000.0
-texture = SubResource("NoiseTexture2D_06l0t")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile1-2" type="TextureRect" parent="mapBase"]
@@ -263,7 +155,6 @@ offset_left = 960.0
 offset_top = 2000.0
 offset_right = 1280.0
 offset_bottom = 2500.0
-texture = SubResource("NoiseTexture2D_06l0t")
 metadata/_edit_use_anchors_ = true
 
 [node name="MapTile2-2" type="TextureRect" parent="mapBase"]
@@ -271,10 +162,9 @@ offset_left = 1280.0
 offset_top = 2000.0
 offset_right = 1600.0
 offset_bottom = 2500.0
-texture = SubResource("NoiseTexture2D_06l0t")
 metadata/_edit_use_anchors_ = true
+
+[node name="trackedChildren" type="Node2D" parent="."]
 
 [node name="TileDrawer" parent="." instance=ExtResource("2_cuosq")]
 alwaysDrawNewTile = false
-
-[node name="trackedChildren" type="Node2D" parent="."]

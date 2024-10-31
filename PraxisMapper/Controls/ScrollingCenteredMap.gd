@@ -1,8 +1,5 @@
 extends Node2D
 
-#TODO: this hits issues if it starts drawing mid-download. It cant tell the difference between 
-#a partial and complete download.
-
 var process = true
 
 var lastPlusCode = '' #Might be replaceable with odl in the change call
@@ -10,32 +7,29 @@ var currentOffset = Vector2(0,0) #Pixels offset for scrolling purposes, referenc
 var plusCodeBase = '22334455+2X' #The plusCode used for the upper-left corner of the area,
 # and referenced by other
 
-
 func _ready():
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
-	PraxisCore.plusCode_changed.connect(plusCode_changed)
+	PraxisCore.plusCode_changed.connect(plusCode_changed) 
 
 func plusCode_changed(current, old):
 	if process == false:
+		print("skipping a process run, busy.")
 		return
-	#TODO: check for data files. Download them if possible/configured, otherwise static.
-	#TODO: ponder scrollview instead of repositioning mapBase node and children.
-	
+
 	if !visible:
-		#If we're not visible, drawing tiles does not work.
-		#TODO: may need to handle drawing tiles when visibility is enabled again later.
 		return
 	
+	#var cur = PlusCodes.RemovePlus(current) # stack overflows? why?
+	process = false #Block this from being called again while we run.
 	if current.substr(0,8) != lastPlusCode.substr(0,8): # old.substr(0,8):
-		process = false
+		#process = false
 		await RefreshTiles(current)
 		var children = $trackedChildren.get_children()
 		for c in children:
 			var offset = getDrawingOffset(c.get_meta("originalLocation", ""))
 			if offset != null:
 				c.position = offset
-		process = true
-	
+
 	#Now scroll mapBase to the right spot.
 	var currentXPos = PlusCodes.RemovePlus(current).substr(9,1)
 	var xIndex = PlusCodes.CODE_ALPHABET_.find(currentXPos)
@@ -44,7 +38,14 @@ func plusCode_changed(current, old):
 	var yIndex = PlusCodes.CODE_ALPHABET_.find(currentYPos)
 	var yShift = (PraxisCore.mapTileHeight / 2) - (PraxisCore.mapTileHeight / 20) * yIndex
 	
-	print("current pos:" + currentXPos + "," + currentYPos)
+	if PlusCodes.RemovePlus(current).length() == 11:
+		var lastIndex = PlusCodes.CODE_ALPHABET_.find(PlusCodes.RemovePlus(current).substr(10,1))
+		xShift += lastIndex % 4
+		yShift += lastIndex / 4
+	
+	#print("current pos:" + currentXPos + "," + currentYPos)
+	
+	#print($trackedChildren.get_children().size())
 	
 	$mapBase.position.x = xShift
 	$mapBase.position.y = -yShift
@@ -55,19 +56,21 @@ func plusCode_changed(current, old):
 	if process == false:
 		process = true
 		if current != PraxisCore.currentPlusCode:
+			print("refreshing scrolling centered map after process run")
 			plusCode_changed(PraxisCore.currentPlusCode, lastPlusCode)
 
 func getDrawingOffset(plusCode):
 	var offset = PlusCodes.GetDistanceCell10s(plusCodeBase, plusCode)
-	#First vector converts to Cell12 pixels, 2nd accommodates non-origin position of ma
+	#First vector converts to Cell12 pixels, 2nd accommodates non-origin position of map
 	return offset * Vector2(-16,25) + position 
-	#TODO: this never runs. remove or fix?
-	if PlusCodes.RemovePlus(plusCode).length == 11:
-		var charVal = PlusCodes.GetLetterIndex(plusCode.right(1))
-		offset += Vector2(charVal % 4, charVal / 4)
-	else:
+	
+	#Dont move the map for Cell11s right now.
+	#if PlusCodes.RemovePlus(plusCode).length == 11:
+		#var charVal = PlusCodes.GetLetterIndex(plusCode.right(1))
+		#offset += Vector2(charVal % 4, charVal / 4)
+	#else:
 		#centers item in cell10 instead of lower-left corner
-		offset += Vector2(8, 13)
+		#offset += Vector2(8, 13)
 	
 func trackChildOnMap(node, plusCodePosition):
 	if (plusCodePosition == null):
@@ -80,7 +83,7 @@ func trackChildOnMap(node, plusCodePosition):
 func clearAllTrackedChildren():
 	for tc in $trackedChildren.get_children():
 		tc.queue_free()
-		
+
 func RefreshTiles(current):
 	if current == null:
 		current = PraxisCore.currentPlusCode
@@ -89,10 +92,37 @@ func RefreshTiles(current):
 	var node
 	var code
 	var tex
+	var textures = {}
+	#NEW: to try to minimize disruptions, we're gonna draw missing tiles first.
+	#THen update the visible display.
+	for x in [-2,-1,0,1,2]:
+		textures[x] = {}
+		for y in [-2,-1,0,1,2]:
+			var checkCode = PlusCodes.ShiftCode(base, x, y)
+			#if !FileAccess.file_exists("user://MapTiles/" + checkCode + ".png"):
+			tex = await $TileDrawer.GetAndProcessData(checkCode, 1)
+			textures[x][y] = tex #await $TileDrawer.tile_created
+			
 	for x in [-2,-1,0,1,2]:
 		for y in [-2,-1,0,1,2]:
-			code = PlusCodes.ShiftCode(base, x, y)
-			tex = await $TileDrawer.GetAndProcessData(code, 1)
-			if tex != null:
+			var t = textures[x][y]
+			if t != null:
 				node = get_node("mapBase/MapTile" + str(x) + str(y))
-				node.texture = ImageTexture.create_from_image(tex) #update might be faster?
+				node.texture = ImageTexture.create_from_image(t) #update might be faster?
+
+#This is not intended to be a full API, but an example of how you'd check on tap
+#to find which child should respond.
+func GetNearestTrackedChild(event: InputEventMouseButton):
+	if !event.pressed:
+		return null
+	
+	var closestNode = null
+	var closestDist = 9999999999
+	
+	for node in $trackedChildren.get_children():
+		var dist = event.position.distance_to(node.global_position)
+		if dist < closestDist:
+			closestDist = dist
+			closestNode = node
+	
+	return closestNode
