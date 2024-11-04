@@ -6,6 +6,8 @@ extends Node2D
 #TODO: may check this object's W/H instead of the viewports? Alter view size?
 #or is that better served as a separate thing?
 
+#TODO: server images are 320:400 (4:5), PraxisCore defaults to 320x500(16:25)
+
 @onready var camera : Camera2D = $Camera2D
 var startX = 0
 var startY = 0

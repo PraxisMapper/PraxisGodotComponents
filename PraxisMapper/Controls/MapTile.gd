@@ -42,31 +42,35 @@ func GenerationListener(result):
 		tileGeneration = currentGen
 		LoadTile(currentTile)
 
-func tile_called(result):
+func tile_called(result, plusCode):
 	print("tile called received body")
 	request.response_data.disconnect(tile_called)
 	
 	var image = Image.new()
 	if (image.load_png_from_buffer(result) != OK):
 		return "error2"
-		
-	var saved = image.save_png("user://MapTiles/" + currentTile + "-" + styleSet + ".png")
-	if (saved != OK):
-		print("Not saved: " + str(saved))
 	
-	var texture = ImageTexture.create_from_image(image)
-	texRect.texture = texture
+	if plusCode == currentTile: 
+		var saved = image.save_png("user://MapTiles/" + plusCode + "-" + styleSet + ".png")
+		if (saved != OK):
+			print("Not saved: " + str(saved))
+		var texture = ImageTexture.create_from_image(image)
+		texRect.texture = texture
 	#texRect.size.x *= 2 #note on where i might resize these.
+	else:
+		print("Tile ignored: Expected " + currentTile + ", received " + plusCode)
+		LoadTile(currentTile)
 	
 func LoadTile(plusCode):
 	#this loads the image for the plusCode given. GetTile shifts appropriately for offsets automatically.
+	request.cancel_request()
 	print('loading tile ' + plusCode)
 	texRect.texture = noiseTex
 	var img = Image.new().load_from_file("user://MapTiles/" + plusCode + "-" + styleSet + ".png")
 	if (img != null):
 		texRect.texture = ImageTexture.create_from_image(img)
 	else:
-		request.response_data.connect(tile_called)
+		request.response_data.connect(tile_called.bind(plusCode))
 	
 		print("getting " + PraxisServer.serverURL + "/MapTile/Area/" + plusCode + "/" + styleSet)
 		request.DrawMapTile(plusCode, styleSet)

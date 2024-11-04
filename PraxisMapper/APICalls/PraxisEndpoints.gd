@@ -2,10 +2,19 @@ extends Node2D
 class_name PraxisEndpoints
 
 @onready var request: HTTPRequest = $HTTPRequest
+#NOTE: Godot now uses an IPv6 call first, and then an IPv4 after that, so if
+#you see 30-ish second delays between Godot calling a request and the webserver answering,
+#thats why. Either set the server up to handle IPv6 or force Godot to resolve the hostname
+#to an IPv4 address before calling.
+
+
 #this version uses signals insted of waiting for a response in a single call.
 #this will let other things process more reliably and is the better design pattern to follow.
 
 signal response_data(body)
+
+func cancel_request():
+	request.cancel_request()
 
 func response_received(result, responseCode, headers, body):
 	print('response received:' + str(responseCode) + "| " + str(result))
