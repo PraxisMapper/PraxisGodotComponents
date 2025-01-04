@@ -39,7 +39,7 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 
 	#Now check if we have the zip file that should hold this data, built in or downloaded
 	var err
-	if FileAccess.file_exists("res://OfflineData/Full/" + code2 + "/" + code4 + ".zip"):
+	if FileAccess.file_exists("res://OfflineData/Full/" + code2 + "/" + code2 + code4 + ".zip"):
 		err = await zipReader.open("res://OfflineData/Full/" + plusCode.substr(0,2) + "/" + plusCode.substr(0,4) + ".zip")
 	elif FileAccess.file_exists("user://Data/Full/" + code2 + code4 + ".zip"):
 		err = await zipReader.open("user://Data/Full/" + code2 + code4 + ".zip")
