@@ -1,5 +1,5 @@
 # PraxisGodotComponents
-A set of pre-built scenes and scripts for using a PraxisMapper server from a Godot 4.2 client. Currently matches up to Release 11+ of PraxisMapper.
+A set of pre-built scenes and scripts for using a PraxisMapper server from a Godot 4.2 (or newer) client. Currently matches up to Release 11+ of PraxisMapper.
 
 ## How To Use These:
 1) Download this repo.
