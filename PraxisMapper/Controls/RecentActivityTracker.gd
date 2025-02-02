@@ -37,7 +37,7 @@ func RemoveOld():
 	var expired = Time.get_unix_time_from_system() - timeDiffSeconds
 	for v in visited.keys():
 		if visited[v].time <= expired:
-			visited.erase([v])
+			visited.erase(v)
 
 func Total():
 	RemoveOld()

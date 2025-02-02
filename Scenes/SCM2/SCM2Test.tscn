@@ -1,0 +1,49 @@
+[gd_scene load_steps=3 format=3 uid="uid://cvuybebh615ng"]
+
+[ext_resource type="PackedScene" uid="uid://bpnt0yvbysdow" path="res://PraxisMapper/Controls/ScrollingCenteredMap2.tscn" id="1_2gldk"]
+[ext_resource type="Script" path="res://Scenes/SCM2/scm_2_test.gd" id="1_atrh6"]
+
+[node name="Scm2Test" type="Node2D"]
+script = ExtResource("1_atrh6")
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 87.0
+offset_top = 329.0
+offset_right = 936.0
+offset_bottom = 1719.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(3.1285e-07, 0.278752, 0.321081, 1)
+
+[node name="ScrollingCenteredMap" parent="." instance=ExtResource("1_2gldk")]
+anchors_preset = 0
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 106.0
+offset_top = 347.0
+offset_right = 919.0
+offset_bottom = 1699.0
+grow_horizontal = 1
+grow_vertical = 1
+tileGridSize = 3
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 483.0
+offset_top = 1005.0
+offset_right = 558.0
+offset_bottom = 1062.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
