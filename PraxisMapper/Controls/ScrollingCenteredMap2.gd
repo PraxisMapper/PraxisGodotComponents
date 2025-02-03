@@ -9,6 +9,8 @@ extends Control
 
 #TODO: finish working out centering math
 #TODO: set up whatever special logic is needed for grids of size 1 and 2
+#--For 2 and even grids, where the current plus code is the center of 4 tiles, I probably
+#want to make the 'current' cell8 tile be the lower-left one? You'll always have that tile on screen for sure.
 
 var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer.tscn")
 
@@ -27,13 +29,15 @@ var lastPlusCode = '' #Might be replaceable with odl in the change call
 var currentOffset = Vector2(0,0) #Pixels offset for scrolling purposes, referenced by other controls
 var plusCodeBase = '22334455+2X' #The plusCode used for the upper-left corner of the area and referenced by other
 
+#This is actually the ADJUSTMENT to center the controls. Not the literal center.
 var controlCenter = Vector2(0,0)
 
 func _ready():
 	Setup()
 	$playerIndicator.visible = showPlayerArrow
 	$centerIndicator.visible = false
-	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
+	#Uncomment this once I have tiles centered on creation
+	#plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
 
 func _process(delta):
 	$playerIndicator.rotation = PraxisCore.GetCompassHeading()
@@ -59,8 +63,13 @@ func Setup():
 		for y in tileGridSize:
 			#create the new tile
 			var newTile = TextureRect.new()
+			newTile.anchor_left = 1
+			newTile.anchor_right = 0
+			newTile.anchor_top = 1
+			newTile.anchor_bottom = 0
+			print(newTile.offset_left)
 			newTile.set_name("MapTile" + str(x) + "_" + str(y))
-			newTile.position = Vector2(x * 320, y * -500) #this looks closer but still isnt right?
+			newTile.position = Vector2(x * 320, (tileGridSize * 500) -  y * 500) #this looks closer but still isnt right?
 			$mapBase.add_child(newTile)
 			
 			print(newTile.name + " at " + str(newTile.position))
@@ -68,30 +77,45 @@ func Setup():
 			if (useCellTrackers):
 				var newCellTracker = cellTrackerDrawerPL.instantiate()
 				newCellTracker.set_name("CTD" + str(x) + "_" + str(y))
-				newCellTracker.scale = Vector2(16,25) #defaults to a 20x20 square.
+				newCellTracker.scale = Vector2(16,25) #defaults to a 20x20px square.
 				newTile.position = Vector2(x * 320, y * 500)
 				$cellTrackerDrawers.add_child(newCellTracker)
 				
 	var mapCenter = Vector2(tileGridSize * 160, tileGridSize * 250)
 	var expectedCenter = size / 2 # The pixel we shows to the developer was the center.
 	#controlCenter = (expectedCenter - mapCenter) * Vector2(0.5, -1) #not even close
-	controlCenter = mapCenter * Vector2(0.5, 1) # best so far, dunno why it needs the adjustment
+	#controlCenter = mapCenter * Vector2(0.5, 1) # best so far, dunno why it needs the adjustment
 	#controlCenter = expectedCenter #isn't super awful but not right.
+	
+	#Closest to right i have so far: before adjustments, x looks correct, y doesnt. 
+	#its in the right X tile, but not the right Y tile. So Y still needs to come down.
+	#So why does this need the extra Y tile adjustment step? Whats off on my math?
+	#and does that only apply to odd-sized grids?
+	#on even grids, this does sit in the middle corner of 4 tiles without any other changes.
+	controlCenter = -mapCenter + expectedCenter - Vector2(0, 500) 
+	print("mapCenter interally at " + str(mapCenter))
 	print("expectedCenter interally at " + str(expectedCenter))
 	print("controlCenter internal will be " + str(controlCenter))
-	print("external reference to center will be " + str(controlCenter + position))
+	print("external reference to center will be " + str(-controlCenter + position)) #entirely wrong math
 	print("test scene expects it close to 480, 1000")
 	
 	#MATH THIS OUT: 
-	#Control has left-corner at 100,100. Shouldn't matter
-	#Control has size of 960,1500. This puts expectedCenter at 480, 750
+	#Control has left-corner at 100,100. Shouldn't matter, we're using internal coords.
+	#Control has size of 800,1300. Not even tile size. This puts expectedCenter at 400, 650
 	#MapTiles are build upwards, so a 3x3 set of those starts at 0,0 and ends at 960,-1500
-	#(and its center is therefore at 450, -750)
-	#so the shift is... 0, 1500. I get that as the distance between the 2 centers!
+	#(and its center is therefore at 480, -750)
+	#so the shift to make mapCenter == controlCenter is...
+	#-80, 1400. thats mapCenter - controlCenter * (1, -1) right?
+	#but I still need a Y tile's offset in addition to get the display correct.
+
 
 	$mapBase.position = controlCenter
-	$cellTrackerDrawers.position = Vector2(tileGridSize * 180, tileGridSize * 200)
-	$playerIndicator.position = -controlCenter 
+	$cellTrackerDrawers.position = controlCenter #Vector2(tileGridSize * 180, tileGridSize * 200)
+	
+	#This needs additional math to line up with its expected position?
+	$playerIndicator.position = controlCenter
+	
+	RefreshTiles(PraxisCore.currentPlusCode) 
 
 func plusCode_changed(current, old):
 	if process == false:
@@ -191,7 +215,7 @@ func RefreshTiles(current):
 			#so while Y == 0 means "top row", it should also be "highest Y coordinate in range"
 			#var thisY = -(tileGridSize - y) # -(3 - 0) = -3, 
 			var checkCode = PlusCodes.ShiftCode(base, x, y) #y #what is wrong with this math
-			print("Checking code " + checkCode)
+			#print("Checking code " + checkCode)
 			#if !FileAccess.file_exists("user://MapTiles/" + checkCode + ".png"):
 			tex = await $TileDrawer.GetAndProcessData(checkCode, 1)
 			textures[x][y] = tex #await $TileDrawer.tile_created
