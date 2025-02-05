@@ -19,13 +19,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_om4r7")
 
-[node name="playerIndicator" type="TextureRect" parent="."]
-layout_mode = 0
-offset_top = 3.0
-offset_right = 32.0
-offset_bottom = 43.0
-texture = ExtResource("3_mhlsw")
-
 [node name="centerIndicator" type="ColorRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -82,3 +75,11 @@ horizontal_alignment = 1
 
 [node name="TileDrawer" parent="." instance=ExtResource("2_hr7m8")]
 alwaysDrawNewTile = false
+
+[node name="playerIndicator" type="TextureRect" parent="."]
+z_index = 1
+layout_mode = 0
+offset_top = 3.0
+offset_right = 32.0
+offset_bottom = 43.0
+texture = ExtResource("3_mhlsw")

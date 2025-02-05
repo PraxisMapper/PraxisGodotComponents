@@ -1,16 +1,17 @@
 extends Control
 #Version 2 of the scrolling centered map control
-#TODO Differences:
-# - This version centers itself, so you do not need to adjust it from the upper left corner TEST
-# - This version can have its size in tiles set externally, and it will scale appropriate TEST
-# - This version can be given a width and adjust the grid automatically. TEST
-# - This version can toggle the celltrackerdrawers and create those as well. TEST
+#Differences:
+# - This version centers itself, so you do not need to adjust it from the upper left corner
+# - This version can have its size in tiles set externally, and it will scale appropriate
+# - This version can be given a width and adjust the grid automatically if grid is set to -1
 # - This version includes the player indicator arrow
+# - This version can toggle the celltrackerdrawers and create those as well. IMPLEMENT/TEST
+# - This version includes built-in zoom options. The controls for those can be connected via signals. IMPLEMENT/TEST
 
-#TODO: finish working out centering math
 #TODO: set up whatever special logic is needed for grids of size 1 and 2
 #--For 2 and even grids, where the current plus code is the center of 4 tiles, I probably
 #want to make the 'current' cell8 tile be the lower-left one? You'll always have that tile on screen for sure.
+#TODO: zoom in/out functions and support controls.
 
 var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer.tscn")
 
@@ -36,8 +37,7 @@ func _ready():
 	Setup()
 	$playerIndicator.visible = showPlayerArrow
 	$centerIndicator.visible = false
-	#Uncomment this once I have tiles centered on creation
-	#plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
+	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
 
 func _process(delta):
 	$playerIndicator.rotation = PraxisCore.GetCompassHeading()
@@ -112,9 +112,8 @@ func Setup():
 	$mapBase.position = controlCenter
 	$cellTrackerDrawers.position = controlCenter #Vector2(tileGridSize * 180, tileGridSize * 200)
 	
-	#This needs additional math to line up with its expected position?
-	$playerIndicator.position = controlCenter
-	
+	$playerIndicator.position = expectedCenter
+	$playerIndicator.z_index = 2
 	RefreshTiles(PraxisCore.currentPlusCode) 
 
 func plusCode_changed(current, old):
