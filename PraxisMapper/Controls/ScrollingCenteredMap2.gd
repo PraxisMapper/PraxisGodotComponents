@@ -8,6 +8,8 @@ extends Control
 # - This version can toggle the celltrackerdrawers and create those as well. IMPLEMENT/TEST
 # - This version includes built-in zoom options. The controls for those can be connected via signals. IMPLEMENT/TEST
 
+#TODO: this should use the queued tile drawer, not the normal one.
+
 #TODO: set up whatever special logic is needed for grids of size 1 and 2
 #--For 2 and even grids, where the current plus code is the center of 4 tiles, I probably
 #want to make the 'current' cell8 tile be the lower-left one? You'll always have that tile on screen for sure.
