@@ -99,16 +99,16 @@ static func GetPlacesPresent(plusCode):
 	if data == null:
 		return
 	var point = PlusCodeToDataCoords(plusCode)
-	print("PlusCode " + plusCode + " translated to coords " + str(point))
+	#print("PlusCode " + plusCode + " translated to coords " + str(point))
 	var results = []
 	var size = plusCode.length()
 	
 	for category in data.entries:
 		for entry in data.entries[category]:
-			if entry.has("nid"):
-				if IsPointInPlace(point, entry, size, data.nameTable[str(entry.nid)]):
+			if entry.has("nid") and entry.nid != 0:
+				if IsPointInPlace(point, entry, size, data.nameTable[str(int(entry.nid))]):
 					results.push_back({ 
-						name  = data.nameTable[str(entry.nid)],
+						name  = data.nameTable[str(int(entry.nid))],
 						category = category,
 						typeId = entry.tid
 					})
