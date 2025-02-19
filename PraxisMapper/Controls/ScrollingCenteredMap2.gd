@@ -13,7 +13,6 @@ extends Control
 #TODO: set up whatever special logic is needed for grids of size 1 and 2
 #--For 2 and even grids, where the current plus code is the center of 4 tiles, I probably
 #want to make the 'current' cell8 tile be the lower-left one? You'll always have that tile on screen for sure.
-#TODO: zoom in/out functions and support controls.
 
 var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer.tscn")
 
@@ -26,6 +25,8 @@ var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer
 #TODO: may need to be passed in specific CellTracker object to draw?
 ## If true, displays an arrow showing the location and direction of the player
 @export var showPlayerArrow = true
+
+@export var zoomFactor = 1.0
 
 var process = true
 var lastPlusCode = '' #Might be replaceable with odl in the change call
@@ -40,6 +41,7 @@ func _ready():
 	$playerIndicator.visible = showPlayerArrow
 	$centerIndicator.visible = false
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
+	$TileDrawer.tile_created.connect(UpdateTexture)
 
 func _process(delta):
 	$playerIndicator.rotation = PraxisCore.GetCompassHeading()
@@ -51,7 +53,7 @@ func Setup():
 	for c in $cellTrackerDrawers.get_children():
 		$cellTrackerDrawers.remove_child(c)
 	
-	if tileGridSize == -1:
+	if tileGridSize <= 0:
 		#auto-determine size
 		print("auto-pick size based on: " + str(size))
 		var gridSize = max(size.x / 320, size.y / 500) 
@@ -62,59 +64,54 @@ func Setup():
 	
 	#Create all tiles
 	for x in tileGridSize:
-		for y in tileGridSize:
+		#for y in tileGridSize:
+		for y in range(tileGridSize, -1, -1):
 			#create the new tile
 			var newTile = TextureRect.new()
+			newTile.scale = Vector2(zoomFactor, zoomFactor)
 			newTile.anchor_left = 1
 			newTile.anchor_right = 0
 			newTile.anchor_top = 1
 			newTile.anchor_bottom = 0
 			print(newTile.offset_left)
 			newTile.set_name("MapTile" + str(x) + "_" + str(y))
-			newTile.position = Vector2(x * 320, (tileGridSize * 500) -  y * 500) #this looks closer but still isnt right?
-			$mapBase.add_child(newTile)
-			
+			#newTile.position = Vector2(x * 320 * zoomFactor, (tileGridSize * 500) - (y+1) * 500 * zoomFactor) #this looks closer but still isnt right?
+			newTile.position = Vector2(x * 320 * zoomFactor + x, y * 500 * zoomFactor + y)
 			print(newTile.name + " at " + str(newTile.position))
+			$mapBase.add_child(newTile)
+			print(newTile.name + " at " + str(newTile.position) + " / " +str(newTile.global_position))
 			
 			if (useCellTrackers):
 				var newCellTracker = cellTrackerDrawerPL.instantiate()
 				newCellTracker.set_name("CTD" + str(x) + "_" + str(y))
 				newCellTracker.scale = Vector2(16,25) #defaults to a 20x20px square.
-				newTile.position = Vector2(x * 320, y * 500)
+				 #TODO: will need to fix this to be the same Y position logic above.
+				newCellTracker.position = Vector2(x * 320 * zoomFactor, y * 500 * zoomFactor)
 				$cellTrackerDrawers.add_child(newCellTracker)
-				
-	var mapCenter = Vector2(tileGridSize * 160, tileGridSize * 250)
-	var expectedCenter = size / 2 # The pixel we shows to the developer was the center.
-	#controlCenter = (expectedCenter - mapCenter) * Vector2(0.5, -1) #not even close
-	#controlCenter = mapCenter * Vector2(0.5, 1) # best so far, dunno why it needs the adjustment
-	#controlCenter = expectedCenter #isn't super awful but not right.
 	
-	#Closest to right i have so far: before adjustments, x looks correct, y doesnt. 
-	#its in the right X tile, but not the right Y tile. So Y still needs to come down.
-	#So why does this need the extra Y tile adjustment step? Whats off on my math?
-	#and does that only apply to odd-sized grids?
-	#on even grids, this does sit in the middle corner of 4 tiles without any other changes.
-	controlCenter = -mapCenter + expectedCenter - Vector2(0, 500) 
-	print("mapCenter interally at " + str(mapCenter))
-	print("expectedCenter interally at " + str(expectedCenter))
-	print("controlCenter internal will be " + str(controlCenter))
-	print("external reference to center will be " + str(-controlCenter + position)) #entirely wrong math
-	print("test scene expects it close to 480, 1000")
+	#var mapCenter = Vector2(tileGridSize * 160, tileGridSize * 250)
+	var expectedCenter = size / 2 * zoomFactor# The pixel we shows to the developer was the center.
 	
-	#MATH THIS OUT: 
-	#Control has left-corner at 100,100. Shouldn't matter, we're using internal coords.
-	#Control has size of 800,1300. Not even tile size. This puts expectedCenter at 400, 650
-	#MapTiles are build upwards, so a 3x3 set of those starts at 0,0 and ends at 960,-1500
-	#(and its center is therefore at 480, -750)
-	#so the shift to make mapCenter == controlCenter is...
-	#-80, 1400. thats mapCenter - controlCenter * (1, -1) right?
-	#but I still need a Y tile's offset in addition to get the display correct.
-
+	#Transform steps:
+	#1: Get the base global position for mapBase
+	#2: Identify the center of the map tiles (in global coordinates)
+	#3: Identify the displayed, intended center of the map as global coordinates
+	#4: Shift mapBase enough to make mapCenter = visibleCenter
+	$mapBase.position = Vector2(0,0)
+	var startingPoint = $mapBase.global_position
+	print(startingPoint)
+	var mapCenter = startingPoint + Vector2(tileGridSize * 160 * zoomFactor, tileGridSize * 250 * zoomFactor)
+	print("center is at " + str(mapCenter))
+	var visibleCenter = $Center.global_position
+	print("center SHOULD MOVE TO " + str(visibleCenter))
+	var shift = visibleCenter - mapCenter
+	print(shift)
+	controlCenter = shift
 
 	$mapBase.position = controlCenter
 	$cellTrackerDrawers.position = controlCenter #Vector2(tileGridSize * 180, tileGridSize * 200)
 	
-	$playerIndicator.position = expectedCenter
+	$playerIndicator.global_position = visibleCenter + Vector2(16, -20)
 	$playerIndicator.z_index = 2
 	RefreshTiles(PraxisCore.currentPlusCode) 
 
@@ -140,10 +137,10 @@ func plusCode_changed(current, old):
 	#Now scroll mapBase to the right spot.
 	var currentXPos = PlusCodes.RemovePlus(current).substr(9,1)
 	var xIndex = PlusCodes.CODE_ALPHABET_.find(currentXPos)
-	var xShift = (PraxisCore.mapTileWidth / 2) -  (PraxisCore.mapTileWidth / 20) * xIndex
+	var xShift = (PraxisCore.mapTileWidth / 2) -  (PraxisCore.mapTileWidth / 20) * xIndex #* zoomFactor
 	var currentYPos = PlusCodes.RemovePlus(current).substr(8,1)
 	var yIndex = PlusCodes.CODE_ALPHABET_.find(currentYPos)
-	var yShift = (PraxisCore.mapTileHeight / 2) - (PraxisCore.mapTileHeight / 20) * yIndex
+	var yShift = (PraxisCore.mapTileHeight / 2) - (PraxisCore.mapTileHeight / 20) * yIndex #* zoomFactor
 	
 	if PlusCodes.RemovePlus(current).length() == 11:
 		var lastIndex = PlusCodes.CODE_ALPHABET_.find(PlusCodes.RemovePlus(current).substr(10,1))
@@ -154,9 +151,11 @@ func plusCode_changed(current, old):
 	
 	#print($trackedChildren.get_children().size())
 	
-	currentOffset = Vector2(xShift, -yShift)
+	currentOffset = Vector2(xShift, -yShift) #How many pixels to move in each direction
 	print(currentOffset)
-	$mapBase.position = controlCenter + currentOffset	
+	var shifting = currentOffset * Vector2(zoomFactor, zoomFactor)
+	print("Shifting mapBase pixels: " + str(shifting))
+	$mapBase.position = controlCenter + shifting
 	$trackedChildren.position = $mapBase.position - position #works but doesnt feel right for some reason.
 	
 	
@@ -170,7 +169,7 @@ func plusCode_changed(current, old):
 func getDrawingOffset(plusCode):
 	var offset = PlusCodes.GetDistanceCell10s(plusCodeBase, plusCode)
 	#First vector converts to Cell12 pixels, 2nd accommodates non-origin position of map
-	return offset * Vector2(-16,25) + position  #TODO: may need updated to handle grid no longer having negative entries
+	return offset * Vector2(-16,25) * Vector2(zoomFactor, zoomFactor) + position  #TODO: may need updated to handle grid no longer having negative entries
 	
 	#Dont move the map for Cell11s right now.
 	#if PlusCodes.RemovePlus(plusCode).length == 11:
@@ -198,7 +197,7 @@ func RefreshTiles(current):
 	print("shifting " + str(baseShift) + " from grid size " + str(tileGridSize))
 	if current == null:
 		current = PraxisCore.currentPlusCode
-	plusCodeBase = PlusCodes.ShiftCode(current.substr(0,8), -baseShift, -baseShift) + "X2" #correct
+	plusCodeBase = PlusCodes.ShiftCode(current.substr(0,8), -baseShift, baseShift) + "X2" #correct
 	var base = plusCodeBase.substr(0,8) #current.substr(0,8)
 	var node
 	var code
@@ -210,16 +209,17 @@ func RefreshTiles(current):
 		print("x row " + str(x))
 		textures[x] = {}
 		for y in tileGridSize:
-		#for y in range(tileGridSize, -1, -1):
-			#OK, I need to subtrack something from x/y here. baseShift?
-			#But base should already be the upper-left pluscode.
-			#so while Y == 0 means "top row", it should also be "highest Y coordinate in range"
-			#var thisY = -(tileGridSize - y) # -(3 - 0) = -3, 
-			var checkCode = PlusCodes.ShiftCode(base, x, y) #y #what is wrong with this math
+			var checkCode = PlusCodes.ShiftCode(base, x, -y) #y #what is wrong with this math
 			#print("Checking code " + checkCode)
 			#if !FileAccess.file_exists("user://MapTiles/" + checkCode + ".png"):
 			tex = await $TileDrawer.GetAndProcessData(checkCode, 1)
+				#node = get_node("mapBase/MapTile" + str(x) + str(y))
+				#node.texture = ImageTexture.create_from_image(tex) #update might be faster?
 			textures[x][y] = tex #await $TileDrawer.tile_created
+			#else:
+				#$TileDrawer.AddToQueue(checkCode)
+			
+			#code = PlusCodes.ShiftCode(base, x, y)
 			
 	for x in tileGridSize:
 		for y in tileGridSize:
@@ -245,3 +245,44 @@ func GetNearestTrackedChild(event: InputEventMouseButton):
 			closestNode = node
 	
 	return closestNode
+
+var zoomFactors = [0.5, 1.0, 1.5, 2.0]
+
+func zoomOut():
+	var zoomIdx = zoomFactors.find(zoomFactor)
+	if zoomIdx == 0:
+		return
+	ChangeZoom(zoomFactors[zoomIdx -1])
+
+func zoomIn():
+	var zoomIdx = zoomFactors.find(zoomFactor)
+	if zoomIdx >= zoomFactors.size() - 1:
+		return
+	ChangeZoom(zoomFactors[zoomIdx + 1])
+
+func ChangeZoom(newZoomFactor):
+	zoomFactor = newZoomFactor
+	Setup()
+	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
+	#TODO: OK, changing zoom does NOT mean the center changed. That value stays the same.
+	#BUT we need to move all the tile components to stay touching or else 
+	#zoomFactor is a multiplier, so zooming IN means the number is bigger to make tiles bigger
+	#and zooming OUT means the number is smaller to make tiles smaller.
+	#HMM: do I want to draw more tiles if we zoom out? That might be a later step in figuring this out.
+	#actually, that wasn't too hard to get the map layer set. Now I need to figure out how to reposition
+	#it correctly to match the map size.
+	
+
+func UpdateTexture(code, texture):
+	var center = PraxisCore.currentPlusCode #lastPlusCode
+	var coords = PlusCodes.GetDistanceCell8s(code, center) 
+	var addendum = str(int(coords.x)) + str(int(coords.y)) #TODO: sometimes has 3 in the x coords, which fails.
+	var tilenode = get_node("mapBase/MapTile" + addendum)
+	if (tilenode != null):
+		tilenode.texture = ImageTexture.create_from_image(texture) #update might be faster?
+	else:
+		print("couldnt get node for tile at " + addendum)
+
+func DrawGrid():
+	pass
+	#TODO: Overlay a grid to help indicate Cell10s on each tile. Maybe Cell8s as an option?

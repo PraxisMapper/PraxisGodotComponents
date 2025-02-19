@@ -36,8 +36,7 @@ const safetyTips = [
 #TODO: explain why/when height should be 400 (Server drawing Cell11 tiles, 4:5) 
 #vs 500 (client drawing Cel1l2 tiles, 16:25 is not the same aspect ratio)
 var mapTileWidth = 320 
-var mapTileHeight = 400
-
+var mapTileHeight = 500
 
 var autoPrecision = true #let the game decide on plusCode to use based on GPS results
 var precision = 10 #use this value always for plusCode size if autoPrecision is false

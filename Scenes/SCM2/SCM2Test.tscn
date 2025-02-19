@@ -40,3 +40,16 @@ offset_bottom = 1062.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
+
+[node name="btnZoomIn" type="Button" parent="."]
+offset_right = 112.0
+offset_bottom = 60.0
+text = "Zoom In"
+
+[node name="btnZoomOut" type="Button" parent="."]
+offset_left = 220.0
+offset_top = 2.0
+offset_right = 350.0
+offset_bottom = 57.0
+text = "Zoom Out
+"

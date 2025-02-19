@@ -125,6 +125,9 @@ static func GetDistanceDegrees(plusCode1, plusCode2):
 	var vec2 = PlusCodes.Decode(plusCode2)
 	return vec1.distance_to(vec2)
 
+static func GetDistanceCell8s(code1, code2):
+	return GetDistanceCell10s(code1.substr(0,8) + "22", code2.substr(0,8) + "22") / 20
+
 #This picks out distances on both axes in Cell10 spaces
 #so the results can be adjusted to pixels fairly easily by multiplying the results
 #by Vector2(4,5) for cell11s or Vector2(16,25) for cell12s
