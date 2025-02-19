@@ -8,15 +8,7 @@ extends Control
 # - This version can toggle the celltrackerdrawers and create those as well. IMPLEMENT/TEST
 # - This version includes built-in zoom options. The controls for those can be connected via signals. IMPLEMENT/TEST
 
-#TODO: adjust positioning of player indicator arrow. Its close but not completely correct.Its slightly high
-
 #TODO: this should use the queued tile drawer, not the original one.
-
-
-#TODO: set up whatever special logic is needed for grids of size 1 and 2.
-# this may just be "minimum grid size is 3x3"
-#--For 2 and even grids, where the current plus code is the center of 4 tiles, I probably
-#want to make the 'current' cell8 tile be the lower-left one? You'll always have that tile on screen for sure.
 
 var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer.tscn")
 
@@ -70,13 +62,15 @@ func Setup():
 		var gridSize = max(size.x / 320 / zoomFactor, size.y / 500 / zoomFactor) 
 		if (gridSize > int(gridSize) or gridSize == 0): #check for any remainder 
 			gridSize = int(gridSize) + 1 #scale up to whole tile.
+		if gridSize < 3:
+			gridSize = 3
 		print("Size is " + str(gridSize))
 		tileGridSize = gridSize
 	
 	#Create all tiles
 	for x in tileGridSize:
 		#for y in tileGridSize:
-		for y in range(tileGridSize, -1, -1):
+		for y in range(tileGridSize -1, -1, -1):
 			#create the new tile
 			var newTile = TextureRect.new()
 			newTile.scale = Vector2(zoomFactor, zoomFactor)
@@ -84,10 +78,10 @@ func Setup():
 			newTile.anchor_right = 0
 			newTile.anchor_top = 1
 			newTile.anchor_bottom = 0
-			print(newTile.offset_left)
+			#This was set to use update() later, but performance wise it seems the same. At least on PC.
+			#newTile.texture = ImageTexture.create_from_image(Image.load_from_file("res://PraxisMapper/Resources/grid template.png")) #setting this NOW so we can update it later.
 			newTile.set_name("MapTile" + str(x) + "_" + str(y))
 			newTile.position = Vector2(x * 320 * zoomFactor + (x * spacing), y * 500 * zoomFactor + (y * spacing))
-			print(newTile.name + " at " + str(newTile.position))
 			$mapBase.add_child(newTile)
 			print(newTile.name + " at " + str(newTile.position) + " / " +str(newTile.global_position))
 			
@@ -139,7 +133,6 @@ func plusCode_changed(current, old):
 	if !visible:
 		return
 	
-	#var cur = PlusCodes.RemovePlus(current) # stack overflows? why?
 	process = false #Block this from being called again while we run.
 	if current.substr(0,8) != lastPlusCode.substr(0,8): # old.substr(0,8):
 		#process = false
@@ -208,15 +201,14 @@ func clearAllTrackedChildren():
 		tc.queue_free()
 
 func RefreshTiles(current):
-	#ISSUE 4: Tiles aren't in the center of the control (this needs fixed in Setup)
 	var baseShift = int(tileGridSize / 2)
 	print("shifting " + str(baseShift) + " from grid size " + str(tileGridSize))
 	if current == null:
 		current = PraxisCore.currentPlusCode
 	plusCodeBase = PlusCodes.ShiftCode(current.substr(0,8), -baseShift, baseShift) + "X2" #correct
+
 	var base = plusCodeBase.substr(0,8) #current.substr(0,8)
 	var node
-	var code
 	var tex
 	var textures = {}
 	#NEW: to try to minimize disruptions, we're gonna draw missing tiles first.
@@ -234,15 +226,14 @@ func RefreshTiles(current):
 			textures[x][y] = tex #await $TileDrawer.tile_created
 			#else:
 				#$TileDrawer.AddToQueue(checkCode)
-			
-			#code = PlusCodes.ShiftCode(base, x, y)
-			
+	
 	for x in tileGridSize:
 		for y in tileGridSize:
 		#for y in range(tileGridSize-1, -1, -1):
 			var t = textures[x][y]
 			if t != null:
 				node = get_node("mapBase/MapTile" + str(x) + "_" + str(y))
+				#node.texture.update(t) # = ImageTexture.create_from_image(t) #update might be faster?
 				node.texture = ImageTexture.create_from_image(t) #update might be faster?
 				#node.texture = load("res://PraxisMapper/Resources/grid template.png") #for testing player positioning
 
