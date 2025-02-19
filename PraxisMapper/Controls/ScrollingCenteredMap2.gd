@@ -8,9 +8,13 @@ extends Control
 # - This version can toggle the celltrackerdrawers and create those as well. IMPLEMENT/TEST
 # - This version includes built-in zoom options. The controls for those can be connected via signals. IMPLEMENT/TEST
 
-#TODO: this should use the queued tile drawer, not the normal one.
+#TODO: adjust positioning of player indicator arrow. Its close but not completely correct.Its slightly high
 
-#TODO: set up whatever special logic is needed for grids of size 1 and 2
+#TODO: this should use the queued tile drawer, not the original one.
+
+
+#TODO: set up whatever special logic is needed for grids of size 1 and 2.
+# this may just be "minimum grid size is 3x3"
 #--For 2 and even grids, where the current plus code is the center of 4 tiles, I probably
 #want to make the 'current' cell8 tile be the lower-left one? You'll always have that tile on screen for sure.
 
@@ -22,10 +26,15 @@ var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer
 @export var showCellTrackers = false
 ## How many map tiles to use in this grid. 3 is the expected minimum. Use -1 to have this control auto-determine the size based on the control's size
 @export var tileGridSize = -1
+## How many pixels to leave between tiles. 0 has them touching.
+@export var spacing = 0
 #TODO: may need to be passed in specific CellTracker object to draw?
 ## If true, displays an arrow showing the location and direction of the player
 @export var showPlayerArrow = true
 
+## What scaling factors are available to the player. Must be in order from smallest to largest.
+@export var zoomFactors = [0.25, 0.5, 1.0, 1.5, 2.0]
+## The starting zoom factor. Must be one of the values in zoomFactors.
 @export var zoomFactor = 1.0
 
 var process = true
@@ -37,6 +46,7 @@ var plusCodeBase = '22334455+2X' #The plusCode used for the upper-left corner of
 var controlCenter = Vector2(0,0)
 
 func _ready():
+	$Center.visible = false
 	Setup()
 	$playerIndicator.visible = showPlayerArrow
 	$centerIndicator.visible = false
@@ -45,6 +55,7 @@ func _ready():
 
 func _process(delta):
 	$playerIndicator.rotation = PraxisCore.GetCompassHeading()
+	#$playerIndicator.rotation += .01 #helps when testing player positioning.
 	
 func Setup():
 	#Do all the one-time stuff here. Clear out child objects just in case we're changing after _ready()
@@ -56,7 +67,7 @@ func Setup():
 	if tileGridSize <= 0:
 		#auto-determine size
 		print("auto-pick size based on: " + str(size))
-		var gridSize = max(size.x / 320, size.y / 500) 
+		var gridSize = max(size.x / 320 / zoomFactor, size.y / 500 / zoomFactor) 
 		if (gridSize > int(gridSize) or gridSize == 0): #check for any remainder 
 			gridSize = int(gridSize) + 1 #scale up to whole tile.
 		print("Size is " + str(gridSize))
@@ -75,8 +86,7 @@ func Setup():
 			newTile.anchor_bottom = 0
 			print(newTile.offset_left)
 			newTile.set_name("MapTile" + str(x) + "_" + str(y))
-			#newTile.position = Vector2(x * 320 * zoomFactor, (tileGridSize * 500) - (y+1) * 500 * zoomFactor) #this looks closer but still isnt right?
-			newTile.position = Vector2(x * 320 * zoomFactor + x, y * 500 * zoomFactor + y)
+			newTile.position = Vector2(x * 320 * zoomFactor + (x * spacing), y * 500 * zoomFactor + (y * spacing))
 			print(newTile.name + " at " + str(newTile.position))
 			$mapBase.add_child(newTile)
 			print(newTile.name + " at " + str(newTile.position) + " / " +str(newTile.global_position))
@@ -86,7 +96,7 @@ func Setup():
 				newCellTracker.set_name("CTD" + str(x) + "_" + str(y))
 				newCellTracker.scale = Vector2(16,25) #defaults to a 20x20px square.
 				 #TODO: will need to fix this to be the same Y position logic above.
-				newCellTracker.position = Vector2(x * 320 * zoomFactor, y * 500 * zoomFactor)
+				newCellTracker.position = Vector2(x * 320 * zoomFactor + spacing, y * 500 * zoomFactor + spacing)
 				$cellTrackerDrawers.add_child(newCellTracker)
 	
 	#var mapCenter = Vector2(tileGridSize * 160, tileGridSize * 250)
@@ -105,13 +115,19 @@ func Setup():
 	var visibleCenter = $Center.global_position
 	print("center SHOULD MOVE TO " + str(visibleCenter))
 	var shift = visibleCenter - mapCenter
+	
+	if int(tileGridSize) % 2 == 0:
+		shift -= Vector2(160 * zoomFactor, 250 * zoomFactor)
 	print(shift)
 	controlCenter = shift
+	
 
 	$mapBase.position = controlCenter
 	$cellTrackerDrawers.position = controlCenter #Vector2(tileGridSize * 180, tileGridSize * 200)
 	
-	$playerIndicator.global_position = visibleCenter + Vector2(16, -20)
+	#The actual visibleCenter position is correct for the lower-left corner of that plus code.
+	$playerIndicator.rotation = 0
+	$playerIndicator.global_position = visibleCenter + Vector2(8 * zoomFactor, -20 * zoomFactor)
 	$playerIndicator.z_index = 2
 	RefreshTiles(PraxisCore.currentPlusCode) 
 
@@ -228,6 +244,7 @@ func RefreshTiles(current):
 			if t != null:
 				node = get_node("mapBase/MapTile" + str(x) + "_" + str(y))
 				node.texture = ImageTexture.create_from_image(t) #update might be faster?
+				#node.texture = load("res://PraxisMapper/Resources/grid template.png") #for testing player positioning
 
 #This is not intended to be a full API, but an example of how you'd check on tap
 #to find which child should respond.
@@ -246,8 +263,6 @@ func GetNearestTrackedChild(event: InputEventMouseButton):
 	
 	return closestNode
 
-var zoomFactors = [0.5, 1.0, 1.5, 2.0]
-
 func zoomOut():
 	var zoomIdx = zoomFactors.find(zoomFactor)
 	if zoomIdx == 0:
@@ -262,6 +277,7 @@ func zoomIn():
 
 func ChangeZoom(newZoomFactor):
 	zoomFactor = newZoomFactor
+	tileGridSize = -1
 	Setup()
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
 	#TODO: OK, changing zoom does NOT mean the center changed. That value stays the same.

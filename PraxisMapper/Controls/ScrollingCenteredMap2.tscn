@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://PraxisMapper/Controls/ScrollingCenteredMap2.gd" id="1_om4r7"]
 [ext_resource type="PackedScene" uid="uid://b16445g8mkbaa" path="res://PraxisMapper/FullOffline/FullSingleTile.tscn" id="2_hr7m8"]
 [ext_resource type="Texture2D" uid="uid://c3033wigb05gp" path="res://PraxisMapper/Resources/kenney_arrow.png" id="3_mhlsw"]
-[ext_resource type="PackedScene" path="res://PraxisMapper/FullOffline/FullSingleTileQueued.tscn" id="3_x4y4u"]
+[ext_resource type="PackedScene" uid="uid://fipn8k07sdhc" path="res://PraxisMapper/FullOffline/FullSingleTileQueued.tscn" id="3_x4y4u"]
 
 [node name="ScrollingCenteredMap" type="Control"]
 layout_mode = 3
@@ -86,12 +86,12 @@ visible = false
 z_index = 1
 layout_mode = 0
 offset_top = 3.0
-offset_right = 32.0
-offset_bottom = 43.0
+offset_right = 16.0
+offset_bottom = 28.0
+pivot_offset = Vector2(8, 12.5)
 texture = ExtResource("3_mhlsw")
 
 [node name="Center" type="ColorRect" parent="."]
-visible = false
 custom_minimum_size = Vector2(10, 10)
 layout_mode = 1
 anchors_preset = 8

@@ -25,6 +25,7 @@ offset_left = 106.0
 offset_top = 347.0
 offset_right = 919.0
 offset_bottom = 1699.0
+spacing = 2
 
 [node name="ColorRect" type="ColorRect" parent="."]
 visible = false
