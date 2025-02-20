@@ -5,17 +5,16 @@ extends Control
 # - This version can have its size in tiles set externally, and it will scale appropriate
 # - This version can be given a width and adjust the grid automatically if grid is set to -1
 # - This version includes the player indicator arrow
-# - This version can toggle the celltrackerdrawers and create those as well. IMPLEMENT/TEST
-# - This version includes built-in zoom options. The controls for those can be connected via signals. IMPLEMENT/TEST
+# - This version can toggle the celltrackerdrawers and create those as well.
+# - This version includes built-in zoom options. The controls for those can be connected via signals.
 
-#TODO: this should use the queued tile drawer, not the original one.
 
 var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer.tscn")
 
 ## If true, will also create CellTrackerDrawers for each tile that can have their visiblity set by showCellTrackers
-@export var useCellTrackers = false
-## If true, and useCellTrackers is true, displays the CellTrackerDrawers overtop each tile
-@export var showCellTrackers = false
+@export var useCellTrackers = true
+## If true, and useCellTrackers is true, displays the CellTrackerDrawers overtop each tile. Toggle this to hide them.
+@export var showCellTrackers = true
 ## How many map tiles to use in this grid. 3 is the expected minimum. Use -1 to have this control auto-determine the size based on the control's size
 @export var tileGridSize = -1
 ## How many pixels to leave between tiles. 0 has them touching.
@@ -44,6 +43,13 @@ func _ready():
 	$centerIndicator.visible = false
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
 	$TileDrawerQueued.tile_created.connect(UpdateTexture)
+	
+func ToggleShowCellTrackerDrawers():
+	showCellTrackers = !showCellTrackers
+	if (showCellTrackers):
+		RefreshTiles(PraxisCore.currentPlusCode)
+	$cellTrackerDrawers.visible = showCellTrackers
+	
 
 func _process(delta):
 	$playerIndicator.rotation = PraxisCore.GetCompassHeading()
@@ -88,9 +94,9 @@ func Setup():
 			if (useCellTrackers):
 				var newCellTracker = cellTrackerDrawerPL.instantiate()
 				newCellTracker.set_name("CTD" + str(x) + "_" + str(y))
-				newCellTracker.scale = Vector2(16,25) #defaults to a 20x20px square.
+				newCellTracker.scale = Vector2(16,25) #defaults to a 20x20px square, scale this to match tiles.
 				 #TODO: will need to fix this to be the same Y position logic above.
-				newCellTracker.position = Vector2(x * 320 * zoomFactor + spacing, y * 500 * zoomFactor + spacing)
+				newCellTracker.position = Vector2(x * 320 * zoomFactor + (x * spacing), y * 500 * zoomFactor + (y * spacing))
 				$cellTrackerDrawers.add_child(newCellTracker)
 	
 	#var mapCenter = Vector2(tileGridSize * 160, tileGridSize * 250)
@@ -102,6 +108,7 @@ func Setup():
 	#3: Identify the displayed, intended center of the map as global coordinates
 	#4: Shift mapBase enough to make mapCenter = visibleCenter
 	$mapBase.position = Vector2(0,0)
+	$cellTrackerDrawers.position = Vector2(0,0)
 	var startingPoint = $mapBase.global_position
 	print(startingPoint)
 	var mapCenter = startingPoint + Vector2(tileGridSize * 160 * zoomFactor, tileGridSize * 250 * zoomFactor)
@@ -114,7 +121,6 @@ func Setup():
 		shift -= Vector2(160 * zoomFactor, 250 * zoomFactor)
 	print(shift)
 	controlCenter = shift
-	
 
 	$mapBase.position = controlCenter
 	$cellTrackerDrawers.position = controlCenter #Vector2(tileGridSize * 180, tileGridSize * 200)
@@ -132,6 +138,12 @@ func plusCode_changed(current, old):
 
 	if !visible:
 		return
+	
+	#TODO: find the center/current tile's cell tracker drawer and update it
+	if (useCellTrackers and showCellTrackers):
+		var tileDist = PlusCodes.GetDistanceCell8s(current, plusCodeBase)
+		var ctdNode = get_node("cellTrackerDrawers/CTD" + str(tileDist.x) + "_" + str(abs(tileDist.y)))
+		ctdNode.DrawCellTracker($CellTracker, current)
 	
 	process = false #Block this from being called again while we run.
 	if current.substr(0,8) != lastPlusCode.substr(0,8): # old.substr(0,8):
@@ -165,8 +177,8 @@ func plusCode_changed(current, old):
 	var shifting = currentOffset * Vector2(zoomFactor, zoomFactor)
 	#print("Shifting mapBase pixels: " + str(shifting))
 	$mapBase.position = controlCenter + shifting
+	$cellTrackerDrawers.position = controlCenter + shifting
 	$trackedChildren.position = $mapBase.position - position #works but doesnt feel right for some reason.
-	
 	
 	lastPlusCode = current
 	if process == false:
@@ -219,6 +231,10 @@ func RefreshTiles(current):
 		for y in tileGridSize:
 			var checkCode = PlusCodes.ShiftCode(base, x, -y) #y #what is wrong with this math
 			#print("Checking code " + checkCode)
+			if useCellTrackers and showCellTrackers:
+				node = get_node("cellTrackerDrawers/CTD" + str(x) + "_" + str(y))
+				node.DrawCellTracker($CellTracker, checkCode)
+			
 			if !FileAccess.file_exists("user://MapTiles/" + checkCode + ".png"):
 				tex = await $TileDrawerQueued.GetAndProcessData(checkCode, 1)
 				node = get_node("mapBase/MapTile" + str(x) + "_" + str(y))
