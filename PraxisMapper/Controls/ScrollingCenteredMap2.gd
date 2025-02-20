@@ -43,7 +43,7 @@ func _ready():
 	$playerIndicator.visible = showPlayerArrow
 	$centerIndicator.visible = false
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
-	$TileDrawer.tile_created.connect(UpdateTexture)
+	$TileDrawerQueued.tile_created.connect(UpdateTexture)
 
 func _process(delta):
 	$playerIndicator.rotation = PraxisCore.GetCompassHeading()
@@ -161,9 +161,9 @@ func plusCode_changed(current, old):
 	#print($trackedChildren.get_children().size())
 	
 	currentOffset = Vector2(xShift, -yShift) #How many pixels to move in each direction
-	print(currentOffset)
+	#print(currentOffset)
 	var shifting = currentOffset * Vector2(zoomFactor, zoomFactor)
-	print("Shifting mapBase pixels: " + str(shifting))
+	#print("Shifting mapBase pixels: " + str(shifting))
 	$mapBase.position = controlCenter + shifting
 	$trackedChildren.position = $mapBase.position - position #works but doesnt feel right for some reason.
 	
@@ -214,28 +214,28 @@ func RefreshTiles(current):
 	#NEW: to try to minimize disruptions, we're gonna draw missing tiles first.
 	#THen update the visible display.
 	for x in tileGridSize:
-		print("x row " + str(x))
+		#print("x row " + str(x))
 		textures[x] = {}
 		for y in tileGridSize:
 			var checkCode = PlusCodes.ShiftCode(base, x, -y) #y #what is wrong with this math
 			#print("Checking code " + checkCode)
-			#if !FileAccess.file_exists("user://MapTiles/" + checkCode + ".png"):
-			tex = await $TileDrawer.GetAndProcessData(checkCode, 1)
-				#node = get_node("mapBase/MapTile" + str(x) + str(y))
-				#node.texture = ImageTexture.create_from_image(tex) #update might be faster?
-			textures[x][y] = tex #await $TileDrawer.tile_created
-			#else:
-				#$TileDrawer.AddToQueue(checkCode)
-	
-	for x in tileGridSize:
-		for y in tileGridSize:
-		#for y in range(tileGridSize-1, -1, -1):
-			var t = textures[x][y]
-			if t != null:
+			if !FileAccess.file_exists("user://MapTiles/" + checkCode + ".png"):
+				tex = await $TileDrawerQueued.GetAndProcessData(checkCode, 1)
 				node = get_node("mapBase/MapTile" + str(x) + "_" + str(y))
-				#node.texture.update(t) # = ImageTexture.create_from_image(t) #update might be faster?
-				node.texture = ImageTexture.create_from_image(t) #update might be faster?
-				#node.texture = load("res://PraxisMapper/Resources/grid template.png") #for testing player positioning
+				node.texture = ImageTexture.create_from_image(tex) #update might be faster?
+			#textures[x][y] = tex #await $TileDrawer.tile_created
+			else:
+				await $TileDrawerQueued.AddToQueue(checkCode)
+	
+	#for x in tileGridSize:
+		#for y in tileGridSize:
+		##for y in range(tileGridSize-1, -1, -1):
+			#var t = textures[x][y]
+			#if t != null:
+				#node = get_node("mapBase/MapTile" + str(x) + "_" + str(y))
+				##node.texture.update(t) # = ImageTexture.create_from_image(t) #update might be faster?
+				#node.texture = ImageTexture.create_from_image(t) #update might be faster?
+				##node.texture = load("res://PraxisMapper/Resources/grid template.png") #for testing player positioning
 
 #This is not intended to be a full API, but an example of how you'd check on tap
 #to find which child should respond.
@@ -281,9 +281,11 @@ func ChangeZoom(newZoomFactor):
 	
 
 func UpdateTexture(code, texture):
+	print("updating texture for " + code)
 	var center = PraxisCore.currentPlusCode #lastPlusCode
-	var coords = PlusCodes.GetDistanceCell8s(code, center) 
-	var addendum = str(int(coords.x)) + str(int(coords.y)) #TODO: sometimes has 3 in the x coords, which fails.
+	var coords = PlusCodes.GetDistanceCell8s(code, plusCodeBase) 
+	var addendum = str(int(coords.x)) + "_" + str(abs(int(coords.y))) #TODO: sometimes has 3 in the x coords, which fails.
+	print("updated node is at " + addendum)
 	var tilenode = get_node("mapBase/MapTile" + addendum)
 	if (tilenode != null):
 		tilenode.texture = ImageTexture.create_from_image(texture) #update might be faster?

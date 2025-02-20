@@ -6,6 +6,9 @@ class_name SingleTileQueued
 #Should not need multiple tiles for full-detail data, since it can be
 #checked directly now.
 
+#TODO: should probably use a semaphor to do this properly on a background thread,
+#as long as a background thread can create/save images.
+
 signal tile_created(code, texture)
 
 var plusCode6 = ""
@@ -16,18 +19,13 @@ var tilesToDraw = []
 
 @export var drawnStyle = "mapTiles"
 @export var makeMapTile = true
-#@export var makeTerrainTile = false
-#@export var makeNameTile = false
-#@export var makeBoundsTile = false
-#@export var makeThumbnail = false
-#@export var thumbnailScale = 0.08
 @export var alwaysDrawNewTile = false
 
 func AddToQueue(code):
 	if !tilesToDraw.has(code):
 		tilesToDraw.push_back(code)
 		if (!busy):
-			RunQueue()
+			await RunQueue()
 		else:
 			print("queue is busy, not running")
 		
@@ -37,11 +35,12 @@ func RunQueue():
 	#print("Running queue")
 	busy = true
 	while tilesToDraw.size() > 0:
+		print("tiles queued:" + str(tilesToDraw.size()))
 		var tile = tilesToDraw.pop_back()
 		#print("popped " + tile)
 		var img = await GetAndProcessData(tile)
 		tile_created.emit(tile, img)
-	#print("Queue complete")
+	print("Queue complete")
 	busy = false
 	
 
@@ -52,8 +51,9 @@ func GetAndProcessData(plusCode, scale = 1):
 		var fileForSize = FileAccess.open("user://MapTiles/" + plusCode + ".png", FileAccess.READ)
 		if !fileForSize.get_length() <= 1539: #magic number that lines up to a blank image.
 			var img = await Image.load_from_file("user://MapTiles/" + plusCode + ".png")
-			tile_created.emit(plusCode, img)
+			#tile_created.emit(plusCode, img)
 			fileForSize.close()
+			print("emitted existing file for " + plusCode)
 			return img #ImageTexture.create_from_image(img)
 		fileForSize.close()
 	
@@ -83,11 +83,12 @@ func GetAndProcessData(plusCode, scale = 1):
 	print("being tile making")
 	var tex = await CreateTile(oneTile) #Godot runs slow while this does work and waits for frames.
 	$Banner.visible = false
-	tile_created.emit(plusCode, tex)
+	#tile_created.emit(plusCode, tex)
 	return tex
 	
 func CreateTile(oneTile = null):
 	if mapData == null:
+		print("no map data, abort create tile.")
 		return
 		
 	print("CreateTileCalled")
