@@ -27,40 +27,58 @@ offset_top = 347.0
 offset_right = 919.0
 offset_bottom = 1699.0
 spacing = 2
+zoomFactors = [0.125, 0.25, 0.5, 1.0, 1.5, 2.0, 4.0]
 
-[node name="ColorRect" type="ColorRect" parent="."]
-visible = false
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 483.0
-offset_top = 1005.0
-offset_right = 558.0
-offset_bottom = 1062.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 1)
+[node name="crHeader" type="ColorRect" parent="."]
+offset_left = -4.0
+offset_top = 16.0
+offset_right = 1076.0
+offset_bottom = 353.0
+color = Color(0.0901961, 0, 0.0156863, 1)
 
-[node name="btnZoomIn" type="Button" parent="."]
-offset_right = 112.0
-offset_bottom = 60.0
+[node name="btnZoomIn" type="Button" parent="crHeader"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 257.0
+offset_right = 130.0
+offset_bottom = 317.0
 text = "Zoom In"
 
-[node name="btnZoomOut" type="Button" parent="."]
-offset_left = 220.0
-offset_top = 2.0
-offset_right = 350.0
-offset_bottom = 57.0
+[node name="btnZoomOut" type="Button" parent="crHeader"]
+layout_mode = 0
+offset_left = 247.0
+offset_top = 261.0
+offset_right = 377.0
+offset_bottom = 316.0
 text = "Zoom Out
 "
 
-[node name="btnCtdToggle" type="Button" parent="."]
-offset_left = 509.0
-offset_top = -4.0
-offset_right = 639.0
-offset_bottom = 51.0
+[node name="btnCtdToggle" type="Button" parent="crHeader"]
+layout_mode = 0
+offset_left = 639.0
+offset_top = 263.0
+offset_right = 801.0
+offset_bottom = 318.0
 text = "Toggle Cell Trackers"
+
+[node name="Label" type="Label" parent="crHeader"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "Scrolling Centered Map"
+
+[node name="Label2" type="Label" parent="crHeader"]
+layout_mode = 0
+offset_left = 22.0
+offset_top = 27.0
+offset_right = 1043.0
+offset_bottom = 258.0
+text = "ScrollingCenteredMap2 is intended to be the core of most game's map screens. This is a huge improvement for both developers and users.
+
+For devs, the single biggest improvement is that you can draw the control on the scene and it will automatically fill the area with sufficient map tiles.
+ Users can zoom in and out if buttons are provided. This scene has custom zoom limits at unreasonable levels, to demonstrate the scene's capacity and performance.
+
+CellTrackers can be toggled and automatically match the map tiles underneath. "
+autowrap_mode = 3
 
 [node name="CellTracker" parent="." instance=ExtResource("3_sgwll")]

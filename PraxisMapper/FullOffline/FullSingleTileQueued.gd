@@ -35,6 +35,7 @@ func RunQueue():
 	#print("Running queue")
 	busy = true
 	while tilesToDraw.size() > 0:
+		$Banner.visible = true
 		print("tiles queued:" + str(tilesToDraw.size()))
 		var tile = tilesToDraw.pop_back()
 		#print("popped " + tile)

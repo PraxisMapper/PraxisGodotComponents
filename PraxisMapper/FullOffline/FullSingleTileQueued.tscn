@@ -22,6 +22,7 @@ script = ExtResource("2_wqwey")
 anchor_mode = 0
 
 [node name="Banner" type="Node2D" parent="."]
+visible = false
 z_index = 3
 
 [node name="ColorRect" type="ColorRect" parent="Banner"]

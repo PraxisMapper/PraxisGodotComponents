@@ -8,6 +8,9 @@ extends Control
 # - This version can toggle the celltrackerdrawers and create those as well.
 # - This version includes built-in zoom options. The controls for those can be connected via signals.
 
+#TODO: size may need to be + 3 to ensure the area is covered entirely instead of +1. Might be more complex?
+
+#TODO: with the queue drawer, I should update all tiles when I move, not ignore the process. Maybe can remove that process flag.
 
 var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer.tscn")
 
@@ -33,6 +36,8 @@ var lastPlusCode = '' #Might be replaceable with odl in the change call
 var currentOffset = Vector2(0,0) #Pixels offset for scrolling purposes, referenced by other controls
 var plusCodeBase = '22334455+2X' #The plusCode used for the upper-left corner of the area and referenced by other
 
+
+var noiseTile = preload("res://PraxisMapper/Resources/noisetile.png")
 #This is actually the ADJUSTMENT to center the controls. Not the literal center.
 var controlCenter = Vector2(0,0)
 
@@ -41,8 +46,8 @@ func _ready():
 	Setup()
 	$playerIndicator.visible = showPlayerArrow
 	$centerIndicator.visible = false
-	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
 	$TileDrawerQueued.tile_created.connect(UpdateTexture)
+	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
 	
 func ToggleShowCellTrackerDrawers():
 	showCellTrackers = !showCellTrackers
@@ -67,7 +72,7 @@ func Setup():
 		print("auto-pick size based on: " + str(size))
 		var gridSize = max(size.x / 320 / zoomFactor, size.y / 500 / zoomFactor) 
 		if (gridSize > int(gridSize) or gridSize == 0): #check for any remainder 
-			gridSize = int(gridSize) + 1 #scale up to whole tile.
+			gridSize = int(gridSize) + 1 #scale up to whole tile, then add 2 for coverage
 		if gridSize < 3:
 			gridSize = 3
 		print("Size is " + str(gridSize))
@@ -94,7 +99,7 @@ func Setup():
 			if (useCellTrackers):
 				var newCellTracker = cellTrackerDrawerPL.instantiate()
 				newCellTracker.set_name("CTD" + str(x) + "_" + str(y))
-				newCellTracker.scale = Vector2(16,25) #defaults to a 20x20px square, scale this to match tiles.
+				newCellTracker.scale = Vector2(16,25) * Vector2(zoomFactor, zoomFactor) #defaults to a 20x20px square, scale this to match tiles.
 				 #TODO: will need to fix this to be the same Y position logic above.
 				newCellTracker.position = Vector2(x * 320 * zoomFactor + (x * spacing), y * 500 * zoomFactor + (y * spacing))
 				$cellTrackerDrawers.add_child(newCellTracker)
@@ -132,9 +137,9 @@ func Setup():
 	RefreshTiles(PraxisCore.currentPlusCode) 
 
 func plusCode_changed(current, old):
-	if process == false:
-		print("skipping a process run, busy.")
-		return
+	#if process == false:
+		#print("skipping a process run, busy.")
+		#return
 
 	if !visible:
 		return
@@ -145,7 +150,7 @@ func plusCode_changed(current, old):
 		var ctdNode = get_node("cellTrackerDrawers/CTD" + str(tileDist.x) + "_" + str(abs(tileDist.y)))
 		ctdNode.DrawCellTracker($CellTracker, current)
 	
-	process = false #Block this from being called again while we run.
+	#process = false #Block this from being called again while we run.
 	if current.substr(0,8) != lastPlusCode.substr(0,8): # old.substr(0,8):
 		#process = false
 		await RefreshTiles(current)
@@ -181,11 +186,11 @@ func plusCode_changed(current, old):
 	$trackedChildren.position = $mapBase.position - position #works but doesnt feel right for some reason.
 	
 	lastPlusCode = current
-	if process == false:
-		process = true
-		if current != PraxisCore.currentPlusCode:
-			print("refreshing scrolling centered map after process run")
-			plusCode_changed(PraxisCore.currentPlusCode, lastPlusCode)
+	#if process == false:
+		#process = true
+		#if current != PraxisCore.currentPlusCode:
+			#print("refreshing scrolling centered map after process run")
+			#plusCode_changed(PraxisCore.currentPlusCode, lastPlusCode)
 
 func getDrawingOffset(plusCode):
 	var offset = PlusCodes.GetDistanceCell10s(plusCodeBase, plusCode)
@@ -234,14 +239,14 @@ func RefreshTiles(current):
 			if useCellTrackers and showCellTrackers:
 				node = get_node("cellTrackerDrawers/CTD" + str(x) + "_" + str(y))
 				node.DrawCellTracker($CellTracker, checkCode)
-			
-			if !FileAccess.file_exists("user://MapTiles/" + checkCode + ".png"):
+				
+			node = get_node("mapBase/MapTile" + str(x) + "_" + str(y))
+			if FileAccess.file_exists("user://MapTiles/" + checkCode + ".png"):
 				tex = await $TileDrawerQueued.GetAndProcessData(checkCode, 1)
-				node = get_node("mapBase/MapTile" + str(x) + "_" + str(y))
-				node.texture = ImageTexture.create_from_image(tex) #update might be faster?
-			#textures[x][y] = tex #await $TileDrawer.tile_created
+				node.texture = ImageTexture.create_from_image(tex) #update might be faster? Doesnt seem like it in testing.
 			else:
-				await $TileDrawerQueued.AddToQueue(checkCode)
+				node.texture = noiseTile
+				$TileDrawerQueued.AddToQueue(checkCode)
 	
 	#for x in tileGridSize:
 		#for y in tileGridSize:
@@ -287,14 +292,6 @@ func ChangeZoom(newZoomFactor):
 	tileGridSize = -1
 	Setup()
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
-	#TODO: OK, changing zoom does NOT mean the center changed. That value stays the same.
-	#BUT we need to move all the tile components to stay touching or else 
-	#zoomFactor is a multiplier, so zooming IN means the number is bigger to make tiles bigger
-	#and zooming OUT means the number is smaller to make tiles smaller.
-	#HMM: do I want to draw more tiles if we zoom out? That might be a later step in figuring this out.
-	#actually, that wasn't too hard to get the map layer set. Now I need to figure out how to reposition
-	#it correctly to match the map size.
-	
 
 func UpdateTexture(code, texture):
 	print("updating texture for " + code)
