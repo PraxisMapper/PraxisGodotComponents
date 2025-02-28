@@ -10,7 +10,8 @@ extends Control
 
 #TODO: size may need to be + 3 to ensure the area is covered entirely instead of +1. Might be more complex?
 
-#TODO: with the queue drawer, I should update all tiles when I move, not ignore the process. Maybe can remove that process flag.
+#TODO: extreme zoom out (<0.25) reveals that positioning for player and child nodes are SLIGHTLY OFF
+
 
 var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer.tscn")
 
@@ -25,6 +26,8 @@ var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer
 #TODO: may need to be passed in specific CellTracker object to draw?
 ## If true, displays an arrow showing the location and direction of the player
 @export var showPlayerArrow = true
+## if true, child nodes the map tracks will be scaled to match the map size.
+@export var scaleAttachedChildren = true
 
 ## What scaling factors are available to the player. Must be in order from smallest to largest.
 @export var zoomFactors = [0.25, 0.5, 1.0, 1.5, 2.0]
@@ -54,7 +57,6 @@ func ToggleShowCellTrackerDrawers():
 	if (showCellTrackers):
 		RefreshTiles(PraxisCore.currentPlusCode)
 	$cellTrackerDrawers.visible = showCellTrackers
-	
 
 func _process(delta):
 	$playerIndicator.rotation = PraxisCore.GetCompassHeading()
@@ -134,6 +136,14 @@ func Setup():
 	$playerIndicator.rotation = 0
 	$playerIndicator.global_position = visibleCenter + Vector2(8 * zoomFactor, -20 * zoomFactor)
 	$playerIndicator.z_index = 2
+	
+	#TODO: allow this to pull a list of tracked children automatically, somehow?
+	#for now, just use the ones we've been assigned.
+	
+	var children = $trackedChildren.get_children()
+	for c in children:
+		UpdateChildNode(c)
+
 	RefreshTiles(PraxisCore.currentPlusCode) 
 
 func plusCode_changed(current, old):
@@ -154,11 +164,6 @@ func plusCode_changed(current, old):
 	if current.substr(0,8) != lastPlusCode.substr(0,8): # old.substr(0,8):
 		#process = false
 		await RefreshTiles(current)
-		var children = $trackedChildren.get_children()
-		for c in children:
-			var offset = getDrawingOffset(c.get_meta("originalLocation", ""))
-			if offset != null:
-				c.position = offset
 
 	#Now scroll mapBase to the right spot.
 	var currentXPos = PlusCodes.RemovePlus(current).substr(9,1)
@@ -172,18 +177,12 @@ func plusCode_changed(current, old):
 		var lastIndex = PlusCodes.CODE_ALPHABET_.find(PlusCodes.RemovePlus(current).substr(10,1))
 		xShift += lastIndex % 4
 		yShift += lastIndex / 4
-	
-	#print("current pos:" + currentXPos + "," + currentYPos)
-	
-	#print($trackedChildren.get_children().size())
-	
+		
 	currentOffset = Vector2(xShift, -yShift) #How many pixels to move in each direction
-	#print(currentOffset)
 	var shifting = currentOffset * Vector2(zoomFactor, zoomFactor)
-	#print("Shifting mapBase pixels: " + str(shifting))
 	$mapBase.position = controlCenter + shifting
 	$cellTrackerDrawers.position = controlCenter + shifting
-	$trackedChildren.position = $mapBase.position - position #works but doesnt feel right for some reason.
+	$trackedChildren.position = $mapBase.position #- position #works but doesnt feel right for some reason.
 	
 	lastPlusCode = current
 	#if process == false:
@@ -193,24 +192,16 @@ func plusCode_changed(current, old):
 			#plusCode_changed(PraxisCore.currentPlusCode, lastPlusCode)
 
 func getDrawingOffset(plusCode):
-	var offset = PlusCodes.GetDistanceCell10s(plusCodeBase, plusCode)
-	#First vector converts to Cell12 pixels, 2nd accommodates non-origin position of map
-	return offset * Vector2(-16,25) * Vector2(zoomFactor, zoomFactor) + position  #TODO: may need updated to handle grid no longer having negative entries
-	
-	#Dont move the map for Cell11s right now.
-	#if PlusCodes.RemovePlus(plusCode).length == 11:
-		#var charVal = PlusCodes.GetLetterIndex(plusCode.right(1))
-		#offset += Vector2(charVal % 4, charVal / 4)
-	#else:
-		#centers item in cell10 instead of lower-left corner
-		#offset += Vector2(8, 13)
+	#TODO: is still off by a small amount at very high zoom levels (< .25)
+	var offset = PlusCodes.GetDistanceCell10s(plusCode, plusCodeBase)
+	#First vector converts to Cell12 pixels, 2nd accommodates zoom
+	return offset * Vector2(16,-25) * Vector2(zoomFactor, zoomFactor)
 	
 func trackChildOnMap(node, plusCodePosition):
 	if (plusCodePosition == null):
 		return
-	var offset = getDrawingOffset(plusCodePosition)
-	node.position = offset
 	node.set_meta("originalLocation", plusCodePosition)
+	UpdateChildNode(node)
 	$trackedChildren.add_child(node)
 
 func clearAllTrackedChildren():
@@ -218,8 +209,9 @@ func clearAllTrackedChildren():
 		tc.queue_free()
 
 func RefreshTiles(current):
+	#print(str($trackedChildren.get_child_count()) + " tracked children")
 	var baseShift = int(tileGridSize / 2)
-	print("shifting " + str(baseShift) + " from grid size " + str(tileGridSize))
+	#print("shifting " + str(baseShift) + " from grid size " + str(tileGridSize))
 	if current == null:
 		current = PraxisCore.currentPlusCode
 	plusCodeBase = PlusCodes.ShiftCode(current.substr(0,8), -baseShift, baseShift) + "X2" #correct
@@ -247,6 +239,9 @@ func RefreshTiles(current):
 			else:
 				node.texture = noiseTile
 				$TileDrawerQueued.AddToQueue(checkCode)
+	
+	for child in $trackedChildren.get_children():
+			UpdateChildNode(child)
 	
 	#for x in tileGridSize:
 		#for y in tileGridSize:
@@ -293,6 +288,13 @@ func ChangeZoom(newZoomFactor):
 	Setup()
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
 
+func UpdateChildNode(child):
+	var offset = getDrawingOffset(child.get_meta("originalLocation", ""))
+	print("child added at " + str(offset))
+	child.position = offset
+	if scaleAttachedChildren == true:
+		child.scale = Vector2(zoomFactor, zoomFactor) 
+
 func UpdateTexture(code, texture):
 	print("updating texture for " + code)
 	var center = PraxisCore.currentPlusCode #lastPlusCode
@@ -304,7 +306,3 @@ func UpdateTexture(code, texture):
 		tilenode.texture = ImageTexture.create_from_image(texture) #update might be faster?
 	else:
 		print("couldnt get node for tile at " + addendum)
-
-func DrawGrid():
-	pass
-	#TODO: Overlay a grid to help indicate Cell10s on each tile. Maybe Cell8s as an option?

@@ -76,7 +76,7 @@ offset_bottom = 258.0
 text = "ScrollingCenteredMap2 is intended to be the core of most game's map screens. This is a huge improvement for both developers and users.
 
 For devs, the single biggest improvement is that you can draw the control on the scene and it will automatically fill the area with sufficient map tiles.
- Users can zoom in and out if buttons are provided. This scene has custom zoom limits at unreasonable levels, to demonstrate the scene's capacity and performance.
+ Users can zoom in and out if buttons are provided. This scene has custom zoom limits at unreasonable levels (up to a 22x22 grid), to demonstrate the scene's capacity and performance.
 
 CellTrackers can be toggled and automatically match the map tiles underneath. "
 autowrap_mode = 3

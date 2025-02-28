@@ -54,7 +54,7 @@ func GetAndProcessData(plusCode, scale = 1):
 			var img = await Image.load_from_file("user://MapTiles/" + plusCode + ".png")
 			#tile_created.emit(plusCode, img)
 			fileForSize.close()
-			print("emitted existing file for " + plusCode)
+			#print("emitted existing file for " + plusCode)
 			return img #ImageTexture.create_from_image(img)
 		fileForSize.close()
 	
