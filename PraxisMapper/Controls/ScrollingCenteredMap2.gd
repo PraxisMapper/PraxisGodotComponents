@@ -12,9 +12,6 @@ extends Control
 #TODO: size may need to be + 3 to ensure the area is covered entirely instead of +1. Might be more complex?
 #TODO: extreme zoom out (<0.25) reveals that positioning for player and child nodes are SLIGHTLY OFF when padding is > 0
 
-#next priorities:
-#TODO: finish up and test automated child node tracking (function needs to be called with (baseCode, tileGridSize)
-
 #TODO documentation on tracking:
 #Autotracking requires an object with a meta property of "location" or the string? Probably meta property
 #manual tracking passes in a string for the location. 
@@ -47,7 +44,7 @@ var loadTrackables = null
 var currentlyTracked = {}
 
 ## If true, the map calls queue_free on trackable when changing map tiles. If false, they are only removed from the tree.
-var freeRemovedTrackables = true
+@export var freeRemovedTrackables = true
 
 var lastPlusCode = '' #Might be replaceable with odl in the change call
 var currentOffset = Vector2(0,0) #Pixels offset for scrolling purposes, referenced by other controls
@@ -245,7 +242,7 @@ func RefreshTiles(current):
 		clearAllTrackedChildren()
 		var newTrackables = loadTrackables.call(base, tileGridSize)
 		for codes in newTrackables:
-			for newnode in newTrackables[codes]:
+			for newnode in newTrackables:
 				trackChildOnMap(newnode, newnode.get_meta("location"))
 	else: #manual tracking
 		for child in $trackedChildren.get_children():

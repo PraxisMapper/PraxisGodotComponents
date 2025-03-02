@@ -27,6 +27,7 @@ offset_top = 347.0
 offset_right = 919.0
 offset_bottom = 1699.0
 zoomFactors = [0.125, 0.25, 0.5, 1.0, 1.5, 2.0, 4.0]
+freeRemovedTrackables = false
 
 [node name="crHeader" type="ColorRect" parent="."]
 offset_right = 1080.0
