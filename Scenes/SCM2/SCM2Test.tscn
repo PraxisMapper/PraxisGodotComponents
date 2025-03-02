@@ -26,14 +26,11 @@ offset_left = 106.0
 offset_top = 347.0
 offset_right = 919.0
 offset_bottom = 1699.0
-spacing = 2
 zoomFactors = [0.125, 0.25, 0.5, 1.0, 1.5, 2.0, 4.0]
 
 [node name="crHeader" type="ColorRect" parent="."]
-offset_left = -4.0
-offset_top = 16.0
-offset_right = 1076.0
-offset_bottom = 353.0
+offset_right = 1080.0
+offset_bottom = 337.0
 color = Color(0.0901961, 0, 0.0156863, 1)
 
 [node name="btnZoomIn" type="Button" parent="crHeader"]
@@ -73,10 +70,9 @@ offset_left = 22.0
 offset_top = 27.0
 offset_right = 1043.0
 offset_bottom = 258.0
-text = "ScrollingCenteredMap2 is intended to be the core of most game's map screens. This is a huge improvement for both developers and users.
+text = "ScrollingCenteredMap2 is intended to be the core of most game's map screens. It handles automatically resizing itself, centered on the indicated position in the scene edtior, zooming in and out with configurable thresholds, and can automatically move nodes passed in via trackChildOnMap() or from a function set to loadTrackables.
 
-For devs, the single biggest improvement is that you can draw the control on the scene and it will automatically fill the area with sufficient map tiles.
- Users can zoom in and out if buttons are provided. This scene has custom zoom limits at unreasonable levels (up to a 22x22 grid), to demonstrate the scene's capacity and performance.
+ This scene has custom zoom limits at unreasonable levels (up to a 22x22 grid), to demonstrate the scene's capacity and performance.
 
 CellTrackers can be toggled and automatically match the map tiles underneath. "
 autowrap_mode = 3

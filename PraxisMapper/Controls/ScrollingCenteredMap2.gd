@@ -7,11 +7,17 @@ extends Control
 # - This version includes the player indicator arrow
 # - This version can toggle the celltrackerdrawers and create those as well.
 # - This version includes built-in zoom options. The controls for those can be connected via signals.
+# - This version can call a function that return what object to track on the map automatically
 
 #TODO: size may need to be + 3 to ensure the area is covered entirely instead of +1. Might be more complex?
+#TODO: extreme zoom out (<0.25) reveals that positioning for player and child nodes are SLIGHTLY OFF when padding is > 0
 
-#TODO: extreme zoom out (<0.25) reveals that positioning for player and child nodes are SLIGHTLY OFF
+#next priorities:
+#TODO: finish up and test automated child node tracking (function needs to be called with (baseCode, tileGridSize)
 
+#TODO documentation on tracking:
+#Autotracking requires an object with a meta property of "location" or the string? Probably meta property
+#manual tracking passes in a string for the location. 
 
 var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer.tscn")
 
@@ -34,11 +40,18 @@ var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer
 ## The starting zoom factor. Must be one of the values in zoomFactors.
 @export var zoomFactor = 1.0
 
-var process = true
+#This should let the map handle loading/unloading nodes automatically.
+## the Callable to pass the current plus code and tile grid size to find what to place on each map tile. 
+## Must return an array of Nodes, and each much have a meta property 'location' set to a Cell10.
+var loadTrackables = null
+var currentlyTracked = {}
+
+## If true, the map calls queue_free on trackable when changing map tiles. If false, they are only removed from the tree.
+var freeRemovedTrackables = true
+
 var lastPlusCode = '' #Might be replaceable with odl in the change call
 var currentOffset = Vector2(0,0) #Pixels offset for scrolling purposes, referenced by other controls
 var plusCodeBase = '22334455+2X' #The plusCode used for the upper-left corner of the area and referenced by other
-
 
 var noiseTile = preload("res://PraxisMapper/Resources/noisetile.png")
 #This is actually the ADJUSTMENT to center the controls. Not the literal center.
@@ -82,7 +95,6 @@ func Setup():
 	
 	#Create all tiles
 	for x in tileGridSize:
-		#for y in tileGridSize:
 		for y in range(tileGridSize -1, -1, -1):
 			#create the new tile
 			var newTile = TextureRect.new()
@@ -102,11 +114,9 @@ func Setup():
 				var newCellTracker = cellTrackerDrawerPL.instantiate()
 				newCellTracker.set_name("CTD" + str(x) + "_" + str(y))
 				newCellTracker.scale = Vector2(16,25) * Vector2(zoomFactor, zoomFactor) #defaults to a 20x20px square, scale this to match tiles.
-				 #TODO: will need to fix this to be the same Y position logic above.
 				newCellTracker.position = Vector2(x * 320 * zoomFactor + (x * spacing), y * 500 * zoomFactor + (y * spacing))
 				$cellTrackerDrawers.add_child(newCellTracker)
 	
-	#var mapCenter = Vector2(tileGridSize * 160, tileGridSize * 250)
 	var expectedCenter = size / 2 * zoomFactor# The pixel we shows to the developer was the center.
 	
 	#Transform steps:
@@ -115,7 +125,6 @@ func Setup():
 	#3: Identify the displayed, intended center of the map as global coordinates
 	#4: Shift mapBase enough to make mapCenter = visibleCenter
 	$mapBase.position = Vector2(0,0)
-	$cellTrackerDrawers.position = Vector2(0,0)
 	var startingPoint = $mapBase.global_position
 	print(startingPoint)
 	var mapCenter = startingPoint + Vector2(tileGridSize * 160 * zoomFactor, tileGridSize * 250 * zoomFactor)
@@ -137,32 +146,27 @@ func Setup():
 	$playerIndicator.global_position = visibleCenter + Vector2(8 * zoomFactor, -20 * zoomFactor)
 	$playerIndicator.z_index = 2
 	
-	#TODO: allow this to pull a list of tracked children automatically, somehow?
-	#for now, just use the ones we've been assigned.
-	
-	var children = $trackedChildren.get_children()
-	for c in children:
-		UpdateChildNode(c)
-
 	RefreshTiles(PraxisCore.currentPlusCode) 
 
-func plusCode_changed(current, old):
-	#if process == false:
-		#print("skipping a process run, busy.")
-		#return
+func AdjustBanner(positionVec2, sizeVec2):
+	#this is for the dev to reposition the drawing/downloading banners on the map.
+	#TODO: finish testing this.
+	$TileDrawerQueued/Banner.global_position = positionVec2
+	$TileDrawerQueued/Banner/ColorRect.size = sizeVec2
+	$TileDrawerQueued/Banner/Status.size = sizeVec2
+	$TileDrawerQueued/Banner/Status.set("theme_override_font_sizes/font_size", sizeVec2.y * 0.8)
 
+func plusCode_changed(current, old):
 	if !visible:
 		return
 	
-	#TODO: find the center/current tile's cell tracker drawer and update it
+	#find the center/current tile's cell tracker drawer and update it
 	if (useCellTrackers and showCellTrackers):
 		var tileDist = PlusCodes.GetDistanceCell8s(current, plusCodeBase)
 		var ctdNode = get_node("cellTrackerDrawers/CTD" + str(tileDist.x) + "_" + str(abs(tileDist.y)))
 		ctdNode.DrawCellTracker($CellTracker, current)
 	
-	#process = false #Block this from being called again while we run.
-	if current.substr(0,8) != lastPlusCode.substr(0,8): # old.substr(0,8):
-		#process = false
+	if current.substr(0,8) != lastPlusCode.substr(0,8):
 		await RefreshTiles(current)
 
 	#Now scroll mapBase to the right spot.
@@ -173,26 +177,22 @@ func plusCode_changed(current, old):
 	var yIndex = PlusCodes.CODE_ALPHABET_.find(currentYPos)
 	var yShift = (PraxisCore.mapTileHeight / 2) - (PraxisCore.mapTileHeight / 20) * yIndex #* zoomFactor
 	
-	if PlusCodes.RemovePlus(current).length() == 11:
-		var lastIndex = PlusCodes.CODE_ALPHABET_.find(PlusCodes.RemovePlus(current).substr(10,1))
-		xShift += lastIndex % 4
-		yShift += lastIndex / 4
+	#THis doenst do anything right now
+	#if PlusCodes.RemovePlus(current).length() == 11:
+		#var lastIndex = PlusCodes.CODE_ALPHABET_.find(PlusCodes.RemovePlus(current).substr(10,1))
+		#xShift += lastIndex % 4
+		#yShift += lastIndex / 4
 		
 	currentOffset = Vector2(xShift, -yShift) #How many pixels to move in each direction
 	var shifting = currentOffset * Vector2(zoomFactor, zoomFactor)
 	$mapBase.position = controlCenter + shifting
 	$cellTrackerDrawers.position = controlCenter + shifting
-	$trackedChildren.position = $mapBase.position #- position #works but doesnt feel right for some reason.
+	$trackedChildren.position = $mapBase.position
 	
 	lastPlusCode = current
-	#if process == false:
-		#process = true
-		#if current != PraxisCore.currentPlusCode:
-			#print("refreshing scrolling centered map after process run")
-			#plusCode_changed(PraxisCore.currentPlusCode, lastPlusCode)
 
 func getDrawingOffset(plusCode):
-	#TODO: is still off by a small amount at very high zoom levels (< .25)
+	#TODO: is still off by a small amount at very high zoom levels (< .25) if padding > 0
 	var offset = PlusCodes.GetDistanceCell10s(plusCode, plusCodeBase)
 	#First vector converts to Cell12 pixels, 2nd accommodates zoom
 	return offset * Vector2(16,-25) * Vector2(zoomFactor, zoomFactor)
@@ -200,18 +200,19 @@ func getDrawingOffset(plusCode):
 func trackChildOnMap(node, plusCodePosition):
 	if (plusCodePosition == null):
 		return
-	node.set_meta("originalLocation", plusCodePosition)
+	node.set_meta("location", plusCodePosition)
 	UpdateChildNode(node)
 	$trackedChildren.add_child(node)
 
 func clearAllTrackedChildren():
 	for tc in $trackedChildren.get_children():
-		tc.queue_free()
+		if freeRemovedTrackables == true:
+			tc.queue_free()
+		else:
+			$trackedChildren.remove_child(tc)
 
 func RefreshTiles(current):
-	#print(str($trackedChildren.get_child_count()) + " tracked children")
 	var baseShift = int(tileGridSize / 2)
-	#print("shifting " + str(baseShift) + " from grid size " + str(tileGridSize))
 	if current == null:
 		current = PraxisCore.currentPlusCode
 	plusCodeBase = PlusCodes.ShiftCode(current.substr(0,8), -baseShift, baseShift) + "X2" #correct
@@ -226,7 +227,7 @@ func RefreshTiles(current):
 		#print("x row " + str(x))
 		textures[x] = {}
 		for y in tileGridSize:
-			var checkCode = PlusCodes.ShiftCode(base, x, -y) #y #what is wrong with this math
+			var checkCode = PlusCodes.ShiftCode(base, x, -y)
 			#print("Checking code " + checkCode)
 			if useCellTrackers and showCellTrackers:
 				node = get_node("cellTrackerDrawers/CTD" + str(x) + "_" + str(y))
@@ -240,18 +241,15 @@ func RefreshTiles(current):
 				node.texture = noiseTile
 				$TileDrawerQueued.AddToQueue(checkCode)
 	
-	for child in $trackedChildren.get_children():
+	if loadTrackables != null: #Automatic tracking. May not be the most optimized behavior but should work
+		clearAllTrackedChildren()
+		var newTrackables = loadTrackables.call(base, tileGridSize)
+		for codes in newTrackables:
+			for newnode in newTrackables[codes]:
+				trackChildOnMap(newnode, newnode.get_meta("location"))
+	else: #manual tracking
+		for child in $trackedChildren.get_children():
 			UpdateChildNode(child)
-	
-	#for x in tileGridSize:
-		#for y in tileGridSize:
-		##for y in range(tileGridSize-1, -1, -1):
-			#var t = textures[x][y]
-			#if t != null:
-				#node = get_node("mapBase/MapTile" + str(x) + "_" + str(y))
-				##node.texture.update(t) # = ImageTexture.create_from_image(t) #update might be faster?
-				#node.texture = ImageTexture.create_from_image(t) #update might be faster?
-				##node.texture = load("res://PraxisMapper/Resources/grid template.png") #for testing player positioning
 
 #This is not intended to be a full API, but an example of how you'd check on tap
 #to find which child should respond.
@@ -267,7 +265,6 @@ func GetNearestTrackedChild(event: InputEventMouseButton):
 		if dist < closestDist:
 			closestDist = dist
 			closestNode = node
-	
 	return closestNode
 
 func zoomOut():
@@ -289,18 +286,15 @@ func ChangeZoom(newZoomFactor):
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
 
 func UpdateChildNode(child):
-	var offset = getDrawingOffset(child.get_meta("originalLocation", ""))
-	print("child added at " + str(offset))
+	var offset = getDrawingOffset(child.get_meta("location", ""))
 	child.position = offset
 	if scaleAttachedChildren == true:
 		child.scale = Vector2(zoomFactor, zoomFactor) 
 
 func UpdateTexture(code, texture):
-	print("updating texture for " + code)
 	var center = PraxisCore.currentPlusCode #lastPlusCode
 	var coords = PlusCodes.GetDistanceCell8s(code, plusCodeBase) 
 	var addendum = str(int(coords.x)) + "_" + str(abs(int(coords.y))) #TODO: sometimes has 3 in the x coords, which fails.
-	print("updated node is at " + addendum)
 	var tilenode = get_node("mapBase/MapTile" + addendum)
 	if (tilenode != null):
 		tilenode.texture = ImageTexture.create_from_image(texture) #update might be faster?
