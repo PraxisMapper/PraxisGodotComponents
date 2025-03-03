@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://kk0c46npchuf"]
 
-[ext_resource type="Script" path="res://Scenes/GpsTest.gd" id="1_2jlo1"]
+[ext_resource type="Script" uid="uid://c2qbfg8gf0xih" path="res://Scenes/GpsTest.gd" id="1_2jlo1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_at7rn"]
 bg_color = Color(0, 0.713726, 0.423529, 1)

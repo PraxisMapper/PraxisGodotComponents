@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://i7s1o6y03ab0"]
 
-[ext_resource type="Script" path="res://PraxisMapper/Controls/ScrollingCenteredMap.gd" id="1_17115"]
+[ext_resource type="Script" uid="uid://vqjj1r11d85c" path="res://PraxisMapper/Controls/ScrollingCenteredMap.gd" id="1_17115"]
 [ext_resource type="PackedScene" uid="uid://b16445g8mkbaa" path="res://PraxisMapper/FullOffline/FullSingleTile.tscn" id="2_cuosq"]
 
 [node name="ScrollingCenteredMap" type="Node2D"]

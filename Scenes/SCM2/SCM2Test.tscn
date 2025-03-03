@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://cvuybebh615ng"]
 
 [ext_resource type="PackedScene" uid="uid://bpnt0yvbysdow" path="res://PraxisMapper/Controls/ScrollingCenteredMap2.tscn" id="1_2gldk"]
-[ext_resource type="Script" path="res://Scenes/SCM2/scm_2_test.gd" id="1_atrh6"]
+[ext_resource type="Script" uid="uid://dywjhndvkh2e2" path="res://Scenes/SCM2/scm_2_test.gd" id="1_atrh6"]
 [ext_resource type="PackedScene" uid="uid://b2hnhr1t57jm7" path="res://PraxisMapper/Controls/CellTracker.tscn" id="3_sgwll"]
 
 [node name="Scm2Test" type="Node2D"]

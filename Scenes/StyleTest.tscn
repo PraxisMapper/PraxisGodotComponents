@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://djlg1po14eatp"]
 
-[ext_resource type="Script" path="res://Scenes/StyleTest.gd" id="1_fg7xk"]
+[ext_resource type="Script" uid="uid://c15tn7c7wjry7" path="res://Scenes/StyleTest.gd" id="1_fg7xk"]
 [ext_resource type="PackedScene" uid="uid://b16445g8mkbaa" path="res://PraxisMapper/FullOffline/FullSingleTile.tscn" id="2_xhfe6"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_yscx5"]

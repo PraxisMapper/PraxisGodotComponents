@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://iyll55elbeed"]
 
-[ext_resource type="Script" path="res://Scenes/ProxyPlayTest.gd" id="1_lsghb"]
+[ext_resource type="Script" uid="uid://b8dffqww07vm7" path="res://Scenes/ProxyPlayTest.gd" id="1_lsghb"]
 [ext_resource type="PackedScene" uid="uid://i7s1o6y03ab0" path="res://PraxisMapper/Controls/ScrollingCenteredMap.tscn" id="2_echss"]
 [ext_resource type="Texture2D" uid="uid://c3033wigb05gp" path="res://PraxisMapper/Resources/kenney_arrow.png" id="3_ipsbg"]
 

@@ -176,7 +176,8 @@ func plusCode_changed(current, old):
 	if (useCellTrackers and showCellTrackers):
 		var tileDist = PlusCodes.GetDistanceCell8s(current, plusCodeBase)
 		var ctdNode = get_node("cellTrackerDrawers/CTD" + str(tileDist.x) + "_" + str(abs(tileDist.y)))
-		ctdNode.DrawCellTracker($CellTracker, current)
+		if ctdNode != null:
+			ctdNode.DrawCellTracker($CellTracker, current)
 	
 	if current.substr(0,8) != lastPlusCode.substr(0,8):
 		await RefreshTiles(current)

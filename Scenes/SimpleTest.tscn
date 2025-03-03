@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3 uid="uid://c4b6p4t02k1fo"]
 
-[ext_resource type="Script" path="res://Scenes/SimpleTest.gd" id="1_6vkws"]
+[ext_resource type="Script" uid="uid://brqvyncfmgbvw" path="res://Scenes/SimpleTest.gd" id="1_6vkws"]
 [ext_resource type="PackedScene" uid="uid://dlr56hkndvvt0" path="res://PraxisMapper/MinimizedOffline/MinOfflineTiles.tscn" id="2_p3ufm"]
 [ext_resource type="PackedScene" uid="uid://b6cfprdbul55o" path="res://PraxisMapper/FullOffline/FullOfflineTiles.tscn" id="3_r55nv"]
 [ext_resource type="Texture2D" uid="uid://xvyj5uj4aqpi" path="res://PraxisMapper/Resources/LoadingOverlay.png" id="4_wkf1d"]
-[ext_resource type="Script" path="res://PraxisMapper/FullOffline/DrawOfflineTile.gd" id="5_j6odq"]
-[ext_resource type="Script" path="res://PraxisMapper/FullOffline/FullAreaScanner.gd" id="6_rrd5t"]
+[ext_resource type="Script" uid="uid://cncmlr71fddvv" path="res://PraxisMapper/FullOffline/DrawOfflineTile.gd" id="5_j6odq"]
+[ext_resource type="Script" uid="uid://dc48icpsvvyqi" path="res://PraxisMapper/FullOffline/FullAreaScanner.gd" id="6_rrd5t"]
 
 [node name="SimpleTest" type="Node2D"]
 script = ExtResource("1_6vkws")

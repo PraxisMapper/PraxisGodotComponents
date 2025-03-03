@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dg633n4hj6r8l"]
 
-[ext_resource type="Script" path="res://Scenes/OverheadView.gd" id="1_x4bur"]
+[ext_resource type="Script" uid="uid://dhnnm7rrmuivw" path="res://Scenes/OverheadView.gd" id="1_x4bur"]
 
 [node name="OverheadView" type="Node2D"]
 script = ExtResource("1_x4bur")
