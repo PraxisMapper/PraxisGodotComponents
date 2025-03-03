@@ -1,4 +1,7 @@
 extends Node
+#NOTE: this needs to be an autoload/global class, due to signals and helpers that
+#add/remove children to the tree. Those will need to be sorted or handled before
+#this can be reduced to a static class.
 
 #Any universally-helpful functions that aren't specific to an operating mode go here
 #Server calls go to PraxisServer. Offline data loading goes to PraxisOfflineData.
@@ -12,6 +15,7 @@ var debugStartingPlusCode = "85633QG4VV" #Elysian Park, Los Angeles, CA, USA
 #var debugStartingPlusCode = "8Q336FJCRV" #Peoples Park, Shanghai, China
 #var debugStartingPlusCode = "7JWVP5923M" #Shalimar Bagh, Delhi, India
 #var debugStartingPlusCode = "86FRXXXPM8" #Ohio State University, Columbus, OH, USA
+
 
 #System global values
 #Resolution of PlusCode cells in degrees
@@ -67,14 +71,14 @@ func SetProxyPlay(state):
 			playerStart = PlusCodes.Decode(currentPlusCode)
 		lastPlusCode = currentPlusCode
 		currentPlusCode = proxyCode
-		PraxisCore.plusCode_changed.emit(currentPlusCode, lastPlusCode)
+		plusCode_changed.emit(currentPlusCode, lastPlusCode)
 
 func ForceChange(newCode):
 	if newCode.find("+") == -1:
 		newCode = newCode.substr(0,8) + "+" + newCode.substr(8)
 	lastPlusCode = currentPlusCode
 	currentPlusCode = newCode
-	PraxisCore.plusCode_changed.emit(currentPlusCode, lastPlusCode)
+	plusCode_changed.emit(currentPlusCode, lastPlusCode)
 	
 func GetFixedRNGForPluscode(pluscode):
 	var rng = RandomNumberGenerator.new()

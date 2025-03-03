@@ -1,4 +1,5 @@
 extends Node
+class_name PraxisServer
 
 #This is where any server-reliant connections will occur.
 # Values used for login/auth and server comms
@@ -6,7 +7,9 @@ static var username = ''
 static var password = ''
 static var authKey = '' #for normal security with a login
 static var headerKey = '' #for header-only security
-static var serverURL = '' #dedicated games want this to be a fixed value and not entered on the login screen.
+static var serverURL = 'http://localhost:5005'
+#5005 is IPv6 setting for now, 5000 is ipv4
+ #dedicated games want this to be a fixed value and not entered on the login screen.
 #NOTE: serverURL should NOT end with a /. Changed from Solar2D's pattern.
 
 static var reauthCode = 419 #AuthTimeout HTTP response

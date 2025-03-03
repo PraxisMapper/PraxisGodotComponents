@@ -6,13 +6,11 @@ var test2
 var test3
 
 func _ready() -> void:
-	PraxisCore.plusCode_changed.connect($ScrollingCenteredMap.plusCode_changed)
 	$crHeader/btnZoomIn.pressed.connect($ScrollingCenteredMap.zoomIn)
 	$crHeader/btnZoomOut.pressed.connect($ScrollingCenteredMap.zoomOut)
 	$crHeader/btnCtdToggle.pressed.connect($ScrollingCenteredMap.ToggleShowCellTrackerDrawers)
 	
 	$ScrollingCenteredMap.AdjustBanner(Vector2(0, 337), Vector2(1080, 80))
-	
 	
 	test1 = ColorRect.new()
 	test1.color = "FF0000"
@@ -35,9 +33,7 @@ func _ready() -> void:
 	#$ScrollingCenteredMap.trackChildOnMap(test3, "85633QH3+VV") #Blue is a cell8 northwest of start.
 	
 	#Instead, we're using auto-tracking now like this:
-	$ScrollingCenteredMap.loadTrackables = AutoTrack
-	#and because the map's already ready at this point, tell it to update again
-	$ScrollingCenteredMap.RefreshTiles(PraxisCore.currentPlusCode)
+	$ScrollingCenteredMap.SetLoadableSource(AutoTrack)
 
 #This is the easiest example for auto-tracking: A function that returns a fixed set of nodes
 #Most games will probably want to do some logic to pick out which ones to send over for given areas.

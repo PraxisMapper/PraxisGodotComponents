@@ -18,7 +18,6 @@ config/icon="res://PraxisMapper/Resources/PraxisMapperIcon.png"
 
 [autoload]
 
-PraxisServer="*res://PraxisMapper/Scripts/PraxisServer.gd"
 PraxisCore="*res://PraxisMapper/Scripts/PraxisCore.gd"
 
 [display]

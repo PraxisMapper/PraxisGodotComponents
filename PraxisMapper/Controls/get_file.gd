@@ -74,7 +74,7 @@ func getCell6FileSync(plusCode6):
 	$Banner.visible = true
 	
 	await $client.request_completed
-	return
+	#return
 		
 	$Banner/Label.text = "Download Complete"
 	await get_tree().create_timer(2).timeout

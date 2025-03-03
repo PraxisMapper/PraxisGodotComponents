@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://bpnt0yvbysdow"]
+[gd_scene load_steps=6 format=3 uid="uid://bpnt0yvbysdow"]
 
 [ext_resource type="Script" path="res://PraxisMapper/Controls/ScrollingCenteredMap2.gd" id="1_om4r7"]
 [ext_resource type="Texture2D" uid="uid://c3033wigb05gp" path="res://PraxisMapper/Resources/kenney_arrow.png" id="3_mhlsw"]
 [ext_resource type="PackedScene" uid="uid://fipn8k07sdhc" path="res://PraxisMapper/FullOffline/FullSingleTileQueued.tscn" id="3_x4y4u"]
 [ext_resource type="PackedScene" uid="uid://b2hnhr1t57jm7" path="res://PraxisMapper/Controls/CellTracker.tscn" id="5_i08gh"]
+[ext_resource type="PackedScene" uid="uid://bev1jin6r7t6n" path="res://PraxisMapper/Controls/GetFile.tscn" id="5_spgqn"]
 
 [node name="ScrollingCenteredMap" type="Control"]
 layout_mode = 3
@@ -100,3 +101,5 @@ grow_vertical = 2
 color = Color(0.92017, 7.41214e-06, 0.581041, 1)
 
 [node name="CellTracker" parent="." instance=ExtResource("5_i08gh")]
+
+[node name="GetFile" parent="." instance=ExtResource("5_spgqn")]

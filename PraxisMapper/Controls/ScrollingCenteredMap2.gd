@@ -9,12 +9,14 @@ extends Control
 # - This version includes built-in zoom options. The controls for those can be connected via signals.
 # - This version can call a function that return what object to track on the map automatically
 
+#TODO: include auto-download code here. Didn't I make a queued version of GetFile somewhere?
+
 #TODO: size may need to be + 3 to ensure the area is covered entirely instead of +1. Might be more complex?
 #TODO: extreme zoom out (<0.25) reveals that positioning for player and child nodes are SLIGHTLY OFF when padding is > 0
 
-#TODO documentation on tracking:
-#Autotracking requires an object with a meta property of "location" or the string? Probably meta property
-#manual tracking passes in a string for the location. 
+# documentation on tracking:
+# Autotracking requires a Node2D object with a meta property of "location"
+# manual tracking passes in a string for the location. 
 
 var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer.tscn")
 
@@ -36,6 +38,9 @@ var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer
 @export var zoomFactors = [0.25, 0.5, 1.0, 1.5, 2.0]
 ## The starting zoom factor. Must be one of the values in zoomFactors.
 @export var zoomFactor = 1.0
+
+##Automatically download map data from the configured URL in PraxisCore when true and no data is available.
+@export var autoDownload = true
 
 #This should let the map handle loading/unloading nodes automatically.
 ## the Callable to pass the current plus code and tile grid size to find what to place on each map tile. 
@@ -60,6 +65,7 @@ func _ready():
 	$playerIndicator.visible = showPlayerArrow
 	$centerIndicator.visible = false
 	$TileDrawerQueued.tile_created.connect(UpdateTexture)
+	PraxisCore.plusCode_changed.connect(plusCode_changed)
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
 	
 func ToggleShowCellTrackerDrawers():
@@ -147,15 +153,24 @@ func Setup():
 
 func AdjustBanner(positionVec2, sizeVec2):
 	#this is for the dev to reposition the drawing/downloading banners on the map.
-	#TODO: finish testing this.
 	$TileDrawerQueued/Banner.global_position = positionVec2
 	$TileDrawerQueued/Banner/ColorRect.size = sizeVec2
 	$TileDrawerQueued/Banner/Status.size = sizeVec2
 	$TileDrawerQueued/Banner/Status.set("theme_override_font_sizes/font_size", sizeVec2.y * 0.8)
+	
+	$GetFile/Banner.global_position = positionVec2
+	$GetFile/Banner/ColorRect.size = sizeVec2
+	$GetFile/Banner/Label.size = sizeVec2
+	$GetFile/Banner/Label.set("theme_override_font_sizes/font_size", sizeVec2.y * 0.8)
 
 func plusCode_changed(current, old):
 	if !visible:
 		return
+	
+	if autoDownload == true:
+		if PraxisOfflineData.OfflineDataExists(current) == false: #Checks built-in and downloaded paths.
+			await $GetFile.getCell6File(current.substr(0,6))
+			await $GetFile.file_downloaded
 	
 	#find the center/current tile's cell tracker drawer and update it
 	if (useCellTrackers and showCellTrackers):
@@ -297,3 +312,15 @@ func UpdateTexture(code, texture):
 		tilenode.texture = ImageTexture.create_from_image(texture) #update might be faster?
 	else:
 		print("couldnt get node for tile at " + addendum)
+
+#TODO: This may need to be done with call_deferred for safety?
+#This allows for an external CellTracker to be assigned to this map
+func SetCellTracker(newTracker):
+	$CellTracker.set_name("old")
+	$CellTracker.queue_free()
+	newTracker.set_name("CellTracker")
+	add_child(newTracker)
+
+func SetLoadableSource(callable):
+	loadTrackables = callable
+	RefreshTiles(PraxisCore.currentPlusCode)
