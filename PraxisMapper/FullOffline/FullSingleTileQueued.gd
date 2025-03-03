@@ -36,12 +36,12 @@ func RunQueue():
 	busy = true
 	while tilesToDraw.size() > 0:
 		$Banner.visible = true
-		print("tiles queued:" + str(tilesToDraw.size()))
+		#print("tiles queued:" + str(tilesToDraw.size()))
 		var tile = tilesToDraw.pop_back()
 		#print("popped " + tile)
 		var img = await GetAndProcessData(tile)
 		tile_created.emit(tile, img)
-	print("Queue complete")
+	#print("Queue complete")
 	busy = false
 	
 
@@ -60,14 +60,15 @@ func GetAndProcessData(plusCode, scale = 1):
 	
 	var oneTile = null
 	$Banner.visible = true
-	print("banner shown, at " + str($Banner.global_position))
+	#print("banner shown, at " + str($Banner.global_position))
 	$Banner/Status.text = "Drawing " + plusCode.substr(0,8)
-	print("processing full offline data for single tile " + plusCode)
+	#print("processing full offline data for single tile " + plusCode)
 	plusCode6 = plusCode.substr(0,6)
 	if (plusCode.length() >= 8):
 		oneTile = plusCode.substr(6,2)
 	scaleVal = scale
-	await RenderingServer.frame_post_draw
+	#also seeing if this can be removed.  SEEMS SAFE TO REMOVE.
+	#await RenderingServer.frame_post_draw
 	
 	var styleData = await PraxisCore.GetStyle(drawnStyle)
 	$svc/SubViewport/fullMap.style = styleData
@@ -78,10 +79,11 @@ func GetAndProcessData(plusCode, scale = 1):
 		return
 		
 	#$Banner/lblStatus.text = "Data Loaded. Processing " + str(mapData.entries["mapTiles"].size()) + " items, please wait...." 
-	await RenderingServer.frame_post_draw
+	#And lets test removing this one too. SEEMS OK.
+	#await RenderingServer.frame_post_draw
 	#Game is probably going to freeze for a couple seconds here while Godot draws stuff to the node
 
-	print("being tile making")
+	#print("being tile making")
 	var tex = await CreateTile(oneTile) #Godot runs slow while this does work and waits for frames.
 	$Banner.visible = false
 	#tile_created.emit(plusCode, tex)
@@ -92,7 +94,7 @@ func CreateTile(oneTile = null):
 		print("no map data, abort create tile.")
 		return
 		
-	print("CreateTileCalled")
+	#print("CreateTileCalled")
 	$svc/SubViewport/fullMap.position.y = 0
 	
 	var viewport1 = $svc/SubViewport
@@ -103,11 +105,13 @@ func CreateTile(oneTile = null):
 	camera1.position = Vector2(0,0)
 	viewport1.size = Vector2i(320 * scale, 500 * scale)
 	#print("viewports set")
-	await RenderingServer.frame_post_draw #set this before loading entities, skips a wasted draw call.
+	
+	#while im here, re-testing if this wait is necessary. SEEMS SAFE TO LEAVE OUT.
+	#await RenderingServer.frame_post_draw #set this before loading entities, skips a wasted draw call.
 	#print("frame waited")
 	
 	if makeMapTile == true:
-		print("drawing map (single)")
+		#print("drawing map (single)")
 		await $svc/SubViewport/fullMap.DrawSingleTile(mapData.entries["mapTiles"], scaleVal, plusCode6 + oneTile)
 	
 	var xList = PlusCodes.CODE_ALPHABET_
@@ -126,14 +130,16 @@ func CreateTile(oneTile = null):
 
 		for xChar in xList:
 			camera1.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320 * scale)
+			#This one is critical, cannot remove this wait.
 			await RenderingServer.frame_post_draw
 			if makeMapTile == true:
 				tex1 = await viewport1.get_texture()
 				img1 = await tex1.get_image() # Get rendered image
 				if !alwaysDrawNewTile: #If you always want the tile redrawn, why save it?
 					await img1.save_png("user://MapTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
-				await RenderingServer.frame_post_draw
+				#Also testing removing this one. SEEMS SAFE TO LEAVE OUT
+				#await RenderingServer.frame_post_draw
 	#tile_created.emit(img1) #WSC fired this here.
 	
-	print("image done")
+	#print("image done")
 	return img1

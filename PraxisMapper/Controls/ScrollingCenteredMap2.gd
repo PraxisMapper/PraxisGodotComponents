@@ -175,7 +175,7 @@ func plusCode_changed(current, old):
 	#find the center/current tile's cell tracker drawer and update it
 	if (useCellTrackers and showCellTrackers):
 		var tileDist = PlusCodes.GetDistanceCell8s(current, plusCodeBase)
-		var ctdNode = get_node("cellTrackerDrawers/CTD" + str(tileDist.x) + "_" + str(abs(tileDist.y)))
+		var ctdNode = get_node("cellTrackerDrawers/CTD" + str(int(tileDist.x)) + "_" + str(abs(int(tileDist.y))))
 		if ctdNode != null:
 			ctdNode.DrawCellTracker($CellTracker, current)
 	

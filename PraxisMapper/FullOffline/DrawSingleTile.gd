@@ -58,27 +58,27 @@ func _draw():  #DrawCell8(plusCode):
 	for possibleDraw in style:
 		var pd = style[possibleDraw].drawOps
 		for do in pd:
-			if !orderedDrawCommands.has(do.drawOrder):
-				orderedDrawCommands[do.drawOrder] = []
+			if !orderedDrawCommands.has(int(do.drawOrder)):
+				orderedDrawCommands[int(do.drawOrder)] = []
 
 	#entries has a dictionary, each entry is a big list of coord pairs
 	for entry in theseentries:
 		#If this entry isn't in our current style, skip it.
-		if !style.has(str(entry.tid)):
+		if !style.has(str(int(entry.tid))):
 			continue
 		
 		#if this entry doesn't possibly touch this tile, skip it.
 		if !entry.envelope.intersects(thisArea):
 			continue
 
-		var thisStyle = style[str(entry.tid)]
+		var thisStyle = style[str(int(entry.tid))]
 		var lineSize = 1.0 * scale
 	
 		for s in thisStyle.drawOps:
 			if entry.gt == 1: #points are getting forced to the top
 				orderedDrawCommands[10].push_back({gt = entry.gt, p = entry.p, size = s.sizePx, color = s.color})
 			else:
-				orderedDrawCommands[s.drawOrder].push_back({gt = entry.gt, p = entry.p, size = s.sizePx, color = s.color})
+				orderedDrawCommands[int(s.drawOrder)].push_back({gt = entry.gt, p = entry.p, size = s.sizePx, color = s.color})
 		
 	var drawLevels = orderedDrawCommands.keys()
 	drawLevels.sort()

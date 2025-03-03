@@ -151,7 +151,7 @@ static func GetDistanceCell10s(plusCode1, plusCode2):
 		diff *= multipliers[xcoords.find(x)]
 		diffX += diff
 
-	return Vector2(diffX, diffY)
+	return Vector2(int(diffX), int(diffY))
 
 #NOTE: 0 is NORTH on this function, whereas in most Godot values its EAST
 static func GetDirection(plusCode1, plusCode2):
