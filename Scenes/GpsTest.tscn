@@ -16,7 +16,15 @@ script = ExtResource("1_2jlo1")
 offset_left = 34.0
 offset_top = 49.0
 offset_right = 1066.0
-offset_bottom = 1877.0
+offset_bottom = 281.0
+theme_override_font_sizes/font_size = 25
+text = "Waiting..."
+
+[node name="lblSensorInfo" type="Label" parent="."]
+offset_left = 26.0
+offset_top = 663.0
+offset_right = 1058.0
+offset_bottom = 1138.0
 theme_override_font_sizes/font_size = 25
 text = "Waiting..."
 
