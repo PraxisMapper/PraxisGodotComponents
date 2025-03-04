@@ -63,6 +63,7 @@ func ProxyDemo():
 	get_tree().change_scene_to_file("res://Scenes/ProxyPlayTest.tscn")
 
 func SCM2Demo():
+	PraxisCore.SetProxyPlay(true) #The demo doesn't download data yet, use the built-in stuff.
 	get_tree().change_scene_to_file("res://Scenes/SCM2/SCM2Test.tscn")
 
 func RequestPerms():
