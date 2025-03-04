@@ -67,7 +67,7 @@ offset_right = 403.0
 offset_bottom = 473.0
 scale = Vector2(3, 3)
 disabled = true
-text = "ProxyPlay and ScrollMap Demo
+text = "ProxyPlay Demo
 "
 
 [node name="btnStyleTest" type="Button" parent="."]
@@ -90,6 +90,16 @@ disabled = true
 text = "Splatter Demo
 "
 
+[node name="btnSCM2Demo" type="Button" parent="."]
+offset_left = 168.0
+offset_top = 959.0
+offset_right = 417.0
+offset_bottom = 990.0
+scale = Vector2(3, 3)
+disabled = true
+text = "ScrollingCenteredMap2 Demo
+"
+
 [node name="Label" type="Label" parent="."]
 offset_right = 1080.0
 offset_bottom = 110.0
@@ -102,3 +112,4 @@ horizontal_alignment = 1
 [connection signal="button_down" from="btnProxyTest" to="." method="ProxyDemo"]
 [connection signal="button_down" from="btnStyleTest" to="." method="StyleDemo"]
 [connection signal="button_down" from="btnSplatDemo" to="." method="SplatDemo"]
+[connection signal="button_up" from="btnSCM2Demo" to="." method="SCM2Demo"]

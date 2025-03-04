@@ -22,10 +22,10 @@ grow_vertical = 2
 color = Color(3.1285e-07, 0.278752, 0.321081, 1)
 
 [node name="ScrollingCenteredMap" parent="." instance=ExtResource("1_2gldk")]
-offset_left = 106.0
-offset_top = 347.0
-offset_right = 919.0
-offset_bottom = 1699.0
+offset_left = -98.0
+offset_top = 313.0
+offset_right = 1202.0
+offset_bottom = 1955.0
 zoomFactors = [0.125, 0.25, 0.5, 1.0, 1.5, 2.0, 4.0]
 freeRemovedTrackables = false
 

@@ -22,6 +22,7 @@ func HavePerms():
 	$btnProxyTest.disabled = false
 	$btnStyleTest.disabled = false
 	$btnSplatDemo.disabled = false
+	$btnSCM2Demo.disabled = false
 	
 func RunTest():
 	#Working
@@ -60,6 +61,9 @@ func SplatDemo():
 func ProxyDemo():
 	PraxisCore.SetProxyPlay(true) #Set proxyplay on AND sets current plus code to proxyBase.
 	get_tree().change_scene_to_file("res://Scenes/ProxyPlayTest.tscn")
+
+func SCM2Demo():
+	get_tree().change_scene_to_file("res://Scenes/SCM2/SCM2Test.tscn")
 
 func RequestPerms():
 	if OS.get_name() == "Windows":
