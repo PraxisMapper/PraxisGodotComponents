@@ -49,6 +49,7 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 		return 
 		
 	var rawdata := await zipReader.read_file(plusCode + ".json")
+	#print("loaded " + str(rawdata.size())  + " from " + plusCode + ".json")
 	var realData = await rawdata.get_string_from_utf8()
 	var json = JSON.new()
 	await json.parse(realData)
@@ -62,11 +63,27 @@ static func ProcessData(jsonData):
 	if jsonData == null: #may happen if data is partially loaded.
 		return
 		
+	print("processing data for " + jsonData.olc)
+	var totalCount = 0
+	var start = Time.get_unix_time_from_system()
+	#PMLogistics changes:
+	# - Make a quick index/catalog of named places worth checking out.
+	#   This is name/category/type/OSMID/center plus code. The server won't be drawing maps
+	#   so it shouldn't have to work with that. If server tracks places by osmid this handles
+	#   the multipolygon ones evenly.
+	var placeIndex = {} # A list of places by OsmID
+	var areaIndex = {} #An array of items in a Cell8
+	var typeIndex = {} #an array of items by type. NOTE: Category is the styleSet, not entry type.
+		
 	#This is envelope detection, so yes I want a big min and tiny max to start
 	#because they'll get flipped to the right values on the first point.
 	var minVector = Vector2i(20000,20000)
 	var maxVector = Vector2i(0,0)
 	for category in jsonData.entries:
+		totalCount += jsonData.entries[category].size()
+		var styleData = PraxisCore.GetStyle(category)
+		if styleData == null:
+			styleData = {}
 		for entry in jsonData.entries[category]:
 			minVector = Vector2i(20000,20000)
 			maxVector = Vector2i(0,0)
@@ -90,7 +107,32 @@ static func ProcessData(jsonData):
 				
 			entry.p = polyCoords
 			entry.envelope = Rect2(minVector, (maxVector - minVector))
-	
+			#New for PMLogistics:
+			if entry.nid != 0 and styleData.has(str(int(entry.tid))):
+				var indexed = {
+					OSMID = entry.OsmId,
+					name = jsonData.nameTable[str(int(entry.nid))],
+					category = category,
+					center = PraxisOfflineData.DataCoordsToPlusCode(entry.envelope.get_center(), jsonData.olc), #May be less accurate than summing coordinates. But faster.
+					itemtype = styleData[str(int(entry.tid))].name
+				}
+				#if styleData.has(str(int(entry.tid))):
+				#	indexed.itemtype = styleData[str(int(entry.tid))].name
+				placeIndex[entry.OsmId] = indexed #TODO: how to handle collisions when a place has multiple polys?
+				if typeIndex.has(indexed.itemtype):
+					typeIndex[indexed.itemtype].append(indexed)
+				else:
+					typeIndex[indexed.itemtype] = [indexed]
+				var area = indexed.center.substr(0,8)
+				if areaIndex.has(area):
+					areaIndex[area].append(indexed)
+				else:
+					areaIndex[area] = [indexed]
+
+	jsonData.index = {places = placeIndex, areas = areaIndex, types = typeIndex}
+	var end = Time.get_unix_time_from_system()
+	var diff = end - start
+	print("Data processed " + str(totalCount) + " items in " + str(diff) + " seconds")
 	allData[jsonData.olc] = jsonData
 	return jsonData
 	
@@ -104,6 +146,7 @@ static func GetPlacesPresent(plusCode):
 	var size = plusCode.length()
 	
 	for category in data.entries:
+		#print(category)
 		for entry in data.entries[category]:
 			if entry.has("nid") and entry.nid != 0:
 				if IsPointInPlace(point, entry, size, data.nameTable[str(int(entry.nid))]):
@@ -112,6 +155,7 @@ static func GetPlacesPresent(plusCode):
 						category = category,
 						typeId = entry.tid
 					})
+					print(data.nameTable[str(int(entry.nid))])
 	return results
 
 static func IsPlusCodeInPlace(plusCode, place):
@@ -184,3 +228,11 @@ static func PlusCodeToDataCoords(plusCode):
 	
 	var point = Vector2(testPointX, testPointY) #for using full precision data
 	return point
+	
+static func DataCoordsToPlusCode(coords, cell6Base):
+	var shiftXCell10s = int(coords.x / 16)
+	var shiftYCell10s = int(coords.y / 25)
+	
+	return PlusCodes.ShiftCode(cell6Base + "2222", shiftXCell10s, shiftYCell10s)
+	
+	

@@ -9,10 +9,10 @@ extends Control
 # - This version includes built-in zoom options. The controls for those can be connected via signals.
 # - This version can call a function that return what object to track on the map automatically
 
-#TODO: include auto-download code here. Didn't I make a queued version of GetFile somewhere?
-
 #TODO: size may need to be + 3 to ensure the area is covered entirely instead of +1. Might be more complex?
 #TODO: extreme zoom out (<0.25) reveals that positioning for player and child nodes are SLIGHTLY OFF when padding is > 0
+
+#TODO: port auto-download back to main components library.
 
 # documentation on tracking:
 # Autotracking requires a Node2D object with a meta property of "location"
@@ -33,14 +33,17 @@ var cellTrackerDrawerPL = preload("res://PraxisMapper/Controls/CellTrackerDrawer
 @export var showPlayerArrow = true
 ## if true, child nodes the map tracks will be scaled to match the map size.
 @export var scaleAttachedChildren = true
+## if true, pulls map data from the defined server automatically when tiles enter range.
+@export var autoGetMapData = true
+## if true, merge the outline overlay on the tiles
+@export var ShowTileOverlay = false
+## if true, merge the cell overlay on the tiles
+@export var ShowCellsOverlay = false
 
 ## What scaling factors are available to the player. Must be in order from smallest to largest.
 @export var zoomFactors = [0.25, 0.5, 1.0, 1.5, 2.0]
 ## The starting zoom factor. Must be one of the values in zoomFactors.
 @export var zoomFactor = 1.0
-
-##Automatically download map data from the configured URL in PraxisCore when true and no data is available.
-@export var autoDownload = true
 
 #This should let the map handle loading/unloading nodes automatically.
 ## the Callable to pass the current plus code and tile grid size to find what to place on each map tile. 
@@ -75,8 +78,8 @@ func ToggleShowCellTrackerDrawers():
 	$cellTrackerDrawers.visible = showCellTrackers
 
 func _process(delta):
-	$playerIndicator.rotation = PraxisCore.GetCompassHeading()
-	#$playerIndicator.rotation += .01 #helps when testing player positioning.
+	$playerIndicator.rotation = PraxisCore.GetCompassHeading() # Default behavior
+	#$playerIndicator.rotation += .01 #helps when testing player positioning by spinning the arrow
 	
 func Setup():
 	#Do all the one-time stuff here. Clear out child objects just in case we're changing after _ready()
@@ -146,13 +149,16 @@ func Setup():
 	
 	#The actual visibleCenter position is correct for the lower-left corner of that plus code.
 	$playerIndicator.rotation = 0
-	$playerIndicator.global_position = visibleCenter + Vector2(8 * zoomFactor, -20 * zoomFactor)
+	$playerIndicator.global_position = visibleCenter + Vector2(0, -25) # Is 1 cell too far south without adjustment
 	$playerIndicator.z_index = 2
+	
+	#print("Arrow at "  + str($playerIndicator.global_position))
 	
 	RefreshTiles(PraxisCore.currentPlusCode) 
 
 func AdjustBanner(positionVec2, sizeVec2):
 	#this is for the dev to reposition the drawing/downloading banners on the map.
+	#TODO: finish testing this.
 	$TileDrawerQueued/Banner.global_position = positionVec2
 	$TileDrawerQueued/Banner/ColorRect.size = sizeVec2
 	$TileDrawerQueued/Banner/Status.size = sizeVec2
@@ -167,18 +173,22 @@ func plusCode_changed(current, old):
 	if !visible:
 		return
 	
-	if autoDownload == true:
-		if PraxisOfflineData.OfflineDataExists(current) == false: #Checks built-in and downloaded paths.
-			await $GetFile.getCell6File(current.substr(0,6))
-			await $GetFile.file_downloaded
-	
 	#find the center/current tile's cell tracker drawer and update it
 	if (useCellTrackers and showCellTrackers):
 		var tileDist = PlusCodes.GetDistanceCell8s(current, plusCodeBase)
 		var ctdNode = get_node("cellTrackerDrawers/CTD" + str(int(tileDist.x)) + "_" + str(abs(int(tileDist.y))))
-		if ctdNode != null:
-			ctdNode.DrawCellTracker($CellTracker, current)
+		ctdNode.DrawCellTracker($CellTracker, current)
 	
+	#TODO: backport this to main component library after testing it out.
+	if autoGetMapData:
+		var baseCell = current.substr(0,6)
+		var cellsToLoad = PlusCodes.GetNearbyCells(baseCell, 1)
+		for c2l in cellsToLoad:
+			if !PraxisOfflineData.OfflineDataExists(c2l):
+				$GetFile.skipTween = true
+				print("Getting new map file")
+				$GetFile.AddToQueue(c2l)
+
 	if current.substr(0,8) != lastPlusCode.substr(0,8):
 		await RefreshTiles(current)
 
@@ -249,10 +259,19 @@ func RefreshTiles(current):
 			node = get_node("mapBase/MapTile" + str(x) + "_" + str(y))
 			if FileAccess.file_exists("user://MapTiles/" + checkCode + ".png"):
 				tex = await $TileDrawerQueued.GetAndProcessData(checkCode, 1)
+				#if ShowTileOverlay:
+					#var img1: Image = Image.load_from_file("res://PraxisMapper/Resources/mapTileOutline.png")
+					#tex.blend_rect(img1, Rect2i(0, 0, 320, 500), Vector2i(0, 0))
+				#if ShowCellsOverlay:
+					#var img2: Image = Image.load_from_file("res://PraxisMapper/Resources/mapTileCells.png")
+					#tex.blend_rect(img2, Rect2i(0, 0, 320, 500), Vector2i(0, 0))
 				node.texture = ImageTexture.create_from_image(tex) #update might be faster? Doesnt seem like it in testing.
 			else:
 				node.texture = noiseTile
 				$TileDrawerQueued.AddToQueue(checkCode)
+	
+	if ShowCellsOverlay or ShowTileOverlay:
+		DebugDraw()
 	
 	if loadTrackables != null: #Automatic tracking. May not be the most optimized behavior but should work
 		clearAllTrackedChildren()
@@ -297,6 +316,17 @@ func ChangeZoom(newZoomFactor):
 	tileGridSize = -1
 	Setup()
 	plusCode_changed(PraxisCore.currentPlusCode, PraxisCore.lastPlusCode)
+
+func DebugDraw():
+	for child in $mapBase.get_children():
+		var tex = child.get_texture().get_image()
+		if ShowTileOverlay:
+			var img1: Image = Image.load_from_file("res://PraxisMapper/Resources/mapTileOutline.png")
+			tex.blend_rect(img1, Rect2i(0, 0, 320, 500), Vector2i(0, 0))
+		if ShowCellsOverlay:
+			var img2: Image = Image.load_from_file("res://PraxisMapper/Resources/mapTileCells.png")
+			tex.blend_rect(img2, Rect2i(0, 0, 320, 500), Vector2i(0, 0))
+		child.texture = ImageTexture.create_from_image(tex)
 
 func UpdateChildNode(child):
 	var offset = getDrawingOffset(child.get_meta("location", ""))
