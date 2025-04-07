@@ -31,46 +31,83 @@ freeRemovedTrackables = false
 
 [node name="crHeader" type="ColorRect" parent="."]
 offset_right = 1080.0
-offset_bottom = 337.0
+offset_bottom = 446.0
 color = Color(0.0901961, 0, 0.0156863, 1)
 
 [node name="btnZoomIn" type="Button" parent="crHeader"]
 layout_mode = 0
-offset_left = 18.0
-offset_top = 257.0
-offset_right = 130.0
-offset_bottom = 317.0
+offset_left = 13.0
+offset_top = 369.0
+offset_right = 125.0
+offset_bottom = 429.0
+theme_override_font_sizes/font_size = 20
 text = "Zoom In"
 
 [node name="btnZoomOut" type="Button" parent="crHeader"]
 layout_mode = 0
-offset_left = 247.0
-offset_top = 261.0
-offset_right = 377.0
-offset_bottom = 316.0
+offset_left = 142.0
+offset_top = 372.0
+offset_right = 272.0
+offset_bottom = 427.0
+theme_override_font_sizes/font_size = 20
 text = "Zoom Out
 "
 
 [node name="btnCtdToggle" type="Button" parent="crHeader"]
 layout_mode = 0
-offset_left = 639.0
-offset_top = 263.0
-offset_right = 801.0
-offset_bottom = 318.0
+offset_left = 876.0
+offset_top = 372.0
+offset_right = 1076.0
+offset_bottom = 427.0
+theme_override_font_sizes/font_size = 20
 text = "Toggle Cell Trackers"
+
+[node name="btnProxyToggle" type="Button" parent="crHeader"]
+layout_mode = 0
+offset_left = 660.0
+offset_top = 372.0
+offset_right = 857.0
+offset_bottom = 436.0
+theme_override_font_sizes/font_size = 20
+text = "Toggle ProxyPlay to
+85633QG4+VV"
+
+[node name="btnShowTiles" type="Button" parent="crHeader"]
+layout_mode = 0
+offset_left = 307.0
+offset_top = 372.0
+offset_right = 469.0
+offset_bottom = 427.0
+theme_override_font_sizes/font_size = 20
+text = "Toggle Tile 
+Grid Overlay"
+
+[node name="btnShowCells" type="Button" parent="crHeader"]
+layout_mode = 0
+offset_left = 486.0
+offset_top = 372.0
+offset_right = 648.0
+offset_bottom = 427.0
+theme_override_font_sizes/font_size = 20
+text = "Toggle Cell
+Grid Overlay"
 
 [node name="Label" type="Label" parent="crHeader"]
 layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+offset_left = 419.0
+offset_top = 12.0
+offset_right = 644.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 20
 text = "Scrolling Centered Map"
 
 [node name="Label2" type="Label" parent="crHeader"]
 layout_mode = 0
-offset_left = 22.0
-offset_top = 27.0
-offset_right = 1043.0
-offset_bottom = 258.0
+offset_left = 24.0
+offset_top = 58.0
+offset_right = 1045.0
+offset_bottom = 362.0
+theme_override_font_sizes/font_size = 21
 text = "ScrollingCenteredMap2 is intended to be the core of most game's map screens. It handles automatically resizing itself, centered on the indicated position in the scene edtior, zooming in and out with configurable thresholds, and can automatically move nodes passed in via trackChildOnMap() or from a function set to loadTrackables.
 
  This scene has custom zoom limits at unreasonable levels (up to a 22x22 grid), to demonstrate the scene's capacity and performance.
@@ -79,3 +116,14 @@ CellTrackers can be toggled and automatically match the map tiles underneath. "
 autowrap_mode = 3
 
 [node name="CellTracker" parent="." instance=ExtResource("3_sgwll")]
+
+[node name="lblLocation" type="Label" parent="."]
+offset_left = 874.0
+offset_top = 333.0
+offset_right = 945.0
+offset_bottom = 356.0
+text = "Location:"
+
+[connection signal="pressed" from="crHeader/btnProxyToggle" to="." method="ToggleProxyPlay"]
+[connection signal="pressed" from="crHeader/btnShowTiles" to="." method="ToggleTileOverlay"]
+[connection signal="pressed" from="crHeader/btnShowCells" to="." method="ToggleCellOverlay"]

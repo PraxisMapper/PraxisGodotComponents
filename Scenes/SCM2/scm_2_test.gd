@@ -40,3 +40,14 @@ func _ready() -> void:
 #NOTE: we have turned off FreeRemovedTrackables on the map, because this scene keep them around.
 func AutoTrack(location, gridSize):
 	return [test1, test2, test3]
+
+func ToggleTileOverlay():
+	$ScrollingCenteredMap.ShowTileOverlay = !$ScrollingCenteredMap.ShowTileOverlay
+	$ScrollingCenteredMap.RefreshTiles(PraxisCore.currentPlusCode)
+
+func ToggleCellOverlay():
+	$ScrollingCenteredMap.ShowCellsOverlay = !$ScrollingCenteredMap.ShowCellsOverlay
+	$ScrollingCenteredMap.RefreshTiles(PraxisCore.currentPlusCode)
+
+func ToggleProxyPlay():
+	PraxisCore.SetProxyPlay(!PraxisCore.proxyPlay)

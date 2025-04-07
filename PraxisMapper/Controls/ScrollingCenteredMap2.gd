@@ -12,7 +12,9 @@ extends Control
 #TODO: size may need to be + 3 to ensure the area is covered entirely instead of +1. Might be more complex?
 #TODO: extreme zoom out (<0.25) reveals that positioning for player and child nodes are SLIGHTLY OFF when padding is > 0
 
-#TODO: port auto-download back to main components library.
+#TODO: zooming changes the position of something after the first setup. The arrow is slighlty misaligned
+#after zooming, so something's getting in an alternate position and not being corrected on later runs.
+#But what? it always calls setup on zoom, so what's not getting reset?
 
 # documentation on tracking:
 # Autotracking requires a Node2D object with a meta property of "location"
@@ -149,8 +151,9 @@ func Setup():
 	
 	#The actual visibleCenter position is correct for the lower-left corner of that plus code.
 	$playerIndicator.rotation = 0
-	$playerIndicator.global_position = visibleCenter + Vector2(0, -25) # Is 1 cell too far south without adjustment
+	$playerIndicator.global_position = visibleCenter + Vector2(0, -25 * zoomFactor) # Is 1 cell too far south without adjustment
 	$playerIndicator.z_index = 2
+	$playerIndicator.scale = Vector2(zoomFactor, zoomFactor)
 	
 	#print("Arrow at "  + str($playerIndicator.global_position))
 	
@@ -177,7 +180,8 @@ func plusCode_changed(current, old):
 	if (useCellTrackers and showCellTrackers):
 		var tileDist = PlusCodes.GetDistanceCell8s(current, plusCodeBase)
 		var ctdNode = get_node("cellTrackerDrawers/CTD" + str(int(tileDist.x)) + "_" + str(abs(int(tileDist.y))))
-		ctdNode.DrawCellTracker($CellTracker, current)
+		if ctdNode != null:
+			ctdNode.DrawCellTracker($CellTracker, current)
 	
 	#TODO: backport this to main component library after testing it out.
 	if autoGetMapData:
@@ -185,7 +189,6 @@ func plusCode_changed(current, old):
 		var cellsToLoad = PlusCodes.GetNearbyCells(baseCell, 1)
 		for c2l in cellsToLoad:
 			if !PraxisOfflineData.OfflineDataExists(c2l):
-				$GetFile.skipTween = true
 				print("Getting new map file")
 				$GetFile.AddToQueue(c2l)
 
@@ -321,10 +324,10 @@ func DebugDraw():
 	for child in $mapBase.get_children():
 		var tex = child.get_texture().get_image()
 		if ShowTileOverlay:
-			var img1: Image = Image.load_from_file("res://PraxisMapper/Resources/mapTileOutline.png")
+			var img1: Image = load("res://PraxisMapper/Resources/mapTileOutline.png").get_image()
 			tex.blend_rect(img1, Rect2i(0, 0, 320, 500), Vector2i(0, 0))
 		if ShowCellsOverlay:
-			var img2: Image = Image.load_from_file("res://PraxisMapper/Resources/mapTileCells.png")
+			var img2: Image = load("res://PraxisMapper/Resources/mapTileCells.png").get_image()
 			tex.blend_rect(img2, Rect2i(0, 0, 320, 500), Vector2i(0, 0))
 		child.texture = ImageTexture.create_from_image(tex)
 
