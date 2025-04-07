@@ -30,10 +30,7 @@ func RunQueue():
 	busy = false
 	skipTween = false
 	TweenFade()
-	#I swear I had a queued file downloader at one point. Where did it go?
 
-#OK, immediately upon trying to do this, I realize I'm gonna hit issues with files overlapping
-#so I can't do both of these nicely. I'll need to pick a folder or something.
 func getCell4File(plusCode4):
 	if isActive:
 		return false

@@ -108,7 +108,7 @@ static func ProcessData(jsonData):
 			entry.p = polyCoords
 			entry.envelope = Rect2(minVector, (maxVector - minVector))
 			#New for PMLogistics:
-			if entry.nid != 0 and styleData.has(str(int(entry.tid))):
+			if entry.has("nid") and entry.nid != 0 and styleData.has(str(int(entry.tid))):
 				var indexed = {
 					OSMID = entry.OsmId,
 					name = jsonData.nameTable[str(int(entry.nid))],

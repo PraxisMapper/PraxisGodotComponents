@@ -183,7 +183,6 @@ func plusCode_changed(current, old):
 		if ctdNode != null:
 			ctdNode.DrawCellTracker($CellTracker, current)
 	
-	#TODO: backport this to main component library after testing it out.
 	if autoGetMapData:
 		var baseCell = current.substr(0,6)
 		var cellsToLoad = PlusCodes.GetNearbyCells(baseCell, 1)
@@ -262,12 +261,6 @@ func RefreshTiles(current):
 			node = get_node("mapBase/MapTile" + str(x) + "_" + str(y))
 			if FileAccess.file_exists("user://MapTiles/" + checkCode + ".png"):
 				tex = await $TileDrawerQueued.GetAndProcessData(checkCode, 1)
-				#if ShowTileOverlay:
-					#var img1: Image = Image.load_from_file("res://PraxisMapper/Resources/mapTileOutline.png")
-					#tex.blend_rect(img1, Rect2i(0, 0, 320, 500), Vector2i(0, 0))
-				#if ShowCellsOverlay:
-					#var img2: Image = Image.load_from_file("res://PraxisMapper/Resources/mapTileCells.png")
-					#tex.blend_rect(img2, Rect2i(0, 0, 320, 500), Vector2i(0, 0))
 				node.texture = ImageTexture.create_from_image(tex) #update might be faster? Doesnt seem like it in testing.
 			else:
 				node.texture = noiseTile

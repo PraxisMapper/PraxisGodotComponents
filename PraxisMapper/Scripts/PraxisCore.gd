@@ -72,6 +72,8 @@ func SetProxyPlay(state):
 		lastPlusCode = currentPlusCode
 		currentPlusCode = proxyCode
 		plusCode_changed.emit(currentPlusCode, lastPlusCode)
+	else: 
+		on_monitoring_location_result(last_location) #Teleport to our actual last position
 
 func ForceChange(newCode):
 	if newCode.find("+") == -1:
@@ -86,6 +88,7 @@ func GetFixedRNGForPluscode(pluscode):
 	return rng
 	
 func on_monitoring_location_result(location: Dictionary) -> void:
+	last_location = location.duplicate() #saves the actual location values and don't change those.
 	if proxyPlay == true:
 		var playerRealPoint = Vector2(location["longitude"], location["latitude"])
 		if playerStart == Vector2(0,0):
@@ -96,7 +99,6 @@ func on_monitoring_location_result(location: Dictionary) -> void:
 		location["longitude"] = inGamePoint.x
 		location["latitude"] = inGamePoint.y
 
-	last_location = location
 	location_changed.emit(location)
 	print("location changed" + str(location))
 	var plusCode = ""
