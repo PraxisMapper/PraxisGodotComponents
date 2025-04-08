@@ -15,6 +15,8 @@ extends Control
 #TODO: zooming changes the position of something after the first setup. The arrow is slighlty misaligned
 #after zooming, so something's getting in an alternate position and not being corrected on later runs.
 #But what? it always calls setup on zoom, so what's not getting reset?
+#Doesn't seem to duplicate on PMLogistics game, so do I need to re-check taht everything copied over?
+#Or that its map scene does something else?
 
 # documentation on tracking:
 # Autotracking requires a Node2D object with a meta property of "location"

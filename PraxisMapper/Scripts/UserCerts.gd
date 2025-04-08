@@ -146,3 +146,8 @@ func TestThisAllOut():
 	print(packed_data)
 	var unpacked_data = UnPack(bob_pub_key, packed_data, Alice)
 	print(unpacked_data)
+
+
+func AntiCheatTestMaybe():
+	pass
+	#As an example of what a server-side anti-cheat thing might do

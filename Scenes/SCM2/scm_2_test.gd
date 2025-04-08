@@ -6,6 +6,7 @@ var test2
 var test3
 
 func _ready() -> void:
+	await get_tree().process_frame
 	$crHeader/btnZoomIn.pressed.connect($ScrollingCenteredMap.zoomIn)
 	$crHeader/btnZoomOut.pressed.connect($ScrollingCenteredMap.zoomOut)
 	$crHeader/btnCtdToggle.pressed.connect($ScrollingCenteredMap.ToggleShowCellTrackerDrawers)

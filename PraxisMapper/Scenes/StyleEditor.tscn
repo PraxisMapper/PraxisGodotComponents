@@ -1,0 +1,139 @@
+[gd_scene load_steps=3 format=3 uid="uid://e1x71tcddfy6"]
+
+[ext_resource type="Script" uid="uid://0gqwfvtg1eef" path="res://PraxisMapper/Scenes/style_editor.gd" id="1_rkrfj"]
+[ext_resource type="Script" uid="uid://cq017kinmhdk8" path="res://PraxisMapper/Scenes/StylePreview.gd" id="2_jtcia"]
+
+[node name="StyleEditor" type="Node2D"]
+script = ExtResource("1_rkrfj")
+
+[node name="btnLoad" type="Button" parent="."]
+offset_left = 314.0
+offset_top = 32.0
+offset_right = 402.0
+offset_bottom = 63.0
+text = "Load Style"
+
+[node name="btnAddDrawOp" type="Button" parent="."]
+offset_left = 410.0
+offset_top = 296.0
+offset_right = 498.0
+offset_bottom = 327.0
+text = "Add DrawOp"
+
+[node name="btnRemoveDrawOp" type="Button" parent="."]
+offset_left = 559.0
+offset_top = 300.0
+offset_right = 666.0
+offset_bottom = 331.0
+text = "Remove DrawOp"
+
+[node name="btnSave" type="Button" parent="."]
+offset_left = 488.0
+offset_top = 33.0
+offset_right = 576.0
+offset_bottom = 64.0
+text = "Save Style"
+
+[node name="Label" type="Label" parent="."]
+offset_left = 26.0
+offset_top = 21.0
+offset_right = 68.0
+offset_bottom = 44.0
+text = "Style:"
+
+[node name="Label2" type="Label" parent="."]
+offset_left = 34.0
+offset_top = 129.0
+offset_right = 76.0
+offset_bottom = 152.0
+text = "Entries:"
+
+[node name="Label3" type="Label" parent="."]
+offset_left = 37.0
+offset_top = 274.0
+offset_right = 96.0
+offset_bottom = 297.0
+text = "DrawOps:"
+
+[node name="Label4" type="Label" parent="."]
+offset_left = 45.0
+offset_top = 365.0
+offset_right = 135.0
+offset_bottom = 388.0
+text = "Details:"
+
+[node name="Label5" type="Label" parent="."]
+offset_left = 43.0
+offset_top = 421.0
+offset_right = 133.0
+offset_bottom = 444.0
+text = "Color"
+
+[node name="Label6" type="Label" parent="."]
+offset_left = 43.0
+offset_top = 471.0
+offset_right = 133.0
+offset_bottom = 494.0
+text = "Size(px)"
+
+[node name="Label8" type="Label" parent="."]
+offset_left = 574.0
+offset_top = 371.0
+offset_right = 664.0
+offset_bottom = 394.0
+text = "Preview:"
+
+[node name="Label7" type="Label" parent="."]
+offset_left = 41.0
+offset_top = 539.0
+offset_right = 131.0
+offset_bottom = 562.0
+text = "Draw Order:"
+
+[node name="iltStyles" type="ItemList" parent="."]
+offset_left = 93.0
+offset_top = 21.0
+offset_right = 291.0
+offset_bottom = 73.0
+item_count = 2
+item_0/text = "style1"
+item_1/text = "style2"
+
+[node name="iltEntries" type="ItemList" parent="."]
+offset_left = 113.0
+offset_top = 144.0
+offset_right = 311.0
+offset_bottom = 196.0
+item_count = 2
+item_0/text = "entry1"
+item_1/text = "entry2"
+
+[node name="iltDrawOps" type="ItemList" parent="."]
+offset_left = 150.0
+offset_top = 284.0
+offset_right = 348.0
+offset_bottom = 336.0
+item_count = 2
+item_0/text = "drawop1"
+item_1/text = "drawop2"
+
+[node name="txtColor" type="LineEdit" parent="."]
+offset_left = 120.0
+offset_top = 412.0
+offset_right = 188.563
+offset_bottom = 443.0
+
+[node name="txtSize" type="LineEdit" parent="."]
+offset_left = 155.0
+offset_top = 475.0
+offset_right = 223.563
+offset_bottom = 506.0
+
+[node name="txtDrawOrder" type="LineEdit" parent="."]
+offset_left = 168.0
+offset_top = 543.0
+offset_right = 236.563
+offset_bottom = 574.0
+
+[node name="Preview" type="Node2D" parent="."]
+script = ExtResource("2_jtcia")
