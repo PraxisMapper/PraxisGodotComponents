@@ -52,3 +52,6 @@ func ToggleCellOverlay():
 
 func ToggleProxyPlay():
 	PraxisCore.SetProxyPlay(!PraxisCore.proxyPlay)
+	
+func Close():
+	get_tree().change_scene_to_file("res://Scenes/SimpleTest.tscn")

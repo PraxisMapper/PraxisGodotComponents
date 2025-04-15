@@ -124,6 +124,15 @@ offset_right = 945.0
 offset_bottom = 356.0
 text = "Location:"
 
+[node name="btnClose" type="Button" parent="."]
+offset_left = 475.0
+offset_top = 1827.0
+offset_right = 636.0
+offset_bottom = 1910.0
+text = "Close
+"
+
 [connection signal="pressed" from="crHeader/btnProxyToggle" to="." method="ToggleProxyPlay"]
 [connection signal="pressed" from="crHeader/btnShowTiles" to="." method="ToggleTileOverlay"]
 [connection signal="pressed" from="crHeader/btnShowCells" to="." method="ToggleCellOverlay"]
+[connection signal="pressed" from="btnClose" to="." method="Close"]
