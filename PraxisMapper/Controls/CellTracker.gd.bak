@@ -41,6 +41,3 @@ func Remove(plusCode10):
 	plusCode10 = plusCode10.replace("+", "").substr(0,10)
 	visited.erase(plusCode10)
 	Save()
-	
-func Total():
-	return visited.size()

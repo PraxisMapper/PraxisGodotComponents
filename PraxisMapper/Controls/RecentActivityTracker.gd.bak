@@ -18,8 +18,6 @@ func _ready():
 
 func Load():
 	visited = PraxisCore.LoadData(fileName)
-	if visited == null:
-		visited = {}
 
 func Save():
 	PraxisCore.SaveData(fileName, visited)

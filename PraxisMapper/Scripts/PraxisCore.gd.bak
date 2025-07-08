@@ -20,17 +20,16 @@ var debugStartingPlusCode = "85633QG4VV" #Elysian Park, Los Angeles, CA, USA
 #System global values
 #Resolution of PlusCode cells in degrees
 const resolutionCell12Lat = .000025 / 5
-const resolutionCell12Lon = .00003125 / 4
-const resolutionCell11Lat = .000025
-const resolutionCell11Lon = .00003125
-const resolutionCell10 = .000125
-const resolutionCell8 = .0025
-const resolutionCell6 = .05
-const resolutionCell4 = 1
-const resolutionCell2 = 20
-const metersPerDegree = 111132
+const resolutionCell12Lon = .00003125 / 4; 
+const resolutionCell11Lat = .000025;
+const resolutionCell11Lon = .00003125; 
+const resolutionCell10 = .000125; 
+const resolutionCell8 = .0025; 
+const resolutionCell6 = .05; 
+const resolutionCell4 = 1; 
+const resolutionCell2 = 20;
+const metersPerDegree = 111111
 const oneMeterLat = 1 / metersPerDegree
-const earthCircumferenceMeters = 40075000
 
 const safetyTips = [
 	"Pay more attention to your surroundings than your phone.",

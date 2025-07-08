@@ -27,6 +27,7 @@ func RunQueue():
 			await getCell4FileSync(next)
 		elif next.length() == 6:
 			await getCell6FileSync(next)
+		PraxisCore.force_redraw.emit()
 	busy = false
 	skipTween = false
 	TweenFade()

@@ -319,10 +319,10 @@ func DebugDraw():
 	for child in $mapBase.get_children():
 		var tex = child.get_texture().get_image()
 		if ShowTileOverlay:
-			var img1: Image = Image.load_from_file("res://PraxisMapper/Resources/mapTileOutline.png")
+			var img1: Image = load("res://PraxisMapper/Resources/mapTileOutline.png").get_image()
 			tex.blend_rect(img1, Rect2i(0, 0, 320, 500), Vector2i(0, 0))
 		if ShowCellsOverlay:
-			var img2: Image = Image.load_from_file("res://PraxisMapper/Resources/mapTileCells.png")
+			var img2: Image = load("res://PraxisMapper/Resources/mapTileCells.png").get_image()
 			tex.blend_rect(img2, Rect2i(0, 0, 320, 500), Vector2i(0, 0))
 		child.texture = ImageTexture.create_from_image(tex)
 

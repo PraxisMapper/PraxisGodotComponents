@@ -15,29 +15,18 @@ static func EncodeLatLonSize(lat, lon, size):
 	
 	var xMul = 8000
 	var yMul = 8000
-	if size >= 11:
-		xMul *= 4
-		yMul *= 5
-	if size >= 12:
+	if size == 11:
 		xMul *= 4
 		yMul *= 5
 		
 	var currentLat = int(floor((lat + 90) * yMul))
 	var currentLon = int(floor((lon + 180) * xMul))
 		
-	if size >= 12:
+	if size == 11:
 		var nextLonIndex = (currentLon % 4) 
 		var nextLatIndex = (currentLat % 5)
 		var indexDigit = (nextLatIndex * 4 + nextLonIndex)
-		digit11 = CODE_ALPHABET_[indexDigit] + digit11
-		currentLat = floor(currentLat / 5)
-		currentLon = floor(currentLon / 4)
-		
-	if size >= 11:
-		var nextLonIndex = (currentLon % 4) 
-		var nextLatIndex = (currentLat % 5)
-		var indexDigit = (nextLatIndex * 4 + nextLonIndex)
-		digit11 = CODE_ALPHABET_[indexDigit] + digit11
+		digit11 = CODE_ALPHABET_[indexDigit]
 		currentLat = floor(currentLat / 5)
 		currentLon = floor(currentLon / 4)
 	
