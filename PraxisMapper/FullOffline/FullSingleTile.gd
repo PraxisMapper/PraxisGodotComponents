@@ -6,6 +6,9 @@ class_name SingleTile
 #Should not need multiple tiles for full-detail data, since it can be
 #checked directly now.
 
+#TODO: How much of this can be kicked to a background thread to minimize in-game stutter when
+#loading/drawing tiles?
+
 signal tile_created(texture)
 
 var plusCode6 = ""
@@ -45,22 +48,32 @@ func GetAndProcessData(plusCode, scale = 1):
 	scaleVal = scale
 	await RenderingServer.frame_post_draw
 	
+	var start1 = Time.get_unix_time_from_system()
 	var styleData = await PraxisCore.GetStyle(drawnStyle)
 	$svc/SubViewport/fullMap.style = styleData
+	var end1 = Time.get_unix_time_from_system()
+	print("Loading style took " + str(end1-start1))
 	
+	var start2 = Time.get_unix_time_from_system()
 	mapData = await PraxisOfflineData.GetDataFromZip(plusCode6) 
 	if (mapData == null):
 		$Banner.visible = false
 		wait = false
 		tile_created.emit()
 		return
+	var end2 = Time.get_unix_time_from_system()
+	print("Loading map data took " + str(end2-start2))
 		
 	#$Banner/lblStatus.text = "Data Loaded. Processing " + str(mapData.entries["mapTiles"].size()) + " items, please wait...." 
 	await RenderingServer.frame_post_draw
 	#Game is probably going to freeze for a couple seconds here while Godot draws stuff to the node
 
 	print("being tile making")
+	var start3 = Time.get_unix_time_from_system()
 	var tex = await CreateTile(oneTile) #Godot runs slow while this does work and waits for frames.
+	var end3 = Time.get_unix_time_from_system()
+	print("awaiting tile create took " + str(end3-start3))
+	print("total time for GetAndProcesData is " + str(end3-start1))
 	$Banner.visible = false
 	wait = false
 	tile_created.emit(tex)
@@ -110,7 +123,7 @@ func CreateTile(oneTile = null):
 				img1 = await tex1.get_image() # Get rendered image
 				if !alwaysDrawNewTile: #If you always want the tile redrawn, why save it?
 					await img1.save_png("user://MapTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
-				await RenderingServer.frame_post_draw
+				#await RenderingServer.frame_post_draw #Seems unnecessary based on StyleTest
 	#tile_created.emit(img1) #WSC fired this here.
 	
 	return img1

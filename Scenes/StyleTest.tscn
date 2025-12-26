@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://djlg1po14eatp"]
+[gd_scene format=3 uid="uid://djlg1po14eatp"]
 
 [ext_resource type="Script" uid="uid://c15tn7c7wjry7" path="res://Scenes/StyleTest.gd" id="1_fg7xk"]
 [ext_resource type="PackedScene" uid="uid://b16445g8mkbaa" path="res://PraxisMapper/FullOffline/FullSingleTile.tscn" id="2_xhfe6"]
@@ -22,15 +22,15 @@ corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
-[node name="StyleTest" type="Node2D"]
+[node name="StyleTest" type="Node2D" unique_id=1760967459]
 script = ExtResource("1_fg7xk")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1887436702]
 offset_right = 1079.0
 offset_bottom = 206.0
 color = Color(0, 0.145098, 0.152941, 1)
 
-[node name="Label" type="Label" parent="."]
+[node name="Label" type="Label" parent="." unique_id=259848233]
 offset_left = 467.0
 offset_top = 7.0
 offset_right = 541.0
@@ -38,7 +38,7 @@ offset_bottom = 30.0
 theme_override_font_sizes/font_size = 30
 text = "Style Test"
 
-[node name="Label2" type="Label" parent="."]
+[node name="Label2" type="Label" parent="." unique_id=1734012716]
 offset_left = 25.0
 offset_top = 62.0
 offset_right = 1072.0
@@ -47,31 +47,31 @@ theme_override_font_sizes/font_size = 20
 text = "Map data can be drawn with multiple styles, and custom styles can be made to fit your game. The same source data is drawn here in 3 styles. The third ignores most areas, and only draws tertiary roads and residential areas."
 autowrap_mode = 3
 
-[node name="FullTile" parent="." instance=ExtResource("2_xhfe6")]
+[node name="FullTile" parent="." unique_id=894455951 instance=ExtResource("2_xhfe6")]
 position = Vector2(0, 205)
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1325122404]
 offset_left = 21.0
 offset_top = 360.0
 offset_right = 341.0
 offset_bottom = 860.0
 texture = SubResource("NoiseTexture2D_yscx5")
 
-[node name="TextureRect2" type="TextureRect" parent="."]
+[node name="TextureRect2" type="TextureRect" parent="." unique_id=175717625]
 offset_left = 738.0
 offset_top = 360.0
 offset_right = 1058.0
 offset_bottom = 860.0
 texture = SubResource("NoiseTexture2D_eqlhi")
 
-[node name="TextureRect3" type="TextureRect" parent="."]
+[node name="TextureRect3" type="TextureRect" parent="." unique_id=1071062469]
 offset_left = 379.0
 offset_top = 360.0
 offset_right = 699.0
 offset_bottom = 860.0
 texture = SubResource("NoiseTexture2D_pwb55")
 
-[node name="Label4" type="Label" parent="."]
+[node name="Label4" type="Label" parent="." unique_id=173980832]
 offset_left = 738.0
 offset_top = 300.0
 offset_right = 1058.0
@@ -80,7 +80,7 @@ theme_override_font_sizes/font_size = 20
 text = "Neon (Only roads and residential)"
 horizontal_alignment = 1
 
-[node name="Label5" type="Label" parent="."]
+[node name="Label5" type="Label" parent="." unique_id=958909134]
 offset_left = 379.0
 offset_top = 300.0
 offset_right = 699.0
@@ -89,7 +89,7 @@ theme_override_font_sizes/font_size = 20
 text = "Inverted MapTiles"
 horizontal_alignment = 1
 
-[node name="Label3" type="Label" parent="."]
+[node name="Label3" type="Label" parent="." unique_id=421750108]
 offset_left = 21.0
 offset_top = 300.0
 offset_right = 341.0
@@ -98,7 +98,7 @@ theme_override_font_sizes/font_size = 20
 text = "OSM-style map tiles default"
 horizontal_alignment = 1
 
-[node name="btnClose" type="Button" parent="."]
+[node name="btnClose" type="Button" parent="." unique_id=544674665]
 offset_left = 786.0
 offset_top = 138.0
 offset_right = 977.0

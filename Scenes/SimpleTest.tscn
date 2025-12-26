@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://c4b6p4t02k1fo"]
+[gd_scene format=3 uid="uid://c4b6p4t02k1fo"]
 
 [ext_resource type="Script" uid="uid://brqvyncfmgbvw" path="res://Scenes/SimpleTest.gd" id="1_6vkws"]
 [ext_resource type="PackedScene" uid="uid://dlr56hkndvvt0" path="res://PraxisMapper/MinimizedOffline/MinOfflineTiles.tscn" id="2_p3ufm"]
@@ -7,17 +7,17 @@
 [ext_resource type="Script" uid="uid://cncmlr71fddvv" path="res://PraxisMapper/FullOffline/DrawOfflineTile.gd" id="5_j6odq"]
 [ext_resource type="Script" uid="uid://dc48icpsvvyqi" path="res://PraxisMapper/FullOffline/FullAreaScanner.gd" id="6_rrd5t"]
 
-[node name="SimpleTest" type="Node2D"]
+[node name="SimpleTest" type="Node2D" unique_id=1987878946]
 script = ExtResource("1_6vkws")
 
-[node name="MinOfflineTiles" parent="." instance=ExtResource("2_p3ufm")]
+[node name="MinOfflineTiles" parent="." unique_id=1197414850 instance=ExtResource("2_p3ufm")]
 position = Vector2(-800, 0)
 
-[node name="FullOfflineTiles" parent="." instance=ExtResource("3_r55nv")]
+[node name="FullOfflineTiles" parent="." unique_id=207575437 instance=ExtResource("3_r55nv")]
 makeMapTile = false
 makeThumbnail = true
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="TextureRect" type="TextureRect" parent="." unique_id=20257661]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -32,17 +32,17 @@ grow_vertical = 2
 pivot_offset = Vector2(85, 85)
 texture = ExtResource("4_wkf1d")
 
-[node name="drawtest" type="Node2D" parent="."]
+[node name="drawtest" type="Node2D" parent="." unique_id=890864260]
 position = Vector2(0, 900)
 script = ExtResource("5_j6odq")
 
-[node name="AreaScanner" type="Node2D" parent="."]
+[node name="AreaScanner" type="Node2D" parent="." unique_id=1952796192]
 script = ExtResource("6_rrd5t")
 
-[node name="testbgdraw" type="Node2D" parent="."]
+[node name="testbgdraw" type="Node2D" parent="." unique_id=1986992295]
 position = Vector2(100, 600)
 
-[node name="btnGpsTest" type="Button" parent="."]
+[node name="btnGpsTest" type="Button" parent="." unique_id=390562091]
 offset_left = 154.0
 offset_top = 286.0
 offset_right = 403.0
@@ -52,7 +52,16 @@ disabled = true
 text = "GPS Test
 "
 
-[node name="btnGetPerms" type="Button" parent="."]
+[node name="btnPlaceTest" type="Button" parent="." unique_id=1551379081]
+offset_left = 171.0
+offset_top = 1125.0
+offset_right = 420.0
+offset_bottom = 1156.0
+scale = Vector2(3, 3)
+disabled = true
+text = "Place Detection Test"
+
+[node name="btnGetPerms" type="Button" parent="." unique_id=1978394095]
 offset_left = 154.0
 offset_top = 125.0
 offset_right = 403.0
@@ -60,7 +69,7 @@ offset_bottom = 156.0
 scale = Vector2(3, 3)
 text = "Request GPS Permissions"
 
-[node name="btnProxyTest" type="Button" parent="."]
+[node name="btnProxyTest" type="Button" parent="." unique_id=107956163]
 offset_left = 154.0
 offset_top = 442.0
 offset_right = 403.0
@@ -70,7 +79,7 @@ disabled = true
 text = "ProxyPlay Demo
 "
 
-[node name="btnStyleTest" type="Button" parent="."]
+[node name="btnStyleTest" type="Button" parent="." unique_id=1084536900]
 offset_left = 154.0
 offset_top = 625.0
 offset_right = 403.0
@@ -80,7 +89,7 @@ disabled = true
 text = "Styles Demo
 "
 
-[node name="btnSplatDemo" type="Button" parent="."]
+[node name="btnSplatDemo" type="Button" parent="." unique_id=747464259]
 offset_left = 154.0
 offset_top = 794.0
 offset_right = 403.0
@@ -90,7 +99,7 @@ disabled = true
 text = "Splatter Demo
 "
 
-[node name="btnSCM2Demo" type="Button" parent="."]
+[node name="btnSCM2Demo" type="Button" parent="." unique_id=14685680]
 offset_left = 168.0
 offset_top = 959.0
 offset_right = 417.0
@@ -100,7 +109,7 @@ disabled = true
 text = "ScrollingCenteredMap2 Demo
 "
 
-[node name="Label" type="Label" parent="."]
+[node name="Label" type="Label" parent="." unique_id=1787495793]
 offset_right = 1080.0
 offset_bottom = 110.0
 theme_override_font_sizes/font_size = 80
@@ -108,6 +117,7 @@ text = "PraxisMapper Demos"
 horizontal_alignment = 1
 
 [connection signal="button_down" from="btnGpsTest" to="." method="GPSDemo"]
+[connection signal="pressed" from="btnPlaceTest" to="." method="PlaceDemo"]
 [connection signal="button_down" from="btnGetPerms" to="." method="RequestPerms"]
 [connection signal="button_down" from="btnProxyTest" to="." method="ProxyDemo"]
 [connection signal="button_down" from="btnStyleTest" to="." method="StyleDemo"]

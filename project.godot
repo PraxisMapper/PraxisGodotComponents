@@ -8,11 +8,15 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="PraxisGodotComponents"
 run/main_scene="res://Scenes/SimpleTest.tscn"
-config/features=PackedStringArray("4.4", "Mobile")
+config/features=PackedStringArray("4.6", "Mobile")
 boot_splash/image="res://PraxisMapper/Resources/PraxisMapper Splash Screen.png"
 config/icon="res://PraxisMapper/Resources/PraxisMapperIcon.png"
 
@@ -45,5 +49,6 @@ pointing/emulate_touch_from_mouse=true
 
 [rendering]
 
-renderer/rendering_method="mobile"
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
 textures/vram_compression/import_etc2_astc=true

@@ -2,23 +2,49 @@ extends Node2D
 
 @onready var lb_location_info: Label = $lblLocInfo
 
+var lastTime = 0
+
 func on_monitoring_location_result(location: Dictionary) -> void:
-	print_location_info(location)
+	if (location.timestamp != lastTime):
+		$AudioStreamPlayer2D.play()
+		print_location_info(location)
 	
 func print_location_info(location: Dictionary) -> void:
+	var timeDiff = 0
+	if location.has("timestamp") and location.timestamp != null:
+		timeDiff = location.timestamp - lastTime
+		lastTime = location.timestamp
+	elif location.has("time") and location.time != null:
+		timeDiff = location.time - lastTime
+		lastTime = location.time
+	
+	$lblRawDump.text = JSON.stringify(location) + "\n" + JSON.stringify(PraxisCore.web_location)
+	if !location.has("accuracy"): #not a full packet
+		return
 	var text: String = "Coordinates: " + str(location["latitude"]) + " , " + str(location["longitude"])
 	text += "\n"
 	text += "Accuracy: " + str(location["accuracy"]) + " m"
 	text += "\n"
-	text += "Altitude: " + str(location["altitude"]) + " m ( Accuracy: " + str(location["verticalAccuracyMeters"]) + " m )"
+	text += "Altitude: " + str(location["altitude"]) 
+	if (location.has("verticalAccuracyMeters") and location["verticalAccuracyMeters"] != null):
+		text += " m ( Accuracy: " + str(location["verticalAccuracyMeters"]) + " m )"
+	elif (location.has("altitudeAccuracy") and location["altitudeAccuracy"] != null):
+		text += " m ( Accuracy: " + str(location["altitudeAccuracy"]) + " m )"
 	text += "\n"
-	text += "Bearing: " + str(location["bearing"]) + "º"
+	if (location.has("bearing") and location["bearing"] != null):
+		text += "Bearing: " + str(location["bearing"]) + "º"
+	elif (location.has("heading") and location["heading"] != null):
+		text += "Bearing: " + str(location["heading"]) + "º"
 	text += "\n"
 	text += "Speed: " + str(location["speed"]) + " m/s"
 	text += "\n"
-	text += "Time: " + str(location["time"])
+	if (location.has("time") and location["time"] != null):
+		text += "Time: " + str(location["time"])
+	elif (location.has("timestamp") and location["timestamp"] != null):
+		text += "Time: " + str(location["timestamp"])
 	text += "\n\n\n"
 	text += "PlusCode:" + PlusCodes.EncodeLatLon(location["latitude"], location["longitude"])
+	text += "\nTime between updates: " + str(timeDiff) 
 	lb_location_info.text = text
 
 func SensorData():
@@ -42,7 +68,7 @@ func SensorData():
 	text += "Heading (Degrees): " + str(rad_to_deg(-yaw_magnet))
 	$lblSensorInfo.text = text
 
-func _process(delta):
+func _process(_delta):
 	SensorData()
 
 func _ready():
@@ -52,3 +78,19 @@ func _ready():
 
 func Close():
 	get_tree().change_scene_to_file("res://Scenes/SimpleTest.tscn")
+
+func timeout500():
+	var evalString = "startListening(500, true);"
+	var evalResults = JavaScriptBridge.eval(evalString)
+
+func timeout1000():
+	var evalString = "startListening(1000, true);"
+	var evalResults = JavaScriptBridge.eval(evalString)
+	
+func timeout5000():
+	var evalString = "startListening(5000, true);"
+	var evalResults = JavaScriptBridge.eval(evalString)
+	
+func timeout1000Low():
+	var evalString = "startListening(1000, false);"
+	var evalResults = JavaScriptBridge.eval(evalString)

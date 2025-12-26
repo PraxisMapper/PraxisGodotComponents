@@ -13,7 +13,7 @@ func _ready():
 	#This is a better way to confirm this than saving the results to file like WSC(P) does.
 	#The old way wont check if the user rescinded perms from setting. This will.
 	var perms = OS.get_granted_permissions()
-	if perms.has("android.permission.ACCESS_FINE_LOCATION"):
+	if perms.has("android.permission.ACCESS_FINE_LOCATION") or OS.get_name() != "Android":
 		HavePerms()
 		
 	
@@ -23,6 +23,7 @@ func HavePerms():
 	$btnStyleTest.disabled = false
 	$btnSplatDemo.disabled = false
 	$btnSCM2Demo.disabled = false
+	$btnPlaceTest.disabled = false
 	
 func RunTest():
 	#Working
@@ -66,8 +67,12 @@ func SCM2Demo():
 	PraxisCore.SetProxyPlay(true) #The demo doesn't download data yet, use the built-in stuff.
 	get_tree().change_scene_to_file("res://Scenes/SCM2/SCM2Test.tscn")
 
+func PlaceDemo():
+	get_tree().change_scene_to_file("res://Scenes/PlaceDetection.tscn")
+
+
 func RequestPerms():
-	if OS.get_name() == "Windows":
+	if OS.get_name() == "Windows" or OS.get_name() == "Web":
 		HavePerms()
 		return
 	var granted = OS.request_permissions()

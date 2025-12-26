@@ -13,17 +13,33 @@ extends Node2D
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var plusCode8 = "85633QG3"
+	var timeData = ""
+	var frametime = 0.016
 	
+	var start = Time.get_unix_time_from_system()
 	var mapTilesImg = await $FullTile.GetAndProcessData(plusCode8)
 	$TextureRect.texture = ImageTexture.create_from_image(mapTilesImg)
+	var end = Time.get_unix_time_from_system()
+	timeData += "Pic1 drawn in " + str(end - start) + "\n"
 	
+	var start2 = Time.get_unix_time_from_system()
 	$FullTile.drawnStyle = "neon"
 	var mapImg2 = await $FullTile.GetAndProcessData(plusCode8)
 	$TextureRect2.texture = ImageTexture.create_from_image(mapImg2)
+	end = Time.get_unix_time_from_system()
+	timeData += "Pic2 drawn in " + str(end - start2) + "\n"
 	
+	var start3 = Time.get_unix_time_from_system()
 	$FullTile.drawnStyle = "invertedMapTiles"
 	var mapImg3 = await $FullTile.GetAndProcessData(plusCode8)
 	$TextureRect3.texture = ImageTexture.create_from_image(mapImg3)
+	end = Time.get_unix_time_from_system()
+	timeData += "Pic3 drawn in " + str(end - start3) + "\n"
+	
+	var elapsed = end - start
+	var frames = elapsed / frametime
+	timeData += "StyleTest  _ready done in " + str(elapsed) + " [" + str(frames) + " frames]"
+	print(timeData)
 
 func Close():
 	get_tree().change_scene_to_file("res://Scenes/SimpleTest.tscn")

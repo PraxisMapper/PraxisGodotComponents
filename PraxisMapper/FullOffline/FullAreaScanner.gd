@@ -1,6 +1,8 @@
 extends Node2D
 class_name FullAreaScanner
 
+#TODO: update to use indexes with new format when ready. See PMLogistics for PlaceScanner class there.
+
 #Like AreaScanner for minimized data, but with the full drawing data.
 #will include roads, named buildings, and such.
 var styleData

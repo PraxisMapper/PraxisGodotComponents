@@ -16,7 +16,6 @@ var debugStartingPlusCode = "85633QG4VV" #Elysian Park, Los Angeles, CA, USA
 #var debugStartingPlusCode = "7JWVP5923M" #Shalimar Bagh, Delhi, India
 #var debugStartingPlusCode = "86FRXXXPM8" #Ohio State University, Columbus, OH, USA
 
-
 #System global values
 #Resolution of PlusCode cells in degrees
 const resolutionCell12Lat = .000025 / 5
@@ -36,6 +35,8 @@ const safetyTips = [
 	"Pay more attention to your surroundings than your phone.",
 	 "If a place isn't safe to go to, don't go there! You can re-roll destinations.",
 ]
+
+var styleData = {}
 
 #system config values. These are for Cell12 resolution images from detailed data.
 #TODO: explain why/when height should be 400 (Server drawing Cell11 tiles, 4:5) 
@@ -64,6 +65,7 @@ var last_location = {
 	longitude = 1,
 	speed = 1
 } # is the entire GPS data dictionary
+var web_location = {}
 signal force_redraw() # called when the map should re-draw tiles
 
 #Plugin for gps info
@@ -174,16 +176,22 @@ func WebLocationUpdate():
 	print("Web location results:" + evalResults)
 	if evalResults != "<null>":
 		var loc = JSON.parse_string(evalResults)
+		web_location = loc #debugging
+		loc.coords.timestamp = loc.timestamp
 		on_monitoring_location_result(loc.coords)
 
 func GetStyle(style):
-	var styleData = FileAccess.open("res://PraxisMapper/Styles/" + style + ".json", FileAccess.READ)
-	if (styleData == null):
+	if (styleData.has(style)):
+		return styleData[style]
+	var styleFile = FileAccess.open("res://PraxisMapper/Styles/" + style + ".json", FileAccess.READ)
+	if (styleFile == null):
 		return null
 	else:
 		var json = JSON.new()
-		json.parse(styleData.get_as_text())
-		return json.get_data()
+		json.parse(styleFile.get_as_text())
+		var data = json.get_data()
+		styleData[style] = data
+		return data
 
 #This needs to be called by a node that exists in a tree, not just a static script, so its here.
 func MakeMinimizedOfflineTiles(plusCode):

@@ -49,8 +49,8 @@ func _draw():
 					#(The * 5 means we're drawing pixels as Cell-11s on the image)
 					#4.5 looks good for POIs, but bad for Trees, which there are quite a few of.
 					#trees are size 0.2, so I should probably make other elements larger?
-					await draw_circle(entry.p[0], s.sizePx * 10.0 * scale, nameColor)
+					draw_circle(entry.p[0], s.sizePx * 10.0 * scale, nameColor)
 				elif (entry.gt == 2):
-					await draw_polyline(entry.p, nameColor, s.sizePx * scale) #no antialiasing, colors matter.
+					draw_polyline(entry.p, nameColor, s.sizePx * scale) #no antialiasing, colors matter.
 				elif entry.gt == 3:
-					await draw_colored_polygon(entry.p, nameColor) 
+					draw_colored_polygon(entry.p, nameColor) 

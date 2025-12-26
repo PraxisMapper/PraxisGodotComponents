@@ -2,6 +2,7 @@ extends Node2D
 class_name DrawOfflineTile
 
 #This is for drawing map tiles directly in the client from Offline/V2 data
+#TODO: 
 
 var theseentries = null
 var thisscale = 1
@@ -76,10 +77,10 @@ func _draw():
 				#4.5 looks good for POIs, but bad for Trees, which there are quite a few of.
 				#trees are size 0.2, so I should probably make other elements larger?
 				#MOST of them shouldn't be points, but lines shouldn't be a Cell10 wide either.
-				await draw_circle(points[0], odc.size * 5.0 * scale, odc.color)
+				draw_circle(points[0], odc.size * 5.0 * scale, odc.color)
 			elif (odc.gt == 2):
 				#This is significantly faster than calling draw_line for each of these.
-				await draw_polyline(points, odc.color, odc.size * scale, true) #antialias display image only.
+				draw_polyline(points, odc.color, odc.size * scale, true) #antialias display image only.
 			elif odc.gt == 3:
 				#A single color, which is what I generally use.
-				await draw_colored_polygon(points, odc.color) 
+				draw_colored_polygon(points, odc.color) 

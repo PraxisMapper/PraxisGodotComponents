@@ -40,19 +40,24 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 	#Now check if we have the zip file that should hold this data, built in or downloaded
 	var err
 	if FileAccess.file_exists("res://OfflineData/Full/" + code2 + "/" + code2 + code4 + ".zip"):
-		err = await zipReader.open("res://OfflineData/Full/" + plusCode.substr(0,2) + "/" + plusCode.substr(0,4) + ".zip")
+		err = zipReader.open("res://OfflineData/Full/" + plusCode.substr(0,2) + "/" + plusCode.substr(0,4) + ".zip")
 	elif FileAccess.file_exists("user://Data/Full/" + code2 + code4 + ".zip"):
-		err = await zipReader.open("user://Data/Full/" + code2 + code4 + ".zip")
+		err = zipReader.open("user://Data/Full/" + code2 + code4 + ".zip")
 
 	if err != OK:
 		print("No FullOffline data found (or zip corrupt/incomplete) for " + plusCode + ": " + str(err))
 		return 
-		
-	var rawdata := await zipReader.read_file(plusCode + ".json")
+	var loadStart = Time.get_unix_time_from_system()
+	var rawdata := zipReader.read_file(plusCode + ".json")
 	#print("loaded " + str(rawdata.size())  + " from " + plusCode + ".json")
-	var realData = await rawdata.get_string_from_utf8()
+	var realData = rawdata.get_string_from_utf8()
+	var loadEnd = Time.get_unix_time_from_system()
+	print("Data loaded from zip in " + str(loadEnd - loadStart))
+	var parseStart = Time.get_unix_time_from_system()
 	var json = JSON.new()
-	await json.parse(realData)
+	json.parse(realData)
+	var parseEnd = Time.get_unix_time_from_system()
+	print("Data parsed from Json in " + str(parseEnd - parseStart))
 	var jsonData = json.data
 	if jsonData == null: #no file in this zip, this area is missing or empty.
 		return 
@@ -60,6 +65,8 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 	return ProcessData(jsonData)
 	
 static func ProcessData(jsonData):
+	#NOTE: This takes more than than reading files from disk on test pc
+	#(.192 this func vs .260 total time) - so this may be a candidate for threading or prework.
 	if jsonData == null: #may happen if data is partially loaded.
 		return
 		

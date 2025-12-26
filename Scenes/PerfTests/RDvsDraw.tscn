@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dpw18njslt6g8"]
+
+[ext_resource type="Script" uid="uid://o3iq4d1mmlle" path="res://Scenes/PerfTests/rd_vs_draw.gd" id="1_jqu0d"]
+
+[node name="RDvsDraw" type="Node2D" unique_id=924775699]
+script = ExtResource("1_jqu0d")
