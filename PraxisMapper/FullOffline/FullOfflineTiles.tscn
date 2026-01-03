@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://b6cfprdbul55o"]
+[gd_scene format=3 uid="uid://b6cfprdbul55o"]
 
 [ext_resource type="Script" uid="uid://3pqkhi7hgb4e" path="res://PraxisMapper/FullOffline/FullOfflineTiles.gd" id="1_rv5jx"]
 [ext_resource type="PackedScene" uid="uid://8os6eof5qcbh" path="res://PraxisMapper/APICalls/PraxisEndpoints.tscn" id="2_rp3kp"]
@@ -7,78 +7,78 @@
 [ext_resource type="Script" uid="uid://b8keqxsf7m787" path="res://PraxisMapper/FullOffline/DrawOfflineBoundsTile.gd" id="5_apl8f"]
 [ext_resource type="Script" uid="uid://bimsoq8pxi6st" path="res://PraxisMapper/FullOffline/DrawOfflineTerrainTile.gd" id="6_fvihv"]
 
-[node name="OfflineData" type="Node2D"]
+[node name="OfflineData" type="Node2D" unique_id=56921163]
 script = ExtResource("1_rv5jx")
 
-[node name="PraxisEndpoints" parent="." instance=ExtResource("2_rp3kp")]
+[node name="PraxisEndpoints" parent="." unique_id=1158178934 instance=ExtResource("2_rp3kp")]
 
-[node name="svc" type="SubViewportContainer" parent="."]
+[node name="svc" type="SubViewportContainer" parent="." unique_id=1768799026]
 offset_left = -10000.0
 offset_right = -9960.0
 offset_bottom = 40.0
 
-[node name="SubViewport" type="SubViewport" parent="svc"]
+[node name="SubViewport" type="SubViewport" parent="svc" unique_id=1651565078]
 handle_input_locally = false
 render_target_update_mode = 4
 
-[node name="fullMap" type="Node2D" parent="svc/SubViewport"]
+[node name="fullMap" type="Node2D" parent="svc/SubViewport" unique_id=693932700]
 script = ExtResource("3_n6eua")
 
-[node name="subcam" type="Camera2D" parent="svc/SubViewport"]
+[node name="subcam" type="Camera2D" parent="svc/SubViewport" unique_id=769146326]
 anchor_mode = 0
 
-[node name="svc2" type="SubViewportContainer" parent="."]
+[node name="svc2" type="SubViewportContainer" parent="." unique_id=1856277597]
 offset_left = -10000.0
 offset_right = -9960.0
 offset_bottom = 40.0
 
-[node name="SubViewport" type="SubViewport" parent="svc2"]
+[node name="SubViewport" type="SubViewport" parent="svc2" unique_id=1420616298]
 handle_input_locally = false
 render_target_update_mode = 4
 
-[node name="nameMap" type="Node2D" parent="svc2/SubViewport"]
+[node name="nameMap" type="Node2D" parent="svc2/SubViewport" unique_id=1131045632]
 script = ExtResource("4_n8854")
 
-[node name="subcam" type="Camera2D" parent="svc2/SubViewport"]
+[node name="subcam" type="Camera2D" parent="svc2/SubViewport" unique_id=278987175]
 anchor_mode = 0
 
-[node name="svc3" type="SubViewportContainer" parent="."]
+[node name="svc3" type="SubViewportContainer" parent="." unique_id=551362809]
 offset_left = -10000.0
 offset_right = -9488.0
 offset_bottom = 512.0
 
-[node name="SubViewport" type="SubViewport" parent="svc3"]
+[node name="SubViewport" type="SubViewport" parent="svc3" unique_id=1694698363]
 handle_input_locally = false
 render_target_update_mode = 4
 
-[node name="boundsMap" type="Node2D" parent="svc3/SubViewport"]
+[node name="boundsMap" type="Node2D" parent="svc3/SubViewport" unique_id=768757871]
 script = ExtResource("5_apl8f")
 
-[node name="subcam" type="Camera2D" parent="svc3/SubViewport"]
+[node name="subcam" type="Camera2D" parent="svc3/SubViewport" unique_id=714822175]
 anchor_mode = 0
 
-[node name="svc4" type="SubViewportContainer" parent="."]
+[node name="svc4" type="SubViewportContainer" parent="." unique_id=1633423296]
 offset_left = -10000.0
 offset_right = -9488.0
 offset_bottom = 512.0
 
-[node name="SubViewport" type="SubViewport" parent="svc4"]
+[node name="SubViewport" type="SubViewport" parent="svc4" unique_id=524610344]
 handle_input_locally = false
 render_target_update_mode = 4
 
-[node name="terrainMap" type="Node2D" parent="svc4/SubViewport"]
+[node name="terrainMap" type="Node2D" parent="svc4/SubViewport" unique_id=1288135862]
 script = ExtResource("6_fvihv")
 
-[node name="subcam" type="Camera2D" parent="svc4/SubViewport"]
+[node name="subcam" type="Camera2D" parent="svc4/SubViewport" unique_id=3247585]
 anchor_mode = 0
 
-[node name="Banner" type="ColorRect" parent="."]
+[node name="Banner" type="ColorRect" parent="." unique_id=1294006662]
 visible = false
 offset_right = 1081.0
 offset_bottom = 40.0
 color = Color(0.631373, 0.603922, 0.301961, 1)
 
-[node name="lblStatus" type="Label" parent="Banner"]
+[node name="lblStatus" type="Label" parent="Banner" unique_id=1874497595]
 layout_mode = 0
 offset_right = 1080.0
 offset_bottom = 39.0

@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cfdh4y8a5re1c"]
+
+[ext_resource type="Script" uid="uid://bd7snlwxs317p" path="res://Scenes/PerfTests/draw_cell_6.gd" id="1_t5kes"]
+[ext_resource type="PackedScene" uid="uid://b6cfprdbul55o" path="res://PraxisMapper/FullOffline/FullOfflineTiles.tscn" id="2_og1rd"]
+
+[node name="DrawCell6" type="Node2D" unique_id=2105663535]
+script = ExtResource("1_t5kes")
+
+[node name="OfflineData" parent="." unique_id=65979043 instance=ExtResource("2_og1rd")]
+makeThumbnail = true
+thumbnailScale = 1.0
+
+[node name="Button" type="Button" parent="." unique_id=1222274980]
+offset_left = 312.0
+offset_top = 247.0
+offset_right = 388.0
+offset_bottom = 315.0
+text = "Run Test"
+
+[connection signal="pressed" from="Button" to="." method="runTest"]

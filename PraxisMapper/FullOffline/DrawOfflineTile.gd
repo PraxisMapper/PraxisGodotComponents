@@ -7,9 +7,13 @@ class_name DrawOfflineTile
 var theseentries = null
 var thisscale = 1
 
+var commands = []
+
 #NOTE: drawOps are drawn in order, so the earlier one has the higher LayerId in PraxisMapper style language.
 #the value/id/order is the MatchOrder for the style in PraxisMapper server
 
+#Perf-testing: objects are drawn in 1.1759s as part of the _draw call.
+#
 
 #This is set from outside.
 var style #same logic as for NameTiles
@@ -40,13 +44,14 @@ func _draw():
 	draw_colored_polygon(bgCoords, style["9999"].drawOps[0].color) 
 	var orderedDrawCommands = {}
 	
+	var start = Time.get_unix_time_from_system()
 	#entries has a dictionary, each entry is a big list of coord pairs
 	for entry in theseentries:
 		#If this entry isn't in our current style, skip it.
-		if !style.has(str(entry.tid)):
+		if !style.has(str(int(entry.tid))):
 			continue
 		
-		var thisStyle = style[str(entry.tid)]
+		var thisStyle = style[str(int(entry.tid))]
 		var lineSize = 1.0 * scale
 
 		for possibleDraw in style:
@@ -84,3 +89,6 @@ func _draw():
 			elif odc.gt == 3:
 				#A single color, which is what I generally use.
 				draw_colored_polygon(points, odc.color) 
+
+	var end = Time.get_unix_time_from_system()
+	print("all objects draw in " + str(end-start))

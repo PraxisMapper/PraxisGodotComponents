@@ -35,11 +35,14 @@ func RunQueue():
 	#print("Running queue")
 	busy = true
 	while tilesToDraw.size() > 0:
+		var start = Time.get_unix_time_from_system()
 		$Banner.visible = true
 		#print("tiles queued:" + str(tilesToDraw.size()))
 		var tile = tilesToDraw.pop_back()
 		#print("popped " + tile)
 		var img = await GetAndProcessData(tile)
+		var end = Time.get_unix_time_from_system()
+		print(tile + " drawn in " + str(end-start))
 		tile_created.emit(tile, img)
 	#print("Queue complete")
 	busy = false
@@ -48,10 +51,10 @@ func RunQueue():
 #Get a Cell8 PlusCode, draw just that tile.
 func GetAndProcessData(plusCode, scale = 1):
 	#save some time
-	if FileAccess.file_exists("user://MapTiles/" + plusCode + ".png") and !alwaysDrawNewTile:
-		var fileForSize = FileAccess.open("user://MapTiles/" + plusCode + ".png", FileAccess.READ)
+	if FileAccess.file_exists("user://MapTiles/" + plusCode + ".webp") and !alwaysDrawNewTile:
+		var fileForSize = FileAccess.open("user://MapTiles/" + plusCode + ".webp", FileAccess.READ)
 		if !fileForSize.get_length() <= 1539: #magic number that lines up to a blank image.
-			var img = await Image.load_from_file("user://MapTiles/" + plusCode + ".png")
+			var img = await Image.load_from_file("user://MapTiles/" + plusCode + ".webp")
 			#tile_created.emit(plusCode, img)
 			fileForSize.close()
 			#print("emitted existing file for " + plusCode)
@@ -137,7 +140,7 @@ func CreateTile(oneTile = null):
 				img1 = await tex1.get_image() # Get rendered image
 				img1.convert(Image.FORMAT_RGBA8)
 				if !alwaysDrawNewTile: #If you always want the tile redrawn, why save it?
-					await img1.save_png("user://MapTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
+					await img1.save_webp("user://MapTiles/" + plusCode6 + yChar + xChar + ".webp") # Save to disk
 				#Also testing removing this one. SEEMS SAFE TO LEAVE OUT
 				#await RenderingServer.frame_post_draw
 	#tile_created.emit(img1) #WSC fired this here.

@@ -26,6 +26,15 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 	var code4 = plusCode.substr(2, 2)
 	var zipReader = ZIPReader.new()
 	
+	
+	#CHECK: if we have a processed file, use it
+	if FileAccess.file_exists("user://Data/Full/" + plusCode.substr(0,6) + "-processed.bin"):
+		print("using processed bin file")
+		var soloFile = FileAccess.open("user://Data/Full/" + plusCode.substr(0,6) + "-processed.bin", FileAccess.READ)
+		var data = soloFile.get_var(false)
+		allData[plusCode] = data
+		return data
+
 	#CHECK: if we have a single downloaded JSON file, use it.
 	if FileAccess.file_exists("user://Data/Full/" + plusCode.substr(0,6) + ".json"):
 		var soloFile = FileAccess.open("user://Data/Full/" + plusCode.substr(0,6) + ".json", FileAccess.READ)
@@ -35,7 +44,10 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 		var jsonData = json.data
 		if jsonData == null: #no good data here? this area is missing or empty?
 			return null
-		return ProcessData(jsonData)
+		
+		var data = ProcessData(jsonData)
+		SaveProcessedFile(plusCode, data)
+		return data
 
 	#Now check if we have the zip file that should hold this data, built in or downloaded
 	var err
@@ -62,7 +74,15 @@ static func GetDataFromZip(plusCode): #full, drawable offline data.
 	if jsonData == null: #no file in this zip, this area is missing or empty.
 		return 
 	
-	return ProcessData(jsonData)
+	var data = ProcessData(jsonData)
+	return data 
+
+#NOTE: this was testing to see if the processed format was worth doing ahead of time. It saves 3-4 frames
+#to load this from disk and draw stuff, so I'm not real sure its worth it right now.
+static func SaveProcessedFile(plusCode, data):
+	var file = FileAccess.open("user://Data/Full/" + plusCode.substr(0,6) + "-processed.bin", FileAccess.WRITE)
+	file.store_var(data, false)
+	file.close()
 	
 static func ProcessData(jsonData):
 	#NOTE: This takes more than than reading files from disk on test pc

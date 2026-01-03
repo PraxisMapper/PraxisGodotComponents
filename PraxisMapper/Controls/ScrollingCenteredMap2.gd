@@ -262,7 +262,7 @@ func RefreshTiles(current):
 				node.DrawCellTracker($CellTracker, checkCode)
 				
 			node = get_node("mapBase/MapTile" + str(x) + "_" + str(y))
-			if FileAccess.file_exists("user://MapTiles/" + checkCode + ".png"):
+			if FileAccess.file_exists("user://MapTiles/" + checkCode + ".webp"):
 				tex = await $TileDrawerQueued.GetAndProcessData(checkCode, 1)
 				node.texture = ImageTexture.create_from_image(tex) #update might be faster? Doesnt seem like it in testing.
 			else:

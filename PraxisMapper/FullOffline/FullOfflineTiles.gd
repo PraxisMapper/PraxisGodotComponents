@@ -65,8 +65,10 @@ func GetAndProcessData(plusCode, scale = 1):
 		$svc/SubViewport.size = Vector2i(320 * 20 * (1 / scale) * thumbnailScale, 500 * 20 * (1 / scale) * thumbnailScale)
 		await RenderingServer.frame_post_draw
 		var img = await $svc/SubViewport.get_texture().get_image() # Get rendered image
-		await img.save_png("user://MapTiles/" + plusCode6 + "-thumb.png") # Save to disk
-		
+		await img.save_webp("user://MapTiles/" + plusCode6 + "-thumb.webp") # Save to disk
+		#NOTE: WebP format is limited to 16k x 16k pixels for a single image on all platforms. 
+		#This defaults to 6400 * 10000, so should be savable at full size regardless if I really wanted to.
+		print("thumbnail saved")
 	
 	$Banner/lblStatus.text = "Tiles Drawn for " + plusCode
 	await get_tree().create_timer(2).timeout
@@ -122,6 +124,7 @@ func CreateAllTiles(oneTile = null):
 		xList = oneTile[1]
 		yList = oneTile[0]
 
+	var threads = []
 	var tex1
 	for yChar in yList:
 		#This kept complaining about can't - a Vector2 and an Int so I had to do this.
@@ -138,21 +141,27 @@ func CreateAllTiles(oneTile = null):
 			camera4.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320)
 			await RenderingServer.frame_post_draw
 			if makeMapTile == true:
-				tex1 = await viewport1.get_texture()
+				var start = Time.get_unix_time_from_system()
+				tex1 = viewport1.get_texture()
 				var img1 = tex1.get_image() # Get rendered image
-				await img1.save_png("user://MapTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
+				img1.save_webp("user://MapTiles/" + plusCode6 + yChar + xChar + ".webp") # Save to disk
+				var end = Time.get_unix_time_from_system()
+				print("tile done in " + str(end-start))
 			if makeNameTile == true:
 				var img2 = await viewport2.get_texture().get_image() # Get rendered image
-				await img2.save_png("user://NameTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
+				await img2.save_webp("user://NameTiles/" + plusCode6 + yChar + xChar + ".webp") # Save to disk
 			if makeBoundsTile == true:
 				var img3 = await viewport3.get_texture().get_image() # Get rendered image
-				await img3.save_png("user://BoundsTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
+				await img3.save_webp("user://BoundsTiles/" + plusCode6 + yChar + xChar + ".webp") # Save to disk
 			if makeTerrainTile == true:
 				var img4 = await viewport4.get_texture().get_image() # Get rendered image
-				await img4.save_png("user://TerrainTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
+				await img4.save_webp("user://TerrainTiles/" + plusCode6 + yChar + xChar + ".webp") # Save to disk
 			$Banner/lblStatus.text = "Saved Tiles for " + plusCode6 + yChar + xChar
 			tile_created.emit(tex1) #Exclusive logic to this prototype.
-	
+
+	for thread in threads:
+		WorkerThreadPool.wait_for_task_completion(thread)
+		
 	tiles_saved.emit()
 
 func xDownloadFullData(plusCode6):

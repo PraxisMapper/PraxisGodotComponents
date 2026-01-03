@@ -209,8 +209,8 @@ func MakeOfflineTiles(plusCode, scale = 1):
 	remove_child(offlineInst)
 
 func GetCell8Tile(plusCode8):
-	if FileAccess.file_exists("user://MapTiles/" + plusCode8 + ".png"):
-		return ImageTexture.create_from_image(Image.load_from_file("user://MapTiles/" + plusCode8 + ".png"))
+	if FileAccess.file_exists("user://MapTiles/" + plusCode8 + ".webp"):
+		return ImageTexture.create_from_image(Image.load_from_file("user://MapTiles/" + plusCode8 + ".webp"))
 	
 	var results = await MakeOneOfflineTiles(plusCode8)
 	return results

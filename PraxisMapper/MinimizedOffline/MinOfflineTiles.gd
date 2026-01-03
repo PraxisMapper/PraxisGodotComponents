@@ -59,10 +59,10 @@ func CreateAllTiles():
 	#Exact details on when/why require more research.
 	
 	var img1 = viewport1.get_texture().get_image() # Get rendered image
-	img1.save_png("user://MapTiles/" + plusCode + ".png") # Save to disk
+	img1.save_webp("user://MapTiles/" + plusCode + ".webp") # Save to disk
 	var img2 = viewport2.get_texture().get_image() # Get rendered image
-	img2.save_png("user://NameTiles/" + plusCode + ".png") # Save to disk
+	img2.save_webp("user://NameTiles/" + plusCode + ".webp") # Save to disk
 	var img3 = viewport3.get_texture().get_image() # Get rendered image
-	img3.save_png("user://TerrainTiles/" + plusCode + ".png") # Save to disk
+	img3.save_webp("user://TerrainTiles/" + plusCode + ".webp") # Save to disk
 	
 	tiles_saved.emit()

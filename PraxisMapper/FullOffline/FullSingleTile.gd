@@ -28,10 +28,10 @@ var wait = false
 #Get a Cell8 PlusCode, draw just that tile.
 func GetAndProcessData(plusCode, scale = 1):
 	#save some time
-	if FileAccess.file_exists("user://MapTiles/" + plusCode + ".png") and !alwaysDrawNewTile:
-		var fileForSize = FileAccess.open("user://MapTiles/" + plusCode + ".png", FileAccess.READ)
+	if FileAccess.file_exists("user://MapTiles/" + plusCode + ".webp") and !alwaysDrawNewTile:
+		var fileForSize = FileAccess.open("user://MapTiles/" + plusCode + ".webp", FileAccess.READ)
 		if !fileForSize.get_length() <= 1539: #magic number that lines up to a blank image.
-			var img = await Image.load_from_file("user://MapTiles/" + plusCode + ".png")
+			var img = await Image.load_from_file("user://MapTiles/" + plusCode + ".webp")
 			tile_created.emit(img)
 			fileForSize.close()
 			wait = false
@@ -122,7 +122,7 @@ func CreateTile(oneTile = null):
 				tex1 = await viewport1.get_texture()
 				img1 = await tex1.get_image() # Get rendered image
 				if !alwaysDrawNewTile: #If you always want the tile redrawn, why save it?
-					await img1.save_png("user://MapTiles/" + plusCode6 + yChar + xChar + ".png") # Save to disk
+					await img1.save_webp("user://MapTiles/" + plusCode6 + yChar + xChar + ".webp") # Save to disk
 				#await RenderingServer.frame_post_draw #Seems unnecessary based on StyleTest
 	#tile_created.emit(img1) #WSC fired this here.
 	
