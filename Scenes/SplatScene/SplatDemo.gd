@@ -114,7 +114,8 @@ func plusCode_changed(cur, old):
 	#this call if I want it to wait until there's data to draw. Get downloads working first.
 	if downloading == true:
 		return
-		
+	
+	#TODO: This should use the built-in data if its present.
 	if !FileAccess.file_exists("user://Data/Full/" + cur.substr(0,6) + ".json"):
 		downloading = true
 		$ScrollingCenteredMap.process = false

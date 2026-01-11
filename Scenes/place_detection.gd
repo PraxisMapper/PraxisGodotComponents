@@ -7,8 +7,8 @@ var scanner = FullAreaScanner.new()
 func _ready():
 	PraxisCore.plusCode_changed.connect(OnGpsUpdate)
 	styleData = {
-		mapTiles = PraxisCore.GetStyle("mapTiles"),
-		adminBoundsFilled = PraxisCore.GetStyle("adminBoundsFilled")
+		mapTiles = PraxisCore.GetStyle("styles"),
+		adminBoundsFilled = PraxisCore.GetStyle("adminBounds")
 	}
 
 func OnGpsUpdate(current, old):

@@ -3,6 +3,13 @@ class_name DrawOfflineTile
 
 #This is for drawing map tiles directly in the client from Offline/V2 data
 #TODO: 
+# Add support for a style to force polys to draw as lines. For adminbounds.
+# add support to draw places by name, also for adminbounds
+# --that code is 
+#		var r = (int(entry.nid) % 256) / 256.0
+#		var g = (int(entry.nid / 256) % 256) / 256.0
+#		var b = (int(entry.nid / 65536) % 256) / 256.0
+#		var nameColor = Color(r, g, b)
 
 var theseentries = null
 var thisscale = 1
@@ -14,14 +21,14 @@ var commands = []
 
 #Perf-testing: objects are drawn in 1.1759s as part of the _draw call.
 #
-
 #This is set from outside.
 var style #same logic as for NameTiles
+var plusCode6 = ''
 
-
-func DrawOfflineTile(entries, scale):
+func DrawOfflineTile(entries, scale, plusCode = ''):
 	theseentries = entries
 	thisscale = scale
+	plusCode6 = plusCode
 	queue_redraw()
 
 func _draw():
@@ -44,6 +51,12 @@ func _draw():
 	draw_colored_polygon(bgCoords, style["9999"].drawOps[0].color) 
 	var orderedDrawCommands = {}
 	
+	for key in style.keys():
+		if (key == "colorByName"):
+			continue
+		for op in style[key].drawOps:
+			orderedDrawCommands[op.drawOrder] = []
+	
 	var start = Time.get_unix_time_from_system()
 	#entries has a dictionary, each entry is a big list of coord pairs
 	for entry in theseentries:
@@ -54,14 +67,28 @@ func _draw():
 		var thisStyle = style[str(int(entry.tid))]
 		var lineSize = 1.0 * scale
 
-		for possibleDraw in style:
-			var pd = style[possibleDraw].drawOps
-			for do in pd:
-				if !orderedDrawCommands.has(do.drawOrder):
-					orderedDrawCommands[do.drawOrder] = []
+		#for possibleDraw in style:
+			#var pd = style[possibleDraw].drawOps
+			#for do in pd:
+				#if !orderedDrawCommands.has(do.drawOrder):
+					#orderedDrawCommands[do.drawOrder] = []
 		
 		for s in thisStyle.drawOps:
-			orderedDrawCommands[s.drawOrder].push_back({gt = entry.gt, p = entry.p, size = s.sizePx, color = s.color})
+			#TODO: check forceLines first and set GT, or do it on draw?
+			#var gt = 2 if (entry.gt == 3 and s.forceLines) else entry.gt
+			#print(str(entry.nid) + " - layer " + str(s.drawOrder))
+			#TODO: load actual name string from data, hash it, use first 6 bytes from that for color.
+			var color = s.color
+			if style.has("colorByName"):
+				if (entry.nid == 0.0):
+					continue
+				var name = PraxisOfflineData.GetName(plusCode6, entry.nid)
+				var hash = name.hash()
+				var r = (hash % 256) / 256.0
+				var g = ((hash / 256) % 256) / 256.0
+				var b = ((hash / 65536) % 256) / 256.0
+				color = Color(r, g, b, 0.4)
+			orderedDrawCommands[s.drawOrder].push_back({gt = entry.gt, p = entry.p, size = s.sizePx, color = color})
 		
 	var drawLevels = orderedDrawCommands.keys()
 	drawLevels.sort()

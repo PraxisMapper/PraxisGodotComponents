@@ -36,6 +36,13 @@ func _ready():
 	end = Time.get_unix_time_from_system()
 	timeData += "Pic3 drawn in " + str(end - start3) + "\n"
 	
+	var start4 = Time.get_unix_time_from_system()
+	$FullTile.drawnStyle = "adminBoundsFilled"
+	var mapImg4 = await $FullTile.GetAndProcessData(plusCode8)
+	$TextureRect4.texture = ImageTexture.create_from_image(mapImg4)
+	end = Time.get_unix_time_from_system()
+	timeData += "Pic4 drawn in " + str(end - start3) + "\n"
+	
 	var elapsed = end - start
 	var frames = elapsed / frametime
 	timeData += "StyleTest  _ready done in " + str(elapsed) + " [" + str(frames) + " frames]"

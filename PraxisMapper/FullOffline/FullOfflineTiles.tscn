@@ -3,9 +3,6 @@
 [ext_resource type="Script" uid="uid://3pqkhi7hgb4e" path="res://PraxisMapper/FullOffline/FullOfflineTiles.gd" id="1_rv5jx"]
 [ext_resource type="PackedScene" uid="uid://8os6eof5qcbh" path="res://PraxisMapper/APICalls/PraxisEndpoints.tscn" id="2_rp3kp"]
 [ext_resource type="Script" uid="uid://cncmlr71fddvv" path="res://PraxisMapper/FullOffline/DrawOfflineTile.gd" id="3_n6eua"]
-[ext_resource type="Script" uid="uid://cdxuagl64g15o" path="res://PraxisMapper/FullOffline/DrawOfflineNameTile.gd" id="4_n8854"]
-[ext_resource type="Script" uid="uid://b8keqxsf7m787" path="res://PraxisMapper/FullOffline/DrawOfflineBoundsTile.gd" id="5_apl8f"]
-[ext_resource type="Script" uid="uid://bimsoq8pxi6st" path="res://PraxisMapper/FullOffline/DrawOfflineTerrainTile.gd" id="6_fvihv"]
 
 [node name="OfflineData" type="Node2D" unique_id=56921163]
 script = ExtResource("1_rv5jx")
@@ -25,51 +22,6 @@ render_target_update_mode = 4
 script = ExtResource("3_n6eua")
 
 [node name="subcam" type="Camera2D" parent="svc/SubViewport" unique_id=769146326]
-anchor_mode = 0
-
-[node name="svc2" type="SubViewportContainer" parent="." unique_id=1856277597]
-offset_left = -10000.0
-offset_right = -9960.0
-offset_bottom = 40.0
-
-[node name="SubViewport" type="SubViewport" parent="svc2" unique_id=1420616298]
-handle_input_locally = false
-render_target_update_mode = 4
-
-[node name="nameMap" type="Node2D" parent="svc2/SubViewport" unique_id=1131045632]
-script = ExtResource("4_n8854")
-
-[node name="subcam" type="Camera2D" parent="svc2/SubViewport" unique_id=278987175]
-anchor_mode = 0
-
-[node name="svc3" type="SubViewportContainer" parent="." unique_id=551362809]
-offset_left = -10000.0
-offset_right = -9488.0
-offset_bottom = 512.0
-
-[node name="SubViewport" type="SubViewport" parent="svc3" unique_id=1694698363]
-handle_input_locally = false
-render_target_update_mode = 4
-
-[node name="boundsMap" type="Node2D" parent="svc3/SubViewport" unique_id=768757871]
-script = ExtResource("5_apl8f")
-
-[node name="subcam" type="Camera2D" parent="svc3/SubViewport" unique_id=714822175]
-anchor_mode = 0
-
-[node name="svc4" type="SubViewportContainer" parent="." unique_id=1633423296]
-offset_left = -10000.0
-offset_right = -9488.0
-offset_bottom = 512.0
-
-[node name="SubViewport" type="SubViewport" parent="svc4" unique_id=524610344]
-handle_input_locally = false
-render_target_update_mode = 4
-
-[node name="terrainMap" type="Node2D" parent="svc4/SubViewport" unique_id=1288135862]
-script = ExtResource("6_fvihv")
-
-[node name="subcam" type="Camera2D" parent="svc4/SubViewport" unique_id=3247585]
 anchor_mode = 0
 
 [node name="Banner" type="ColorRect" parent="." unique_id=1294006662]

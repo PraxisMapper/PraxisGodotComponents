@@ -1,13 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://cvuybebh615ng"]
+[gd_scene format=3 uid="uid://cvuybebh615ng"]
 
 [ext_resource type="PackedScene" uid="uid://bpnt0yvbysdow" path="res://PraxisMapper/Controls/ScrollingCenteredMap2.tscn" id="1_2gldk"]
 [ext_resource type="Script" uid="uid://dywjhndvkh2e2" path="res://Scenes/SCM2/scm_2_test.gd" id="1_atrh6"]
 [ext_resource type="PackedScene" uid="uid://b2hnhr1t57jm7" path="res://PraxisMapper/Controls/CellTracker.tscn" id="3_sgwll"]
 
-[node name="Scm2Test" type="Node2D"]
+[node name="Scm2Test" type="Node2D" unique_id=1152237934]
 script = ExtResource("1_atrh6")
 
-[node name="ColorRect2" type="ColorRect" parent="."]
+[node name="ColorRect2" type="ColorRect" parent="." unique_id=1240805283]
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -21,7 +21,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(3.1285e-07, 0.278752, 0.321081, 1)
 
-[node name="ScrollingCenteredMap" parent="." instance=ExtResource("1_2gldk")]
+[node name="ScrollingCenteredMap" parent="." unique_id=2018689078 instance=ExtResource("1_2gldk")]
 offset_left = -98.0
 offset_top = 313.0
 offset_right = 1202.0
@@ -29,12 +29,12 @@ offset_bottom = 1955.0
 zoomFactors = [0.125, 0.25, 0.5, 1.0, 1.5, 2.0, 4.0]
 freeRemovedTrackables = false
 
-[node name="crHeader" type="ColorRect" parent="."]
+[node name="crHeader" type="ColorRect" parent="." unique_id=451488664]
 offset_right = 1080.0
 offset_bottom = 446.0
 color = Color(0.0901961, 0, 0.0156863, 1)
 
-[node name="btnZoomIn" type="Button" parent="crHeader"]
+[node name="btnZoomIn" type="Button" parent="crHeader" unique_id=74652475]
 layout_mode = 0
 offset_left = 13.0
 offset_top = 369.0
@@ -43,7 +43,7 @@ offset_bottom = 429.0
 theme_override_font_sizes/font_size = 20
 text = "Zoom In"
 
-[node name="btnZoomOut" type="Button" parent="crHeader"]
+[node name="btnZoomOut" type="Button" parent="crHeader" unique_id=1179190477]
 layout_mode = 0
 offset_left = 142.0
 offset_top = 372.0
@@ -53,7 +53,7 @@ theme_override_font_sizes/font_size = 20
 text = "Zoom Out
 "
 
-[node name="btnCtdToggle" type="Button" parent="crHeader"]
+[node name="btnCtdToggle" type="Button" parent="crHeader" unique_id=706954411]
 layout_mode = 0
 offset_left = 876.0
 offset_top = 372.0
@@ -62,7 +62,7 @@ offset_bottom = 427.0
 theme_override_font_sizes/font_size = 20
 text = "Toggle Cell Trackers"
 
-[node name="btnProxyToggle" type="Button" parent="crHeader"]
+[node name="btnProxyToggle" type="Button" parent="crHeader" unique_id=621781196]
 layout_mode = 0
 offset_left = 660.0
 offset_top = 372.0
@@ -72,7 +72,7 @@ theme_override_font_sizes/font_size = 20
 text = "Toggle ProxyPlay to
 85633QG4+VV"
 
-[node name="btnShowTiles" type="Button" parent="crHeader"]
+[node name="btnShowTiles" type="Button" parent="crHeader" unique_id=1320683119]
 layout_mode = 0
 offset_left = 307.0
 offset_top = 372.0
@@ -82,7 +82,7 @@ theme_override_font_sizes/font_size = 20
 text = "Toggle Tile 
 Grid Overlay"
 
-[node name="btnShowCells" type="Button" parent="crHeader"]
+[node name="btnShowCells" type="Button" parent="crHeader" unique_id=1767993438]
 layout_mode = 0
 offset_left = 486.0
 offset_top = 372.0
@@ -92,7 +92,7 @@ theme_override_font_sizes/font_size = 20
 text = "Toggle Cell
 Grid Overlay"
 
-[node name="Label" type="Label" parent="crHeader"]
+[node name="Label" type="Label" parent="crHeader" unique_id=715961867]
 layout_mode = 0
 offset_left = 419.0
 offset_top = 12.0
@@ -101,7 +101,7 @@ offset_bottom = 40.0
 theme_override_font_sizes/font_size = 20
 text = "Scrolling Centered Map"
 
-[node name="Label2" type="Label" parent="crHeader"]
+[node name="Label2" type="Label" parent="crHeader" unique_id=1175112293]
 layout_mode = 0
 offset_left = 24.0
 offset_top = 58.0
@@ -115,16 +115,16 @@ text = "ScrollingCenteredMap2 is intended to be the core of most game's map scre
 CellTrackers can be toggled and automatically match the map tiles underneath. "
 autowrap_mode = 3
 
-[node name="CellTracker" parent="." instance=ExtResource("3_sgwll")]
+[node name="CellTracker" parent="." unique_id=1026600621 instance=ExtResource("3_sgwll")]
 
-[node name="lblLocation" type="Label" parent="."]
+[node name="lblLocation" type="Label" parent="." unique_id=1950888986]
 offset_left = 874.0
 offset_top = 333.0
 offset_right = 945.0
 offset_bottom = 356.0
 text = "Location:"
 
-[node name="btnClose" type="Button" parent="."]
+[node name="btnClose" type="Button" parent="." unique_id=2101261609]
 offset_left = 475.0
 offset_top = 1827.0
 offset_right = 636.0

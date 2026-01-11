@@ -31,7 +31,7 @@ func GetAndProcessData(plusCode, scale = 1):
 	if FileAccess.file_exists("user://MapTiles/" + plusCode + ".webp") and !alwaysDrawNewTile:
 		var fileForSize = FileAccess.open("user://MapTiles/" + plusCode + ".webp", FileAccess.READ)
 		if !fileForSize.get_length() <= 1539: #magic number that lines up to a blank image.
-			var img = await Image.load_from_file("user://MapTiles/" + plusCode + ".webp")
+			var img = Image.load_from_file("user://MapTiles/" + plusCode + ".webp")
 			tile_created.emit(img)
 			fileForSize.close()
 			wait = false
@@ -99,7 +99,7 @@ func CreateTile(oneTile = null):
 	
 	if makeMapTile == true:
 		print("drawing map (single)")
-		await $svc/SubViewport/fullMap.DrawSingleTile(mapData.entries["mapTiles"], scaleVal, plusCode6 + oneTile)
+		await $svc/SubViewport/fullMap.DrawSingleTile(mapData.entries["offline"], scaleVal, plusCode6 + oneTile)
 	
 	var xList = PlusCodes.CODE_ALPHABET_
 	var yList = PlusCodes.CODE_ALPHABET_

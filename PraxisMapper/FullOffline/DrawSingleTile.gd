@@ -51,15 +51,18 @@ func _draw():  #DrawCell8(plusCode):
 	bgCoords.append(Vector2(0,0))
 	draw_colored_polygon(bgCoords, style["9999"].drawOps[0].color) 
 	var orderedDrawCommands = {}
+	for key in style.keys():
+		for op in style[key].drawOps:
+			orderedDrawCommands[op.drawOrder] = []
 	
 	#FUTURE TODO: This is almost, but not quite, the correct draw order.
 	#For now, forcing points to be visible over the rest.
 	orderedDrawCommands[10] = [] #forced-point layer
-	for possibleDraw in style:
-		var pd = style[possibleDraw].drawOps
-		for do in pd:
-			if !orderedDrawCommands.has(int(do.drawOrder)):
-				orderedDrawCommands[int(do.drawOrder)] = []
+	#for possibleDraw in style:
+		#var pd = style[possibleDraw].drawOps
+	#	for do in pd:
+	#		if !orderedDrawCommands.has(int(do.drawOrder)):
+	#			orderedDrawCommands[int(do.drawOrder)] = []
 
 	#entries has a dictionary, each entry is a big list of coord pairs
 	for entry in theseentries:
@@ -72,7 +75,6 @@ func _draw():  #DrawCell8(plusCode):
 			continue
 
 		var thisStyle = style[str(int(entry.tid))]
-		var lineSize = 1.0 * scale
 	
 		for s in thisStyle.drawOps:
 			if entry.gt == 1: #points are getting forced to the top

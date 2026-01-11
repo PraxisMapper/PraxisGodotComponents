@@ -21,10 +21,6 @@ var scaleVal = 1
 var mapData
 
 @export var drawnStyle = "mapTiles"
-@export var makeMapTile = true
-@export var makeTerrainTile = false
-@export var makeNameTile = false
-@export var makeBoundsTile = false
 @export var makeThumbnail = false
 @export var thumbnailScale = 0.08
 
@@ -43,17 +39,13 @@ func GetAndProcessData(plusCode, scale = 1):
 	var styleData = await PraxisCore.GetStyle(drawnStyle)
 	$Banner/lblStatus.text = "Style loaded."
 	$svc/SubViewport/fullMap.style = styleData
-	$svc2/SubViewport/nameMap.style = styleData
-	$svc4/SubViewport/terrainMap.style = styleData
-	if makeBoundsTile: #Always uses its own style
-		$svc3/SubViewport/boundsMap.style = await PraxisCore.GetStyle("adminBoundsFilled")
 	
 	mapData = await PraxisOfflineData.GetDataFromZip(plusCode6) 
 	if (mapData == null):
 		$Banner/lblStatus.text = "Error getting map data. Try again." 
 		return
 		
-	$Banner/lblStatus.text = "Data Loaded. Processing " + str(mapData.entries["mapTiles"].size()) + " items, please wait...." 
+	$Banner/lblStatus.text = "Data Loaded. Processing " + str(mapData.entries["offline"].size()) + " items, please wait...." 
 	await RenderingServer.frame_post_draw
 	#Game is probably going to freeze for a couple seconds here while Godot draws stuff to the node
 
@@ -63,9 +55,11 @@ func GetAndProcessData(plusCode, scale = 1):
 		$svc/SubViewport/fullMap.scale = Vector2((1 / scale) * thumbnailScale, (1 / scale) * thumbnailScale)
 		$svc/SubViewport/subcam.position = Vector2(0,-500 * 20 * (1 / scale) * thumbnailScale)
 		$svc/SubViewport.size = Vector2i(320 * 20 * (1 / scale) * thumbnailScale, 500 * 20 * (1 / scale) * thumbnailScale)
+		print(str($svc/SubViewport.size))
+		print(str($svc/SubViewport/subcam.position))
 		await RenderingServer.frame_post_draw
 		var img = await $svc/SubViewport.get_texture().get_image() # Get rendered image
-		await img.save_webp("user://MapTiles/" + plusCode6 + "-thumb.webp") # Save to disk
+		await img.save_webp("user://MapTiles/" + plusCode6 + "-" + drawnStyle + "-thumb.webp") # Save to disk
 		#NOTE: WebP format is limited to 16k x 16k pixels for a single image on all platforms. 
 		#This defaults to 6400 * 10000, so should be savable at full size regardless if I really wanted to.
 		print("thumbnail saved")
@@ -79,43 +73,18 @@ func GetAndProcessData(plusCode, scale = 1):
 func CreateAllTiles(oneTile = null):
 	#Fullmap at 0, name map at 40k, bounds map at 80k, terrain at 120k
 	$svc/SubViewport/fullMap.position.y = 0
-	$svc2/SubViewport/nameMap.position.y = 40000 * scaleVal
-	$svc3/SubViewport/boundsMap.position.y = 80000 * scaleVal
-	$svc4/SubViewport/terrainMap.position.y = 120000 * scaleVal
 	
 	var viewport1 = $svc/SubViewport
-	var viewport2 = $svc2/SubViewport
-	var viewport3 = $svc3/SubViewport
-	var viewport4 = $svc4/SubViewport
 	var camera1 = $svc/SubViewport/subcam
-	var camera2 = $svc2/SubViewport/subcam
-	var camera3 = $svc3/SubViewport/subcam
-	var camera4 = $svc4/SubViewport/subcam
 	var scale = scaleVal
 	
 	camera1.position = Vector2(0,0)
-	camera2.position = Vector2(0,40000 * scaleVal)
-	camera3.position = Vector2(0,80000 * scaleVal)
-	camera4.position = Vector2(0,120000 * scaleVal)
 	viewport1.size = Vector2i(320 * scale, 500 * scale)
-	viewport2.size = Vector2i(320, 500) #non-visible images don't need scaled up.
-	viewport3.size = Vector2i(320, 500)
-	viewport4.size = Vector2i(320, 500)
 	await RenderingServer.frame_post_draw #set this before loading entities, skips a wasted draw call.
 	
 	$Banner/lblStatus.text = "Drawing " + plusCode6 + "..."
-	if makeMapTile == true:
-		print("drawing map (full)")
-		await $svc/SubViewport/fullMap.DrawOfflineTile(mapData.entries["mapTiles"], scaleVal)
-	if makeNameTile == true:
-		print("drawing name")
-		await $svc2/SubViewport/nameMap.DrawOfflineNameTile(mapData.entries["mapTiles"], scaleVal)
-	if makeBoundsTile == true and mapData.entries.has("adminBoundsFilled"): #dont draw if theres no data.
-		print("drawing bounds")
-		await $svc3/SubViewport/boundsMap.DrawOfflineBoundsTile(mapData.entries["adminBoundsFilled"], scaleVal)
-	if makeTerrainTile == true:
-		print("drawing terrain")
-		await $svc4/SubViewport/terrainMap.DrawOfflineTerrainTile(mapData.entries["mapTiles"], scaleVal)
+	print("drawing map (full)")
+	await $svc/SubViewport/fullMap.DrawOfflineTile(mapData.entries["offline"], scaleVal, plusCode6)
 	
 	var xList = PlusCodes.CODE_ALPHABET_
 	var yList = PlusCodes.CODE_ALPHABET_
@@ -130,32 +99,16 @@ func CreateAllTiles(oneTile = null):
 		#This kept complaining about can't - a Vector2 and an Int so I had to do this.
 		#yPos -= (PlusCodes.CODE_ALPHABET_.find(yChar) * 20 * scale)
 		camera1.position.y -= (500 * scale)
-		camera2.position.y -= (500)
-		camera3.position.y -= (500)
-		camera4.position.y -= (500)
 			
 		for xChar in xList:
 			camera1.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320 * scale)
-			camera2.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320)
-			camera3.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320)
-			camera4.position.x = (PlusCodes.CODE_ALPHABET_.find(xChar) * 320)
 			await RenderingServer.frame_post_draw
-			if makeMapTile == true:
-				var start = Time.get_unix_time_from_system()
-				tex1 = viewport1.get_texture()
-				var img1 = tex1.get_image() # Get rendered image
-				img1.save_webp("user://MapTiles/" + plusCode6 + yChar + xChar + ".webp") # Save to disk
-				var end = Time.get_unix_time_from_system()
-				print("tile done in " + str(end-start))
-			if makeNameTile == true:
-				var img2 = await viewport2.get_texture().get_image() # Get rendered image
-				await img2.save_webp("user://NameTiles/" + plusCode6 + yChar + xChar + ".webp") # Save to disk
-			if makeBoundsTile == true:
-				var img3 = await viewport3.get_texture().get_image() # Get rendered image
-				await img3.save_webp("user://BoundsTiles/" + plusCode6 + yChar + xChar + ".webp") # Save to disk
-			if makeTerrainTile == true:
-				var img4 = await viewport4.get_texture().get_image() # Get rendered image
-				await img4.save_webp("user://TerrainTiles/" + plusCode6 + yChar + xChar + ".webp") # Save to disk
+			var start = Time.get_unix_time_from_system()
+			tex1 = viewport1.get_texture()
+			var img1 = tex1.get_image() # Get rendered image
+			img1.save_webp("user://MapTiles/" + plusCode6 + yChar + xChar + "-" + drawnStyle + ".webp") # Save to disk
+			var end = Time.get_unix_time_from_system()
+			print("tile done in " + str(end-start))
 			$Banner/lblStatus.text = "Saved Tiles for " + plusCode6 + yChar + xChar
 			tile_created.emit(tex1) #Exclusive logic to this prototype.
 

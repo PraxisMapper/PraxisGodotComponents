@@ -80,6 +80,22 @@ theme_override_font_sizes/font_size = 20
 text = "Neon (Only roads and residential)"
 horizontal_alignment = 1
 
+[node name="TextureRect4" type="TextureRect" parent="." unique_id=1488802986]
+offset_left = 16.0
+offset_top = 966.0
+offset_right = 336.0
+offset_bottom = 1466.0
+texture = SubResource("NoiseTexture2D_eqlhi")
+
+[node name="Label6" type="Label" parent="." unique_id=1543096102]
+offset_left = 16.0
+offset_top = 906.0
+offset_right = 341.0
+offset_bottom = 934.0
+theme_override_font_sizes/font_size = 20
+text = "Admin Bounds"
+horizontal_alignment = 1
+
 [node name="Label5" type="Label" parent="." unique_id=958909134]
 offset_left = 379.0
 offset_top = 300.0

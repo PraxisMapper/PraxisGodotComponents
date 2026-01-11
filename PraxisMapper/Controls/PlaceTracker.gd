@@ -1,10 +1,13 @@
 extends Node2D
 class_name PlaceTracker
 
+#NOTE: This may need updated to use the full offline data. Originally may have been
+#set only for minimized offline data.
+
 #keys are [plusCode6][placeName], value is dictionary (type, time visited)
 #EX: [223344][Main Park] = {type = 50, timeFirstVisisted = 12345.679}
 var allPlaces = {} 
-var category = "mapTiles" #Use a separate PlaceTracker for adminBoundaries
+var category = "offline"
 #NOTE: if you want a custom filename for multiple placetrackers, set this value after calling _ready()
 var fileName = "user://Data/PlaceTracker" + category + ".json"
 var styleData = {}
@@ -21,7 +24,7 @@ var autoRun = true
 signal place_changed(newplace)
 
 func _ready():
-	styleData = PraxisCore.GetStyle("suggestedmini") 
+	styleData = PraxisCore.GetStyle("offline") 
 	styleDataFull = PraxisCore.GetStyle(category) 
 	fileName = "user://Data/PlaceTracker" + category + ".json"
 	Load()

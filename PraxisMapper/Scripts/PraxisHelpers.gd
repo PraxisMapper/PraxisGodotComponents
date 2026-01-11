@@ -71,3 +71,11 @@ static func MakeAreaCircle(geoVector2, areaTotalMeters):
 	# xa = r(a)cos(a)
 	# ya = r(a)sin(a)
 	# ra = some harder sqrt math.
+
+static func MakePlusCodePairs():
+	var pairs = []
+	for x in PlusCodes.CODE_ALPHABET_:
+		for y in PlusCodes.CODE_ALPHABET_:
+			pairs.append(x + y)
+	return pairs
+			
