@@ -1,6 +1,12 @@
 extends Node2D
-
+class_name DrawSingleTile #is this identical to or replaceable by/with drawOFflineTile?
 #This is for drawing map tiles directly in the client from Offline/V2 data
+#this script is MUCH faster than DrawOfflineTile. This one should get any code changes and replace that one?
+#may just be envelope related?
+#TODO: remember this is the new 'main' class if possible? would like to only have one of these.
+
+#TODO: move colorByName check to be on drawOps instead of the whole style.
+#TODO: add AlwaysDrawAsLine to drawOps instead of style.
 
 var theseentries = null
 var thisscale = 1
@@ -52,8 +58,10 @@ func _draw():  #DrawCell8(plusCode):
 	draw_colored_polygon(bgCoords, style["9999"].drawOps[0].color) 
 	var orderedDrawCommands = {}
 	for key in style.keys():
+		if key == "colorByName":
+			continue
 		for op in style[key].drawOps:
-			orderedDrawCommands[op.drawOrder] = []
+			orderedDrawCommands[int(op.drawOrder)] = []
 	
 	#FUTURE TODO: This is almost, but not quite, the correct draw order.
 	#For now, forcing points to be visible over the rest.
@@ -75,12 +83,28 @@ func _draw():  #DrawCell8(plusCode):
 			continue
 
 		var thisStyle = style[str(int(entry.tid))]
-	
+		
 		for s in thisStyle.drawOps:
-			if entry.gt == 1: #points are getting forced to the top
-				orderedDrawCommands[10].push_back({gt = entry.gt, p = entry.p, size = s.sizePx, color = s.color})
+			#HERE we set color by name
+			var color = s.color
+			if s.has("colorByName"): #Intended for adminBoundsFilled, so each city/state/etc is a unique color
+				if (entry.nid == 0.0):
+					continue
+				var name = PraxisOfflineData.GetName(plusCode.substr(0,6), entry.nid)
+				var hash = name.hash()
+				var r = (hash % 256) / 256.0
+				var g = ((hash / 256) % 256) / 256.0
+				var b = ((hash / 65536) % 256) / 256.0
+				color = Color(r, g, b, 0.4)
+			
+			var gt = entry.gt
+			if s.has("alwaysDrawAsLine") and gt == 3: #Intended for drawing admin bounds overtop other map details.
+				gt = 2
+				
+			if gt == 1: #points are getting forced to the top
+				orderedDrawCommands[10].push_back({gt = gt, p = entry.p, size = s.sizePx, color = color})
 			else:
-				orderedDrawCommands[int(s.drawOrder)].push_back({gt = entry.gt, p = entry.p, size = s.sizePx, color = s.color})
+				orderedDrawCommands[int(s.drawOrder)].push_back({gt = gt, p = entry.p, size = s.sizePx, color = color})
 		
 	var drawLevels = orderedDrawCommands.keys()
 	drawLevels.sort()

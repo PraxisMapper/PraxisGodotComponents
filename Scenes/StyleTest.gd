@@ -12,7 +12,7 @@ extends Node2D
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	var plusCode8 = "85633QG3"
+	var plusCode8 = "85634PFW"
 	var timeData = ""
 	var frametime = 0.016
 	
@@ -41,7 +41,14 @@ func _ready():
 	var mapImg4 = await $FullTile.GetAndProcessData(plusCode8)
 	$TextureRect4.texture = ImageTexture.create_from_image(mapImg4)
 	end = Time.get_unix_time_from_system()
-	timeData += "Pic4 drawn in " + str(end - start3) + "\n"
+	timeData += "Pic4 drawn in " + str(end - start4) + "\n"
+	
+	var start5 = Time.get_unix_time_from_system()
+	$FullTile.drawnStyle = "mapTilesAdminBoundsLines"
+	var mapImg5 = await $FullTile.GetAndProcessData(plusCode8)
+	$TextureRect5.texture = ImageTexture.create_from_image(mapImg5)
+	end = Time.get_unix_time_from_system()
+	timeData += "Pic5 drawn in " + str(end - start5) + "\n"
 	
 	var elapsed = end - start
 	var frames = elapsed / frametime

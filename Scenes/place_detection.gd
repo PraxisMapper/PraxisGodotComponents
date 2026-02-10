@@ -1,5 +1,8 @@
 extends Node2D
 
+
+#TODO: update this to use new offline format, I may have existing bugs in here too from lables
+#not lining up anyways.
 var styleData
 var downloading = false
 var scanner = FullAreaScanner.new()
@@ -7,17 +10,19 @@ var scanner = FullAreaScanner.new()
 func _ready():
 	PraxisCore.plusCode_changed.connect(OnGpsUpdate)
 	styleData = {
-		mapTiles = PraxisCore.GetStyle("styles"),
-		adminBoundsFilled = PraxisCore.GetStyle("adminBounds")
+		mapTiles = PraxisCore.GetStyle("mapTiles"), #TODO: keep for backwards compatibility?
+		adminBoundsFilled = PraxisCore.GetStyle("adminBoundsFilled"),
+		offline = PraxisCore.GetStyle("offline")
 	}
 
 func OnGpsUpdate(current, old):
 	$lblLoc.text = "Location: " + current
-	
+
+#TODO: this should be an external function or something, maybe a signal to listen for when its done.
 	#Place Lookup and download logic
 	if downloading == true:
 		return
-		
+
 	if !FileAccess.file_exists("user://Data/Full/" + current.substr(0,6) + ".json"):
 		$lblLoc3.text = "Data Present: No"
 		downloading = true

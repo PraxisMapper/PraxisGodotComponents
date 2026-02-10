@@ -8,7 +8,7 @@ class_name DrawOfflineTile
 # --that code is 
 #		var r = (int(entry.nid) % 256) / 256.0
 #		var g = (int(entry.nid / 256) % 256) / 256.0
-#		var b = (int(entry.nid / 65536) % 256) / 256.0
+#		var b = (int(entry.nid / 65536) % 256) / 256.0 
 #		var nameColor = Color(r, g, b)
 
 var theseentries = null
@@ -24,6 +24,9 @@ var commands = []
 #This is set from outside.
 var style #same logic as for NameTiles
 var plusCode6 = ''
+
+func DrawSingleTile(entries, scale, plusCode = ''):
+	DrawOfflineTile(entries, scale, plusCode)
 
 func DrawOfflineTile(entries, scale, plusCode = ''):
 	theseentries = entries

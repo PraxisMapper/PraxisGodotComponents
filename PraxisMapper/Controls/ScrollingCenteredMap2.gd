@@ -88,6 +88,8 @@ func _process(delta):
 	
 func Setup():
 	#Do all the one-time stuff here. Clear out child objects just in case we're changing after _ready()
+	#TODO: may need to use call_deferred on this spot for zooming?
+	#Or have this function and/or zoom buttons lock out once they're activated until the operation completes
 	for c in $mapBase.get_children():
 		$mapBase.remove_child(c)
 	for c in $cellTrackerDrawers.get_children():
@@ -258,6 +260,8 @@ func RefreshTiles(current):
 			var checkCode = PlusCodes.ShiftCode(base, x, -y)
 			#print("Checking code " + checkCode)
 			if useCellTrackers and showCellTrackers:
+				#TODO: can crash if zooming in and this celltracker has been removed for some reason. if has_node() can be added to check.
+				#TODO: ScrollingCenteredMap2 demo seems to put tiles in wrong places sometimes, need to handle that.
 				node = get_node("cellTrackerDrawers/CTD" + str(x) + "_" + str(y))
 				node.DrawCellTracker($CellTracker, checkCode)
 				

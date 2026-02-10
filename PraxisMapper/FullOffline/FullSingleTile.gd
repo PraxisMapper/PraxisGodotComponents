@@ -1,6 +1,6 @@
 extends Node2D
-class_name SingleTile
-
+class_name SingleTile #FullSingleTile.gd
+ 
 #Single Cell8 drawing from Cell6 data. 
 #Should not be so slow as to need user status displays.
 #Should not need multiple tiles for full-detail data, since it can be
@@ -16,7 +16,7 @@ var scaleVal = 1
 var mapData
 var wait = false
 
-@export var drawnStyle = "mapTiles"
+@export var drawnStyle = "offline"
 @export var makeMapTile = true
 #@export var makeTerrainTile = false
 #@export var makeNameTile = false

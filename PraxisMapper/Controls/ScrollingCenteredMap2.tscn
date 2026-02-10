@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://bpnt0yvbysdow"]
+[gd_scene format=3 uid="uid://bpnt0yvbysdow"]
 
 [ext_resource type="Script" uid="uid://d1f647e0d5w1f" path="res://PraxisMapper/Controls/ScrollingCenteredMap2.gd" id="1_om4r7"]
 [ext_resource type="Texture2D" uid="uid://c3033wigb05gp" path="res://PraxisMapper/Resources/kenney_arrow.png" id="3_mhlsw"]
@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://b2hnhr1t57jm7" path="res://PraxisMapper/Controls/CellTracker.tscn" id="5_i08gh"]
 [ext_resource type="PackedScene" uid="uid://bev1jin6r7t6n" path="res://PraxisMapper/Controls/GetFile.tscn" id="5_spgqn"]
 
-[node name="ScrollingCenteredMap" type="Control"]
+[node name="ScrollingCenteredMap" type="Control" unique_id=1439201203]
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -21,7 +21,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_om4r7")
 
-[node name="centerIndicator" type="ColorRect" parent="."]
+[node name="centerIndicator" type="ColorRect" parent="." unique_id=1132778593]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,7 +30,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.441199, 0, 0.227991, 1)
 
-[node name="ColorRect" type="ColorRect" parent="centerIndicator"]
+[node name="ColorRect" type="ColorRect" parent="centerIndicator" unique_id=298007329]
 layout_mode = 1
 anchors_preset = 13
 anchor_left = 0.5
@@ -42,7 +42,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0.55071, 0.347919, 1)
 
-[node name="ColorRect2" type="ColorRect" parent="centerIndicator"]
+[node name="ColorRect2" type="ColorRect" parent="centerIndicator" unique_id=1964178117]
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5
@@ -54,7 +54,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0.55071, 0.347919, 1)
 
-[node name="Label" type="Label" parent="centerIndicator"]
+[node name="Label" type="Label" parent="centerIndicator" unique_id=1225779625]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -71,15 +71,16 @@ text = "ScrollingCenteredMap
 Center"
 horizontal_alignment = 1
 
-[node name="mapBase" type="Node2D" parent="."]
+[node name="mapBase" type="Node2D" parent="." unique_id=1970567870]
 
-[node name="cellTrackerDrawers" type="Node2D" parent="."]
+[node name="cellTrackerDrawers" type="Node2D" parent="." unique_id=1457444340]
 
-[node name="trackedChildren" type="Node2D" parent="."]
+[node name="trackedChildren" type="Node2D" parent="." unique_id=203146123]
 
-[node name="TileDrawerQueued" parent="." instance=ExtResource("3_x4y4u")]
+[node name="TileDrawerQueued" parent="." unique_id=511177966 instance=ExtResource("3_x4y4u")]
+drawnStyle = "offline"
 
-[node name="playerIndicator" type="TextureRect" parent="."]
+[node name="playerIndicator" type="TextureRect" parent="." unique_id=539506176]
 z_index = 1
 layout_mode = 0
 offset_top = 3.0
@@ -88,7 +89,7 @@ offset_bottom = 28.0
 pivot_offset = Vector2(8, 12.5)
 texture = ExtResource("3_mhlsw")
 
-[node name="Center" type="ColorRect" parent="."]
+[node name="Center" type="ColorRect" parent="." unique_id=1530525154]
 custom_minimum_size = Vector2(10, 10)
 layout_mode = 1
 anchors_preset = 8
@@ -100,6 +101,6 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.92017, 7.41214e-06, 0.581041, 1)
 
-[node name="CellTracker" parent="." instance=ExtResource("5_i08gh")]
+[node name="CellTracker" parent="." unique_id=759876645 instance=ExtResource("5_i08gh")]
 
-[node name="GetFile" parent="." instance=ExtResource("5_spgqn")]
+[node name="GetFile" parent="." unique_id=1790154280 instance=ExtResource("5_spgqn")]

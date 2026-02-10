@@ -270,6 +270,7 @@ static func DataCoordsToPlusCode(coords, cell6Base):
 	
 #Shouldn't call this before data is loaded, but just in case
 static func GetName(cell6, nid):
+	cell6 = cell6.substr(0,6)
 	if (!allData.has(cell6)):
 		GetDataFromZip(cell6)
 	return allData[cell6].nameTable[str(int(nid))]

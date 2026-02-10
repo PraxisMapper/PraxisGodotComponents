@@ -275,3 +275,17 @@ func PlusCodeToScreenCoords(plusCodeCoords, plusCodeScreenBase):
 	#If my tiles are always the same size, I can do that here.
 	#take the first8 of PlusCodeScreenBase, and then work down the character pair differences
 	#until I have a solid running total.
+
+
+func DetectCorpPcWin():
+	#identify if this is running on a windows PC in a likely-corporate scenario.
+	if (OS.get_name() != "Windows"):
+		return false
+	
+	#TODO: this is a blocking call, spin it off to a thread to avoid blocking main thread.
+	var output = []
+	OS.execute("dsregcmd", ["/status"], output)
+	if output.contains("MdmUrl"): #TODO: get MDM server from response and check against known lists?
+		return true
+	
+	return false

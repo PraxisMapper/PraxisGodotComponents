@@ -1,35 +1,35 @@
-[gd_scene load_steps=3 format=3 uid="uid://b16445g8mkbaa"]
+[gd_scene format=3 uid="uid://b16445g8mkbaa"]
 
 [ext_resource type="Script" uid="uid://o77qaq23mvoc" path="res://PraxisMapper/FullOffline/FullSingleTile.gd" id="1_r2ooq"]
 [ext_resource type="Script" uid="uid://dyg58jv1ccfnc" path="res://PraxisMapper/FullOffline/DrawSingleTile.gd" id="3_s2ulk"]
 
-[node name="OfflineData" type="Node2D"]
+[node name="OfflineData" type="Node2D" unique_id=1510635528]
 script = ExtResource("1_r2ooq")
 
-[node name="svc" type="SubViewportContainer" parent="."]
+[node name="svc" type="SubViewportContainer" parent="." unique_id=1096084068]
 offset_left = -10000.0
 offset_right = -9960.0
 offset_bottom = 40.0
 
-[node name="SubViewport" type="SubViewport" parent="svc"]
+[node name="SubViewport" type="SubViewport" parent="svc" unique_id=1274794929]
 handle_input_locally = false
 render_target_update_mode = 4
 
-[node name="fullMap" type="Node2D" parent="svc/SubViewport"]
+[node name="fullMap" type="Node2D" parent="svc/SubViewport" unique_id=1645466094]
 script = ExtResource("3_s2ulk")
 
-[node name="subcam" type="Camera2D" parent="svc/SubViewport"]
+[node name="subcam" type="Camera2D" parent="svc/SubViewport" unique_id=505999116]
 anchor_mode = 0
 
-[node name="Banner" type="Node2D" parent="."]
+[node name="Banner" type="Node2D" parent="." unique_id=793699011]
 visible = false
 
-[node name="ColorRect" type="ColorRect" parent="Banner"]
+[node name="ColorRect" type="ColorRect" parent="Banner" unique_id=126425495]
 offset_right = 1079.0
 offset_bottom = 61.0
 color = Color(1, 1, 0, 1)
 
-[node name="Status" type="Label" parent="Banner"]
+[node name="Status" type="Label" parent="Banner" unique_id=931215287]
 offset_right = 1079.0
 offset_bottom = 40.0
 theme_override_colors/font_color = Color(0, 0, 0, 1)

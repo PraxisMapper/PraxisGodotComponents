@@ -115,7 +115,7 @@ func CreateTile(oneTile = null):
 	
 	if makeMapTile == true:
 		#print("drawing map (single)")
-		await $svc/SubViewport/fullMap.DrawSingleTile(mapData.entries["mapTiles"], scaleVal, plusCode6 + oneTile)
+		await $svc/SubViewport/fullMap.DrawSingleTile(mapData.entries["offline"], scaleVal, plusCode6 + oneTile)
 	
 	var xList = PlusCodes.CODE_ALPHABET_
 	var yList = PlusCodes.CODE_ALPHABET_

@@ -77,7 +77,7 @@ offset_top = 300.0
 offset_right = 1058.0
 offset_bottom = 323.0
 theme_override_font_sizes/font_size = 20
-text = "Neon (Only roads and residential)"
+text = "Neon (Only roads)"
 horizontal_alignment = 1
 
 [node name="TextureRect4" type="TextureRect" parent="." unique_id=1488802986]
@@ -93,7 +93,24 @@ offset_top = 906.0
 offset_right = 341.0
 offset_bottom = 934.0
 theme_override_font_sizes/font_size = 20
-text = "Admin Bounds"
+text = "Admin Bounds (Filled)"
+horizontal_alignment = 1
+
+[node name="TextureRect5" type="TextureRect" parent="." unique_id=512881415]
+offset_left = 380.0
+offset_top = 964.0
+offset_right = 700.0
+offset_bottom = 1464.0
+texture = SubResource("NoiseTexture2D_eqlhi")
+
+[node name="Label7" type="Label" parent="." unique_id=1362372901]
+offset_left = 380.0
+offset_top = 904.0
+offset_right = 705.0
+offset_bottom = 932.0
+theme_override_font_sizes/font_size = 20
+text = "MapTiles and 
+Admin Bounds"
 horizontal_alignment = 1
 
 [node name="Label5" type="Label" parent="." unique_id=958909134]
